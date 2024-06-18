@@ -3328,13 +3328,7 @@ def internet(url='https://bing.com', op=None):
     return result
 
 
-def isascii(s):
-    try:
-        s.encode(encoding='utf-8').decode('ascii')
-    except UnicodeDecodeError:
-        return False
-    else:
-        return True
+
 
 
 def isodexstatus():

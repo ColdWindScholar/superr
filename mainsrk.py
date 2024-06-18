@@ -1868,7 +1868,7 @@ def superr(mfunc=None):
 
                                 j.appendf(j.cmd(
                                     j.adb + ' push ' + j.tools + '/updater/install/bin/configure.sh /tmp/srk_configure.sh'),
-                                          j.logs + '/adb.log')
+                                    j.logs + '/adb.log')
                                 j.appendf(j.cmd(j.adb + ' shell "sh /tmp/srk_configure.sh"'), j.logs + '/adb.log')
                                 j.appendf(j.cmd(j.adb + ' pull /tmp/srk_config ' + j.prfiles + '/adb_config'),
                                           j.logs + '/adb.log')
@@ -1917,7 +1917,7 @@ def superr(mfunc=None):
 
                                 j.appendf(j.cmd(
                                     j.adb + ' push ' + j.tools + '/updater/install/bin/configure.sh /sdcard/srk_configure.sh'),
-                                          j.logs + '/adb.log')
+                                    j.logs + '/adb.log')
                                 # j.cmd(j.adb+' push '+j.tools+'/updater/binary/busybox-arm /sdcard/srk_busybox')
                                 # j.cmd(j.adb+' shell su -c "chmod +x /sdcard/srk_configure.sh; chmod +x /sdcard/srk_busybox"')
                                 j.appendf(j.cmd(j.adb + ' shell su -c "sh /sdcard/srk_configure.sh"'),
@@ -1986,7 +1986,7 @@ def superr(mfunc=None):
 
             if any([romzip, romtar, romimg, romdat, romlz4]) and ((not romimg and not romdat and not romlz4) or (
                     romimg == 'system.img' or romdat.startswith('system') or romlz4.startswith(
-                    'system') or romlz4.startswith('super') or romimg == 'super.img')):
+                'system') or romlz4.startswith('super') or romimg == 'super.img')):
                 moveoldfiles(romzip, romtar, romimg, romdat)
 
             if romzip:
@@ -1996,8 +1996,9 @@ def superr(mfunc=None):
                     ziptest = j.zipl(j.rd + '/' + romzip)
 
                 if not j.greps(
-                        j.fl('.*system.ext4.tar|.*system.ext4.tar.a|.*tar.md5|AP_.*tar|.*chunk.*|.*system/build.prop|.*system.new.dat|.*system_new.img|.*system.img|.*super.img|.*payload.bin|.*system_1.img|.*.pac$|.*.img.lz4',
-                             '.*\.so$'), ziptest):
+                        j.fl(
+                            '.*system.ext4.tar|.*system.ext4.tar.a|.*tar.md5|AP_.*tar|.*chunk.*|.*system/build.prop|.*system.new.dat|.*system_new.img|.*system.img|.*super.img|.*payload.bin|.*system_1.img|.*.pac$|.*.img.lz4',
+                            '.*\.so$'), ziptest):
                     j.banner()
                     j.kprint(j.lang['warning'], 'yrbbo')
                     j.kprint(j.lang['extract_zip_fail'], 'r')
@@ -2705,7 +2706,7 @@ def superr(mfunc=None):
                             j.imgextract('cache.img')
                             if j.existd(j.rd + '/cache') and (
                                     j.getprop('ro.product.manufacturer') == 'samsung' or j.getprop(
-                                    'ro.product.system.manufacturer') == 'samsung'):
+                                'ro.product.system.manufacturer') == 'samsung'):
                                 reply = 'y'
                                 if not j.autorom() and ex_all_img != 'Yes':
                                     j.kprint('\n' + j.lang['extract_cache_include_q'])
@@ -3115,206 +3116,6 @@ def superr(mfunc=None):
             sigcust = j.getconf(sigloc, j.uconf)
 
         return sigcust
-
-    def get_tools():
-        if not j.internet():
-            j.banner()
-            j.kprint(j.lang['error'], 'yrbbo')
-            j.kprint(j.lang['update_no_internet'] + '\n', 'r')
-            input(j.lang['enter_exit'])
-            sys.exit()
-
-        def dltools(tooldir, toolsize):
-            j.banner()
-            j.kprint(j.lang['notice'], 'ryb')
-            j.kprint(j.lang['tools_need'], 'r')
-            j.kprint(toolsize + '\n', 'y')
-            j.kprint(j.lang['tools_dl_q'])
-
-            reply = j.getChar()
-            if reply != 'y':
-                sys.exit()
-
-            j.banner()
-            j.kprint(j.lang['tools_dl_install'], 'b')
-
-            j.mkdir(j.tools + '/' + tooldir)
-
-            with j.cd(j.tools + '/' + tooldir):
-                if tooldir == 'linux_tools':
-                    j.dlfile('64-bit_python.zip', tooldir + '.zip', 1)
-                else:
-                    j.dlfile(tooldir + '.zip', tooldir + '.zip', 1)
-
-            if not j.existf(j.tools + '/' + tooldir + '/' + tooldir + '.zip'):
-                j.banner()
-                j.kprint(j.lang['error'], 'yrbbo')
-                j.kprint(j.lang['tools_dl_failed'], 'r')
-                j.delpath(j.tools + '/' + tooldir)
-                input(j.lang['enter_exit'])
-                sys.exit()
-
-            with j.cd(j.tools + '/' + tooldir):
-                j.zipu2(tooldir + '.zip')
-                j.delpath(tooldir + '.zip')
-
-        sprint = ''
-        if j.platf == 'win':
-            tooldir = 'win_tools'
-            if not j.existd(j.tools + os.sep + tooldir):
-                sprint = 1
-                dltools(tooldir, j.lang['wintools_dl'])
-
-            md5tmp = j.md5chk(md5file='md5win')
-
-            if not os.path.exists(j.AIK):
-                j.delpath(j.AIK)
-
-                if not sprint:
-                    j.banner()
-                    j.kprint(j.lang['tools_dl_install'], 'b')
-
-                j.mkdir(j.AIK)
-                with j.cd(j.AIK):
-                    try:
-                        j.dlfile('AIK_windows.zip', 'aik.zip', 1)
-                        j.internet(j.server1 + '/dllog/?f=AIK_windows&u=' + j.srkuser)
-                        j.zipu2('aik.zip')
-                    except:
-                        pass
-
-                    j.delpath('aik.zip')
-        else:
-            if j.platf in ['lin', 'wsl', 'wsl2']:
-                tooldir = 'linux_tools'
-            elif j.platf == 'mac':
-                tooldir = 'mac_tools'
-
-            if not j.existd(j.tools + os.sep + tooldir):
-                sprint = 1
-                dltools(tooldir, j.lang['lintools_dl'])
-
-            if tooldir == 'linux_tools':
-                md5tmp = j.md5chk(md5file='md5lin')
-            else:
-                md5tmp = j.md5chk(md5file='md5mac')
-
-            if j.md5chk(md5file='md5aik') != 0:
-                j.delpath(j.AIK)
-
-                if not sprint:
-                    j.banner()
-                    j.kprint(j.lang['tools_dl_install'], 'b')
-
-                with j.cd(j.tools + '/boot'):
-                    try:
-                        j.dlfile('AIK_linux.zip', 'aik.zip', 1)
-                        j.internet(j.server1 + '/dllog/?f=AIK_linux&u=' + j.srkuser)
-                        j.zipu2('aik.zip')
-                    except:
-                        pass
-
-                    j.delpath('aik.zip')
-
-        if md5tmp != 0:
-            if not sprint:
-                j.banner()
-                j.kprint(j.lang['tools_dl_install'], 'b')
-
-            with j.cd(j.tools):
-                for i in md5tmp:
-                    j.delpath(i)
-                    ibase = j.basename(i)
-                    j.dlfile(i + '.zip', ibase + '.zip', 1)
-                    j.zipu(ibase + '.zip')
-                    j.delpath(ibase + '.zip')
-
-        if j.md5chk(md5file='md5smali') != 0:
-            j.delpath(j.tools + '/smali')
-
-            if not sprint:
-                j.banner()
-                j.kprint(j.lang['tools_dl_install'], 'b')
-
-            with j.cd(j.tools):
-                j.dlfile('srk_smali.zip', 'smali.zip', 1)
-                try:
-                    j.zipu2('smali.zip')
-                except:
-                    pass
-                j.delpath('smali.zip')
-
-        ubcheck = j.md5chk(md5file='md5binary')
-        if ubcheck != 0:
-            j.mkdir(j.tools + '/updater/binary')
-
-            with j.cd(j.tools + '/updater/binary'):
-                for i in ubcheck:
-                    j.delpath(j.tools + '/' + i)
-                    j.dlfile(i, j.basename(i), 1)
-
-        del ubcheck
-
-        if not j.existd(j.tools + '/devices'):
-            if not sprint:
-                j.banner()
-                j.kprint(j.lang['tools_dl_install'], 'b')
-
-            with j.cd(j.tools):
-                j.dlfile('srkp_devices.zip', 'devices.zip', 1)
-                j.zipu2('devices.zip')
-                j.delpath('devices.zip')
-
-        if j.existf(j.tools + '/root/root_zips/SuperSU.zip'):
-            if j.md5chk(md5file='md5su') != 0:
-                j.delpath(j.tools + '/root/root_zips/SuperSU.zip')
-
-        if j.existf(j.tools + '/root/busybox/Busybox.zip'):
-            if j.md5chk(md5file='md5busybox') != 0:
-                j.delpath(j.tools + '/root/busybox/Busybox.zip')
-
-        if j.platf != 'win':
-            for i in j.readfl(j.tools + '/depends/xfiles'):
-                j.cmd('chmod a+x ' + i)
-
-        toolsfail = []
-        if not j.existf(j.tools + '/win_tools/aapt.exe') and not j.existf(
-                j.tools + '/linux_tools/aapt') and not j.existf(j.tools + '/mac_tools/aapt'):
-            toolsfail.append(tooldir)
-
-        if not j.existd(j.tools + '/smali'):
-            toolsfail.append('smali')
-
-        if not j.existd(j.tools + '/devices'):
-            j.mkdir(j.tools + '/devices')
-            toolsfail.append('devices')
-
-        if j.platf != 'win' and not j.existf(j.AIK + '/unpackimg.sh'):
-            toolsfail.append('boot/AIK')
-
-        if j.platf == 'win' and not j.existf(j.AIK + '/unpackimg.bat'):
-            toolsfail.append('boot/AIK2')
-
-        if toolsfail:
-            j.banner()
-            if len(toolsfail) == 1 and toolsfail[0] == 'devices':
-                j.kprint(j.lang['warning'], 'yrbbo')
-                j.kprint(j.lang['tools_dl_device_failed'], 'r')
-                j.kprint(j.lang['tools_dl_device_failed2'], 'r')
-                j.kprint(j.lang['tools_dl_device_failed3'] + '\n', 'r')
-                input(j.lang['enter_continue'])
-            else:
-                toolprint = []
-                for i in toolsfail:
-                    toolprint.append(j.basename(i))
-                    if i != tooldir:
-                        j.delpath(j.tools + '/' + i)
-
-                j.kprint(j.lang['error'], 'yrbbo')
-                j.kprint(j.lang['tools_dl_install_failed'], 'r')
-                j.kprint('\n'.join(toolprint) + '\n', 'y')
-                input(j.lang['enter_exit'])
-                sys.exit()
 
     def ext_dirmenu():
         global main
@@ -4188,7 +3989,6 @@ def superr(mfunc=None):
             elif choice == '6':  # START Reset all tools
                 j.banner()
                 j.kprint(j.lang['update_updating'], 'b')
-                get_tools()
 
                 choice = ''
                 continue
@@ -4198,7 +3998,7 @@ def superr(mfunc=None):
                     j.banner()
                     j.kprint(j.lang['menu_flashable'] + '\n', 'ryb')
                     j.kprint('1) ' + j.lang['metasize'] + '(' + color['b'] + j.lang['title_current'] + color['g'] + (
-                                j.getconf('metasize', j.mconf) or j.lang['metasize_s']) + color['n'] + ')')
+                            j.getconf('metasize', j.mconf) or j.lang['metasize_s']) + color['n'] + ')')
                     j.kprint(
                         '2) ' + j.lang['menu_zip_compression'] + '(' + color['b'] + j.lang['title_current'] + color[
                             'g'] + (j.getconf('rom_comp_level', j.mconf) or '5') + color['n'] + ')')
@@ -5714,7 +5514,7 @@ def superr(mfunc=None):
                 for i in j.getconf('exdirs', j.uconf, l=1):
                     if not j.grepf('package_extract_dir("' + i + '.*', j.usdir + '/updater-script') and not j.grepf(
                             i + '.transfer', j.usdir + '/updater-script') and not j.grepf(
-                            'package_extract_file("' + i + '.*', j.usdir + '/updater-script'):
+                        'package_extract_file("' + i + '.*', j.usdir + '/updater-script'):
                         partadd(i)
 
                 j.getconf('exdone', j.uconf, add='1')
@@ -5924,132 +5724,11 @@ def superr(mfunc=None):
 
         j.getconf('depmet', j.mconf, add='1')
 
-    with j.cd(j.tools):
-        x = 0
-        for i in ['linux_tools', 'win_tools', 'mac_tools', 'devices', 'smali', 'boot/AIK', 'boot/AIK2',
-                  'updater/binary']:
-            if j.existd(i):
-                x += 1
-
-    if x < 5: get_tools()
-
-    if j.existf(j.tools + '/source/md5_full'):
-        j.banner()
-        j.kprint(j.lang['update_verify'], 'b')
-
-        md5err = []
-        for i in j.readfl(j.tools + '/source/md5_full'):
-            i = i.split('\t')
-
-            if j.md5chk(i[0]) != i[-1]:
-                md5err.append(i[0])
-        if md5err:
-            j.banner()
-            j.kprint(j.lang['error'], 'yrbbo')
-
-            md5source = j.greps('tools/source/.*', md5err)
-
-            if j.getconf('firstrun', j.mconf):
-                j.appendf('ERROR: ' + j.lang['startup_checksum'], 'update.log')
-                j.appendf('\n'.join(md5err), 'update.log')
-
-                j.kprint(j.lang['startup_checksum'], 'r')
-                j.kprint('\n'.join(md5err) + '\n', 'y')
-
-                if md5source:
-                    j.kprint(j.lang['update_fail'], 'r')
-                    j.kprint(j.lang['update_fail2'] + '\n', 'r')
-                    j.kprint(j.lang['update_fail3'] + '\n', 'r')
-
-                    input(j.lang['enter_exit'])
-                    sys.exit()
-                else:
-                    j.kprint(j.lang['general_cont_anyway_q'])
-                    reply = j.getChar()
-                    if reply != 'y':
-                        sys.exit()
-            else:
-                j.appendf('ERROR: The following checksums did not match:', 'install.log')
-                j.appendf('\n'.join(md5err), 'install.log')
-
-                j.kprint(j.lang['startup_error'] + '\n', 'r')
-                input(j.lang['enter_exit'])
-                sys.exit()
-
-        get_tools()
-
-        if j.getconf('firstrun', j.mconf):
-            doneit = j.internet(j.server1 + '/dlplug/?u=' + j.srkuser + '&p=' + j.srkpass + '&d=update2.py', 1)
-            if doneit.startswith('import'):
-                update = types.ModuleType('update')
-                exec(doneit, update.__dict__)
-                del doneit
-            else:
-                j.banner()
-                j.kprint(j.lang['error'], 'yrbbo')
-                j.kprint(j.lang['update_down'], 'r')
-                j.kprint(j.lang['update_down2'] + '\n', 'r')
-                input(j.lang['enter_exit'])
-                sys.exit(1)
-
-            if update.doupdate(j) == 'none':
-                j.banner()
-                j.kprint(j.lang['error_mess'] + '\n', 'r')
-                input(j.lang['enter_exit'])
-                sys.exit()
-
-            with j.cd(j.tools + '/plugins'):
-                plugins44 = sorted(j.greps(j.fl('', '.*\.zip$'), j.findf('*')))
-
-            retv = j.mfunc2('auth = ' + str([j.srkuser, 1, 0, j.superrv, j.osbit(), j.platf, j.whoami(), j.dbtst]),
-                            'out').decode()
-
-            j.internet(j.server1 + '/estats/?e=' + retv)
-
-            del retv
-
-            if j.platf == 'win':
-                j.delpath('superr1.exe', 'tools/source/superr1.exe', 'tools/source/mainsrk1.pyd', 'please_delete_me')
-
-            j.plug_update(plugins44, quiet=1)
-        else:
-            retv = j.mfunc2('auth = ' + str([j.srkuser, 0, 1, j.superrv, j.osbit(), j.platf, j.whoami(), j.dbtst]),
-                            'out').decode()
-
-            j.internet(j.server1 + '/estats/?e=' + retv)
-
-            del retv
-
-            j.getconf('firstrun', j.mconf, add='1')
-            j.getconf('ubinary', j.mconf, add='no')
-            j.getconf('assert-no', j.mconf, add='1')
-            j.getconf('metasize', j.mconf, add='Short')
-
-        if not j.getconf('case_fix', j.mconf):
-            if j.platf in ['win', 'wsl', 'wsl2']:
-                j.getconf('case_fix', j.mconf, add='Yes')
-            else:
-                j.getconf('case_fix', j.mconf, add='No')
-
-        if not j.getconf('mount_extract', j.mconf):
-            if j.platf in ['win', 'wsl']:
-                j.getconf('mount_extract', j.mconf, add='No')
-            else:
-                j.getconf('mount_extract', j.mconf, add='Yes')
-
-        if not j.getconf('use_make_ext4fs', j.mconf):
-            if j.platf not in ['win', 'mac']:
-                j.getconf('use_make_ext4fs', j.mconf, add='No')
-
-        j.delpath(j.tools + '/source/md5_full')
-
     if not j.partslist:
         j.partslist = ['system', 'prism', 'optics', 'vendor', 'product', 'super', 'oem', 'odm', 'system_ext', 'hidden',
                        'cust', 'generic', 'system_other']
 
         j.getconf('partition_extract_list', j.mconf, add=j.partslist, l=1)
-
-
 
     loop = 0
     while loop == 0:
