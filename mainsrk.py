@@ -7,6 +7,7 @@
 import importlib
 import os
 import re
+import struct
 import sys
 import types
 from shutil import which
@@ -3869,7 +3870,7 @@ def superr(mfunc=None):
                 srksupf = j.rd + '/srk_support_zip/info'
                 srksupd = j.rd + '/srk_support_zip'
                 j.appendf(j.platf, srksupf)
-                j.appendf(j.osbit(), srksupf)
+                j.appendf(str(struct.calcsize('P') * 8), srksupf)
                 j.appendf(j.superrv, srksupf)
                 j.appendf('\n'.join(j.greps(j.fl('', '.*srkpass'), j.readfl(j.tools + '/srk.conf'))),
                           srksupd + '/srk_m.conf')
@@ -4452,10 +4453,10 @@ def superr(mfunc=None):
                     j.clears()
 
                     # Backup functions to be removed for plugin use
-                    autorom, bbdown, getlang, deodex_start, new_project, timegt, mfunc2 = j.autorom, j.bbdown, j.getlang, j.deodex_start, j.new_project, j.timegt, j.mfunc2
+                    autorom, bbdown, getlang, deodex_start, new_project, mfunc2 = j.autorom, j.bbdown, j.getlang, j.deodex_start, j.new_project, j.mfunc2
 
                     # Delete functions for plugin use
-                    del j.autorom, j.bbdown, j.plug_update, j.getlang, j.deodex_start, j.new_project, j.timegt, j.mfunc2
+                    del j.autorom, j.bbdown, j.plug_update, j.getlang, j.deodex_start, j.new_project, j.mfunc2
 
                     # Backup variables to be removed for plugin use
                     dbtst, srkuser, srkpass, server1, auth_days, days_left = j.dbtst, j.srkuser, j.srkpass, j.server1, j.auth_days, j.days_left
@@ -4497,10 +4498,10 @@ def superr(mfunc=None):
                         input(j.lang['enter_continue'])
 
                     # Restore functions removed for plugin use
-                    j.autorom, j.bbdown, j.getlang, j.deodex_start, j.new_project, j.timegt, j.mfunc2 = autorom, bbdown, getlang, deodex_start, new_project, timegt, mfunc2
+                    j.autorom, j.bbdown, j.getlang, j.deodex_start, j.new_projec, j.mfunc2 = autorom, bbdown, getlang, deodex_start, new_project, mfunc2
 
                     # Delete tmp functions removed for plugin use
-                    del autorom, bbdown, getlang, deodex_start, new_project, timegt, mfunc2
+                    del autorom, bbdown, getlang, deodex_start, new_project, mfunc2
 
                     # Restore variables removed for plugin use
                     j.dbtst, j.srkuser, j.srkpass, j.server1, j.auth_days, j.days_left = dbtst, srkuser, srkpass, server1, auth_days, days_left
@@ -4602,7 +4603,6 @@ def superr(mfunc=None):
         global main, permtype
         main = 0
         while main == 0:
-            j.timegt()
 
             if not j.existf(j.sysdir + '/build.prop'):
                 j.banner()
@@ -5629,7 +5629,7 @@ def superr(mfunc=None):
 
         j.lang = j.getlang(langfile)
 
-    j.srkuser, j.srkpass, j.dbtst, j.days_left, latest_ver = ('Donate', '114514', 'yes', '1k+', '3.2.1.3')
+    j.srkuser, j.srkpass, j.dbtst, j.days_left, latest_ver = ('Donate', '114514', 'yes', '1', '3.2.1.3')
 
     if j.existf(j.tools + '/source/md5_full'):
         if not j.getconf('firstrun', j.mconf) and latest_ver > j.superrv[1::2]:
@@ -5794,7 +5794,6 @@ def superr(mfunc=None):
 
         choice = ''
         while not choice:
-            j.timegt()
 
             j.banner()
             if j.romname:

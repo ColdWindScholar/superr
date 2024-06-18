@@ -2613,8 +2613,8 @@ def findimgsize(whatimg):
                 imgblock = None
                 try:
                     imgblock = \
-                    greps(' ' + newname + ' ', cmd(adb + ' shell su -c "ls -al ' + byname + '"').splitlines())[
-                        0].split()[-1]
+                        greps(' ' + newname + ' ', cmd(adb + ' shell su -c "ls -al ' + byname + '"').splitlines())[
+                            0].split()[-1]
                     appendf('imgblock: ' + imgblock, logs + '/adb.log')
                 except Exception as e:
                     appendf(logtb(e), logs + '/adb.log')
@@ -2624,8 +2624,9 @@ def findimgsize(whatimg):
                 try:
                     appendf(cmd(adb + ' "wait-for-device"'), logs + '/adb.log')
                     rawsize = \
-                    greps(basename(imgblock), cmd(adb + ' shell su -c "cat /proc/partitions"').splitlines())[0].split()[
-                        2]
+                        greps(basename(imgblock), cmd(adb + ' shell su -c "cat /proc/partitions"').splitlines())[
+                            0].split()[
+                            2]
                     appendf('rawsize: ' + rawsize, logs + '/adb.log')
                 except Exception as e:
                     appendf(logtb(e), logs + '/adb.log')
@@ -3328,9 +3329,6 @@ def internet(url='https://bing.com', op=None):
     return result
 
 
-
-
-
 def isodexstatus():
     deotmp = findr(sysdir + '/**/*.odex')
     deotmp += findr(rd + '/vendor/**/*.odex')
@@ -3345,43 +3343,6 @@ def isodexstatus():
         return color['g'] + 'Deodexed' + color['n']
     else:
         return color['r'] + 'Odexed' + color['n']
-
-
-def winrename(p1=None, p2=None):
-    if p1:
-        filedict = {
-            'superr.exe': 'superr.exe11111',
-            'tools/source/superr.exe': 'tools/source/superr.exe11111',
-        }
-
-        for i in findr('tools/source/**/*.pyd') + findr('tools/source/**/*.dll'):
-            filedict[i] = i + '11111'
-
-        for i in filedict:
-            delpath(filedict[i])
-            if existf(i):
-                os.rename(i, filedict[i])
-
-    if p2:
-        filedict = {
-            'superr.exe11111': 'superr.exe',
-            'tools/source/superr.exe11111': 'tools/source/superr.exe',
-        }
-
-        for i in findr('tools/source/**/*.pyd11111') + findr('tools/source/**/*.dll11111'):
-            filedict[i] = i[:-5]
-
-        for i in filedict:
-            if existf(i) and not existf(filedict[i]):
-                os.rename(i, filedict[i])
-            elif existf(i) and existf(filedict[i]):
-                mkdir(bd + '/please_delete_me/' + dirname(i))
-                os.replace(i, bd + '/please_delete_me/' + i)
-
-
-def kitchen_update(jupdate=None, averify=None):
-    pass
-
 
 
 def kprint(ctext, cl='n'):
@@ -3438,60 +3399,6 @@ def md5chk(fname=None, md5file=None):
             return 1
 
 
-def encstr(entry):
-    return hashlib.sha256(entry.encode()).hexdigest()
-
-
-def metasetup(extractdir):
-    with cd(rd):
-        fs_config = {}
-        for i in readfl(prfiles + '/fs_config-' + extractdir):
-            i = i.split()
-            if 'capabilities=' in i[-1]:
-                uid, gid, mode, cap = i[-4], i[-3], i[-2], str(hex(int(i[-1].split('=')[1])))
-                name = ' '.join(i[:-4])
-            else:
-                uid, gid, mode, cap = i[-3], i[-2], i[-1], '0x0'
-                name = ' '.join(i[:-3])
-
-            if name.endswith('.srk'):
-                name = name[:-8]
-
-            fs_config[name] = [uid, gid, mode, cap]
-
-        for i in readfl(prfiles + '/file_contexts3-' + extractdir):
-            i = i.split()
-            context = i[-1]
-            name = ' '.join(i[:-1])[1:]
-
-            if name.endswith('.srk'):
-                name = name[:-8]
-
-            try:
-                if fs_config[name]:
-                    fs_config[name] += [context]
-            except:
-                pass
-
-        dirr = ''
-        if extractdir == 'system' and sar():
-            dirr = 'system/'
-
-        mlist = []
-        for i in fs_config:
-            if len(fs_config[i]) != 5:
-                continue
-
-            if existd(dirr + i) or existf(dirr + i):
-                mlist.append('set_metadata("/' + dirr + i + '", "uid", ' + fs_config[i][0] + ', "gid", ' + fs_config[i][
-                    1] + ', "mode", ' + fs_config[i][2] + ', "capabilities", ' + fs_config[i][3] + ', "selabel", "' +
-                             fs_config[i][4] + '");')
-
-        del fs_config
-
-        return list(filter(None, mlist))
-
-
 def mfunc2(data, dtype):
     xtr_cc = [76, 107, 115, 95, 105, 71, 66, 99, 54, 107, 49, 83, 103, 86, 112, 76, 99, 69, 90, 78, 102, 99, 101, 71,
               56, 105, 108, 86, 45, 114, 55, 100, 66, 51, 119, 49, 52, 109, 53, 116, 51, 116, 107, 61]
@@ -3546,10 +3453,6 @@ def mkdir(dirpath):
 def mvdir(src_dir, dst_dir):
     if not os.path.isdir(dst_dir):
         os.rename(src_dir, dst_dir)
-
-
-def osbit():
-    return str(struct.calcsize('P') * 8)
 
 
 def partimg(whatimg, sparseimg='', fromplug=None, frommenu=None, quiet=None):
@@ -4273,36 +4176,6 @@ def timest():
     return datetime.now().strftime('%m-%d-%Y-%H_%M_%S')
 
 
-def timegt(short=None):
-    if short:
-        start_date = datetime.now()
-        end_date = start_date + timedelta(days=auth_days)
-        start_date = start_date.strftime(date_pattern)
-        end_date = end_date.strftime(date_pattern)
-
-        return [start_date, end_date]
-    else:
-        if getconf('offline_auth', mconf) == 'enabled':
-            if (datetime.now() > datetime.strptime(days_left, date_pattern)):
-                delpath(tools + '/auth.key')
-
-                while True:
-                    banner()
-                    kprint(lang['auth_expired'] + '\n', 'r')
-                    print('1) ' + lang['menu_renew_now'])
-                    kprint('q = ' + lang['menu_quit'] + '\n', 'm')
-                    print(lang['select'])
-                    reply = getChar()
-
-                    if reply not in ['1', 'q']:
-                        continue
-
-                    if reply == '1':
-                        sys.exit(3)
-                    else:
-                        sys.exit()
-
-
 def touch(filename):
     open(filename, 'a', newline='\n').close()
 
@@ -4447,9 +4320,6 @@ def ubinary(ubdir):
 
     delpath(ubdir + '/updater-script')
     appendf('# Dummy file; update-binary is a shell script.', ubdir + '/updater-script')
-
-
-
 
 
 def utftest(filename):
@@ -4681,5 +4551,3 @@ else:
     zipadjust = ostools + '/zipadjust'
     vdexext = ostools + '/vdexExtractor'
     brotli = ostools + '/brotli'
-
-
