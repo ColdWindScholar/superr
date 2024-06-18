@@ -1,0 +1,20 @@
+#ASSERT
+show_progress(1.000000, 0);
+ui_print(" ");
+ui_print(" ");
+ui_print("#SIGNATURE Installer");
+ui_print("#SIGCUST");
+ui_print(" ");
+ui_print(" ");
+ui_print(" ");
+ui_print(" ");
+ui_print("Checking config ...");
+ui_print(" ");
+package_extract_dir("install", "/tmp/install");
+set_metadata_recursive("/tmp/install/bin", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0755);
+run_program("/tmp/install/bin/busybox", "sh", "/tmp/install/bin/configure.sh");
+ui_print("Extracting boot image...");
+ui_print(" ");
+package_extract_file("boot.img", file_getprop("/tmp/config", "boot"));
+set_progress(1.000000);
+ui_print("#SIGNATURE Installed");

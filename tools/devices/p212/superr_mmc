@@ -1,0 +1,5 @@
+/dev/block/system /system
+/dev/block/boot /boot
+/dev/block/data /data
+/dev/block/cache /cache
+/dev/block/recovery /recovery

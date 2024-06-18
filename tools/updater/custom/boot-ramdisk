@@ -1,0 +1,2 @@
+ui_print(" "); ui_print("Extracting ramdisk image..."); ui_print(" ");
+package_extract_file("ramdisk.img", file_getprop("/tmp/config", "ramdisk"));

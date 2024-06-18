@@ -1,0 +1,2 @@
+ui_print(" "); ui_print("Extracting kernel image..."); ui_print(" ");
+package_extract_file("kernel.img", file_getprop("/tmp/config", "kernel"));
