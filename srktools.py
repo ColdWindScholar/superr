@@ -4089,7 +4089,7 @@ def plug_update(plugins, getlist=None, quiet=None):
         with cd(tools + '/plugins'):
             for i in upplugs:
                 delpath(i)
-                dlfile('https://github.com/ColdWindScholar/superr_files/raw/plugins/' + i + '.zip', i + '.zip', 1)
+                dlfile('https://github.com/ColdWindScholar/superr_files/raw/plugins/' + i + '.zip', i + '.zip')
                 internet(server1 + '/dllog/?f=PLUG_' + i + '.zip&u=' + srkuser)
                 zipu(i + '.zip')
                 appendf(pluglist[1][i], i + '/plugmd5')
