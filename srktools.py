@@ -256,7 +256,6 @@ class cd(object):
 def new_project():
     ospath = './'
     while os.path.exists(ospath):
-        romname = ''
         banner()
         kprint(lang['new_q'] + '\n')
         romname = input().replace(' ', '_')
