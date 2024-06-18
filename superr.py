@@ -1,15 +1,10 @@
-
-import platform
-
-
 import mainsrk
 
+try:
+    import readline
+except:
+    pass
 
-if platform.platform().startswith('Linux'):
-    try:
-        import readline
-    except:
-        pass
 try:
     mainsrk.superr()
 except (BaseException) as e:
