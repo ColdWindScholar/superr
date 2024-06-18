@@ -3920,7 +3920,6 @@ def superr():
             j.kprint('5) ' + j.lang['menu_extract_options'])
             j.kprint('6) ' + j.lang['menu_tools_reset'])
             j.kprint('7) ' + j.lang['menu_flashable'])
-            j.kprint('8) ' + j.lang['menu_device_reset'])
             j.kprint('m = ' + j.lang['title_main'], 'y')
             j.kprint('q = ' + j.lang['menu_quit'] + '\n', 'm')
             j.kprint(j.lang['select'])
@@ -3972,25 +3971,10 @@ def superr():
                         choice2 = ''
                         continue
 
-                    if choice2 == 'b':
-                        choice = ''
-                    elif choice2 == '1':
-                        if j.getconf('offline_auth', j.mconf) == 'enabled':
-                            j.days_left = color['r'] + j.lang['disabled']
-                            j.delpath(j.tools + '/auth.key')
-                            j.getconf('offline_auth', j.mconf, 'rem')
-                        else:
-                            j.getconf('offline_auth', j.mconf, add='enabled')
-                            j.banner()
-                            j.kprint(j.lang['auth_reset'], 'g')
-                            j.kprint(j.lang['auth_reset2'] + '\n', 'y')
-                            input(j.lang['enter_continue'])
-                            sys.exit(3)
 
                         choice2 = ''
                     elif choice2 == '2':
                         j.banner()
-                        j.delpath(j.tools + '/auth.key')
                         j.kprint(j.lang['auth_reset'], 'g')
                         j.kprint(j.lang['auth_reset2'] + '\n', 'y')
                         input(j.lang['enter_continue'])
@@ -4073,9 +4057,6 @@ def superr():
                 j.appendf(j.superrv, srksupf)
                 j.appendf('\n'.join(j.greps(j.fl('', '.*srkpass'), j.readfl(j.tools + '/srk.conf'))),
                           srksupd + '/srk_m.conf')
-
-                if j.existf(j.tools + '/auth.key'):
-                    j.cp(j.tools + '/auth.key', srksupd + '/auth.key')
 
                 with j.cd(j.prfiles):
                     j.cp('srk.conf', srksupd + '/srk_u.conf')
@@ -4367,13 +4348,7 @@ def superr():
                                 j.getconf('brotli_comp', j.mconf, 'rem')
 
                             choice3 = ''
-            elif choice == '8':  # START Update device database
-                with j.cd(j.tools):
-                    j.delpath('devices')
-                j.banner()
-                j.kprint(j.lang['menu_tools_update'] + '\n', 'g')
-                input(j.lang['enter_continue'])
-                sys.exit(3)
+
 
     def moveoldfiles(romzip, romtar, romimg, romdat):
         timestamp = j.timest()
