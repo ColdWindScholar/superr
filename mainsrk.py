@@ -4684,11 +4684,11 @@ def superr():
                             else:
                                 plug_incompat()
                         else:
-                            if j.grepf(' ', j.tools + '/plugins/' + plugin + '/' + plugin):
-                                plug_incompat()
-                            else:
+                            try:
                                 p = imp.load_source('module', j.tools + '/plugins/' + plugin + '/' + plugin)
                                 p.main(j, plugin)
+                            except:
+                                plug_incompat()
                     except Exception as e:
                         j.appendf(j.logtb(e), j.logs + '/plugin.log')
                         j.banner()
