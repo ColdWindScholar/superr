@@ -4390,9 +4390,7 @@ def superr(mfunc=None):
             j.banner()
             j.kprint(j.lang['menu_plugin_menu'] + '\n', 'gb')
             j.kprint('1) ' + j.lang['menu_plugin_run'])
-            j.kprint('2) ' + j.lang['menu_plugin_install'])
             j.kprint('3) ' + j.lang['menu_plugin_delete'])
-            j.kprint('4) ' + j.lang['menu_plugin_updates'])
             j.kprint('m = ' + j.lang['title_main'], 'y')
             j.kprint('q = ' + j.lang['menu_quit'] + '\n', 'm')
             j.kprint(j.lang['select'])
@@ -4410,23 +4408,6 @@ def superr(mfunc=None):
                 sys.exit()
             elif choice == 'm':  # START Main menu
                 return
-
-            if choice in ['2', '4']:  # Get remote plugin list
-                pluglist = j.plug_update(plugins, choice)
-                if pluglist == 1:
-                    j.banner()
-                    j.kprint(j.lang['error'], 'yrbbo')
-                    j.kprint(j.lang['donate_plugin_server'] + '\n', 'r')
-                    input(j.lang['enter_continue'])
-                    choice = ''
-                    continue
-                elif not pluglist:
-                    j.banner()
-                    j.kprint(j.lang['error'], 'yrbbo')
-                    j.kprint(j.lang['donate_plugin_none'] + '\n', 'r')
-                    input(j.lang['enter_continue'])
-                    choice = ''
-                    continue
 
             if choice == '1':  # START Run a plugin
                 countplug = len(plugins)
