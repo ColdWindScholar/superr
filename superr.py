@@ -12,6 +12,6 @@ if platform.platform().startswith('Linux'):
         pass
 try:
     mainsrk.superr()
-except (BaseException) as e:
-    if input(f'{e}\nQ:Restart E:Exit') == 'Q':
+except:
+    if input('Q:Restart E:Exit') == 'Q':
         mainsrk.superr()
