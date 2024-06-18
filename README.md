@@ -1,6 +1,6 @@
 # **SuperR's Kitchen**
 ## *by SuperR*
-#### (Shared by Hant Summ)
+
 ## **FEATURES**
 
 **Extract and create ROM from:**
@@ -144,6 +144,8 @@ Double-click the superr file and choose "Run in Terminal" if your OS supports it
 
 ## **Windows:**
 ```
-Double-click superr.exe in the main kitchen directory
+cd /location/of/kitchen
+pip install -r requirements.txt
+python superr.py
 ```
 
