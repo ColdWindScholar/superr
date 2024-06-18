@@ -5789,42 +5789,6 @@ def superr():
 
     j.srkuser, j.srkpass, j.dbtst, j.days_left, latest_ver = ('Donate', '114514', 'yes', '1k+', '3.2.1.3')
 
-    if j.existf(j.tools + '/source/md5_full'):
-        if not j.getconf('firstrun', j.mconf) and latest_ver > j.superrv[1::2]:
-            j.banner()
-            j.kprint(j.superrv + ' ' + j.lang['update_latest_version'] + ' v' + '.'.join(latest_ver) + '.\n', 'y')
-            j.kprint(j.lang['general_cont_anyway_q'])
-
-            if j.getChar() != 'y':
-                sys.exit()
-
-        if j.platf == 'wsl2' and not j.bd.startswith('/home'):
-            j.banner()
-            j.kprint(j.lang['warning'], 'yrbbo')
-            j.kprint(j.lang['startup_wsl2_warning'], 'y')
-            j.kprint(j.lang['startup_wsl2_warning2'] + '\n', 'y')
-            print(j.lang['general_cont_anyway_q'])
-
-            if j.getChar() != 'y':
-                sys.exit()
-        elif j.platf == 'wsl':
-            j.banner()
-            j.kprint(j.lang['warning'], 'yrbbo')
-            j.kprint(j.lang['startup_wsl_warning'], 'y')
-            j.kprint(j.lang['startup_wsl_warning2'] + '\n', 'y')
-            print(j.lang['general_cont_anyway_q'])
-
-            if j.getChar() != 'y':
-                sys.exit()
-        elif j.platf == 'win':
-            j.banner()
-            j.kprint(j.lang['warning'], 'yrbbo')
-            j.kprint(j.lang['update_win_final'], 'y')
-            j.kprint(j.lang['startup_win_warning2'] + '\n', 'y')
-            print(j.lang['general_cont_anyway_q'])
-
-            if j.getChar() != 'y':
-                sys.exit()
 
     if not j.getconf('depmet', j.mconf):
         if not j.existf('/system/build.prop') and not j.existf('/system/system/build.prop'):
