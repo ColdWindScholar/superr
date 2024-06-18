@@ -4737,9 +4737,9 @@ def superr(mfunc=None):
                 j.banner()
                 j.kprint(j.lang['tools_dl_install'], 'b')
                 with j.cd(j.tools + '/plugins'):
-                    j.dlfile('plugins/' + plug + '.zip', plug + '.zip', 1)
-                    j.internet(j.server1 + '/dllog/?f=PLUG_' + plug + '.zip&u=' + j.srkuser)
+                    j.dlfile('https://github.com/ColdWindScholar/superr_files/raw/plugin/' + plug + '.zip', plug + '.zip')
                     j.appendf(j.zipu(plug + '.zip'), j.logs + '/zip.log')
+                    j.touch(plug + '/plugmd5')
                     j.appendf(j.md5chk(plug + '.zip'), plug + '/plugmd5')
                     j.delpath(plug + '.zip')
 
