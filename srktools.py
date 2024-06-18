@@ -4069,7 +4069,7 @@ def plug_update(plugins, getlist=None, quiet=None):
 
             continue
 
-        if readf(tools + '/plugins/' + i + '/plugmd5') != pluglist[1][i]:
+        elif readf(tools + '/plugins/' + i + '/plugmd5') != pluglist[1][i]:
             upplugs.append(i)
 
     if upplugs:
