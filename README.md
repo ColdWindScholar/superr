@@ -1,6 +1,6 @@
 # **SuperR's Kitchen**
 ## *by SuperR*
-
+#### (Shared by Hant Summ)
 ## **FEATURES**
 
 **Extract and create ROM from:**
