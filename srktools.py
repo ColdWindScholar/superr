@@ -149,7 +149,7 @@ def basename(filename):
 def bbdown(dlurl):
     page = internet(dlurl + '/', 1).splitlines()
     page2 = []
-    for i in greps('.*href.*\.zip|.*href.*\.exe|.*href.*changelog', page):
+    for i in greps('.*href.*.zip|.*href.*.exe|.*href.*changelog', page):
         i = basename(i.split('"')[1])
         page2.append(i)
 
@@ -680,7 +680,7 @@ def deodex_start(quiet=None):
                     else:
                         continue
 
-                if greps('.*classes\.dex', zipl(deoappdir + '/' + app + '/' + app2 + '.apk')):
+                if greps('.*classes.dex', zipl(deoappdir + '/' + app + '/' + app2 + '.apk')):
                     print()
                     kprint(app + lang['deodex_app_already'] + '\n', 'g')
                     if dtype != 'l':
@@ -802,7 +802,7 @@ def deodex_start(quiet=None):
         delpath(logs + '/deodex_fail_list')
 
         comptmp = findr(appdir + '/**') + findr(privdir + '/**') + findr(framedir + '/**')
-        comptmp = greps('.*\.gz$|.*\.xz$', comptmp)
+        comptmp = greps('.*.gz$|.*.xz$', comptmp)
 
         if comptmp:
             if not quiet: clears()
@@ -811,13 +811,13 @@ def deodex_start(quiet=None):
             print(lang['deodex_extract_txt'])
             print('-'.center(tsize, '-'))
             print()
-            for i in greps('.*\.gz$', comptmp):
+            for i in greps('.*.gz$', comptmp):
                 gzdir = dirname(i)
                 gzfile = basename(i)
                 kprint('\n' + lang['deodex_extract'] + gzfile + '\n')
                 appendf(zipu(i, gzdir), logs + '/zip.log')
 
-            for i in greps('.*\.xz$', comptmp):
+            for i in greps('.*.xz$', comptmp):
                 xzdir = dirname(i)
                 xzfile = basename(i)
                 kprint('\n' + lang['deodex_extract'] + xzfile + '\n')
@@ -894,7 +894,7 @@ def deodex_start(quiet=None):
 
         if existd(sysdir + '/vendor/framework'):
             for i in findf(sysdir + '/vendor/framework/*.jar'):
-                if not greps('.*classes\.dex', zipl(i)):
+                if not greps('.*classes.dex', zipl(i)):
                     os.replace(i, framedir + '/' + basename(i))
                     extramv[framedir + os.sep + basename(i)] = i
 
@@ -1270,7 +1270,7 @@ def deodex_start(quiet=None):
         delpath(logs + '/deodex_fail_list')
 
         comptmp = findr(appdir + '/**') + findr(privdir + '/**') + findr(framedir + '/**')
-        comptmp = greps('.*\.gz$|.*\.xz$', comptmp)
+        comptmp = greps('.*.gz$|.*.xz$', comptmp)
 
         if comptmp:
             banner(quiet)
@@ -1279,13 +1279,13 @@ def deodex_start(quiet=None):
             print(lang['deodex_extract_txt'])
             print('-'.center(tsize, '-'))
             print()
-            for i in greps('.*\.gz$', comptmp):
+            for i in greps('.*.gz$', comptmp):
                 gzdir = dirname(i)
                 gzfile = basename(i)
                 kprint('\n' + lang['deodex_extract'] + gzfile + '\n')
                 appendf(zipu(i, gzdir), logs + '/zip.log')
 
-            for i in greps('.*\.xz$', comptmp):
+            for i in greps('.*.xz$', comptmp):
                 xzdir = dirname(i)
                 xzfile = basename(i)
                 kprint('\n' + lang['deodex_extract'] + xzfile + '\n')
@@ -1377,7 +1377,7 @@ def deodex_start(quiet=None):
                     appendf('FAILED: ' + i, logs + '/deodex.log')
                     continue
 
-                if existf(mainfile) and greps('.*classes\.dex', zipl(mainfile)):
+                if existf(mainfile) and greps('.*classes.dex', zipl(mainfile)):
                     if not mainfile.endswith('.jar'):
                         delpath(dirname(mainfile) + '/oat')
 
@@ -1389,10 +1389,10 @@ def deodex_start(quiet=None):
                 with cd(dirname(mainfile)):
                     os.replace(i, thefile)
                     retv = cmd(vdexext + ' -i ' + thefile)
-                    if greps('\[ERROR\]|\[WARNING\]', retv.split()):
+                    if greps('[ERROR]|[WARNING]', retv.split()):
                         retv = cmd(vdexext + ' -i ' + thefile + ' --ignore-crc-error')
 
-                        if greps('\[ERROR\]|\[WARNING\]', retv.split()):
+                        if greps('[ERROR]|[WARNING]', retv.split()):
                             appendf(retv, logs + '/deodex.log')
                             appendf(mainfile.replace(rd2, ''), logs + '/deodex_fail_list')
                             os.replace(thefile, i)
@@ -1708,7 +1708,7 @@ def deodex_start(quiet=None):
             deodex_sqsh(i)
 
     for i in [usdir + '/updater-script'] + findf(prfiles + '/symlinks*'):
-        grepvf('.*odex\.app|.*odex\.priv-app|.*odex\.framework|.*orig\.applications|.*\.vdex\"', i)
+        grepvf('.*odex.app|.*odex.priv-app|.*odex.framework|.*orig.applications|.*.vdex\"', i)
 
     deodext = ''
     if autorom():
@@ -2483,8 +2483,8 @@ def ext4Xtract(whatimg, *vargs):
 
         appendf(cmd(p7z + ' l -slt ' + whatimg + '.img'), prfiles + '/testfile')
 
-        if existf(prfiles + '/testfile') and grepf('Symbolic\ Link\ ', prfiles + '/testfile'):
-            grepff(fl('Symbolic Link |Mode |Group |User |Path ', '.*' + whatimg + '\.img'), prfiles + '/testfile',
+        if existf(prfiles + '/testfile') and grepf('Symbolic\\ Link\\ ', prfiles + '/testfile'):
+            grepff(fl('Symbolic Link |Mode |Group |User |Path ', '.*' + whatimg + '.img'), prfiles + '/testfile',
                    prfiles + '/testfile2')
         else:
             delpath(prfiles + '/testfile')
@@ -2812,7 +2812,7 @@ def gen_min_contexts(whatimg):
         if existf(prfiles + '/file_contexts3-' + whatimg):
             testcon = grepf('^/' + whatimg + ' ', prfiles + '/file_contexts3-' + whatimg)[0].split()[-1]
         else:
-            testcon = grepf('^/' + whatimg + '\(.*\t', prfiles + '/file_contexts')[0].split('\t\t')[1]
+            testcon = grepf('^/' + whatimg + '\\(.*\t', prfiles + '/file_contexts')[0].split('\t\t')[1]
 
         appendf('/' + whatimg + '(/.*)?\t\t' + testcon, prfiles + '/file_contexts_min')
     except:
@@ -2964,7 +2964,7 @@ def get_contexts():
                     appendf(conlist[0], prfiles + c)
             else:
                 cp(tools + '/boot' + c, prfiles + c)
-                conlist = greps(fl('u:|\/', 'ER'), conlist)
+                conlist = greps(fl('u:|\\/', 'ER'), conlist)
                 conlist = greps(fl('', '.*abcd'), conlist)
                 contest = []
                 for i, line in enumerate(conlist):
@@ -2977,7 +2977,7 @@ def get_contexts():
 
         if existf(prfiles + c):
             contest = grepf(
-                fl('^\/system|^\/vendor|^\/oem|^\/product|^\/system_ext', '.*:system_file|.*:system_library_file'),
+                fl('^/system|^/vendor|^/oem|^/product|^/system_ext', '.*:system_file|.*:system_library_file'),
                 prfiles + c)
 
             with cd(rd):
@@ -3116,13 +3116,6 @@ def grepb(a, b, flist, loc=None):
     return greptmp
 
 
-def grepc(searcht, gstr):
-    searcht = searcht.replace('+', '\+')
-    for line in gstr:
-        otest = re.search(searcht, line, re.IGNORECASE)
-        if otest:
-            return otest.group()
-    return None
 
 
 def grepvb(rlist, filename):
@@ -3161,7 +3154,6 @@ def grepff(searcht, filename, newfile):
 
 
 def greps(searcht, gstr):
-    searcht = searcht.replace('+', '\+')
     gstest = []
     for line in gstr:
         if re.search(searcht, line):
@@ -3245,7 +3237,7 @@ def get_symlinks(quiet=None, tarf=None, part=None):
                 delpath(rd + '/' + b)
         else:
             if existf(usdir + '/updater-script'):
-                symlinks = grepf('symlink\(.*', usdir + '/updater-script')
+                symlinks = grepf('symlink(.*', usdir + '/updater-script')
                 if not symlinks:
                     return
             else:
@@ -4521,8 +4513,7 @@ def xzu(xzname):
 
 
 def zipl(filename):
-    listzip = zipfile.ZipFile(filename)
-    return listzip.namelist()
+    return zipfile.ZipFile(filename).namelist()
 
 
 def zipl7(zipname, p7z1=None):
