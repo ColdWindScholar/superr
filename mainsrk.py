@@ -115,8 +115,8 @@ def superr():
             else:
                 choice = assertch
 
-            j.grepff(j.fl('.*getprop\(', '.*/tmp/.*'), j.usdir + '/updater-script', assertdir + '/assert_original')
-            j.grepvf(j.fl('.*getprop\(', '.*/tmp/'), j.usdir + '/updater-script')
+            j.grepff(j.fl('.*getprop(', '.*/tmp/.*'), j.usdir + '/updater-script', assertdir + '/assert_original')
+            j.grepvf(j.fl('.*getprop(', '.*/tmp/'), j.usdir + '/updater-script')
 
             if choice == '1':  # START Add/Remove Device asserts
                 j.delpath(assertdir + '/assert')
@@ -334,9 +334,9 @@ def superr():
                         blog2 = blog.splitlines()
                         if not j.greps('^patched', blog2):
                             j.banner()
-                            if j.greps('^sepolicy\ ', blog2):
+                            if j.greps('^sepolicy ', blog2):
                                 j.kprint(j.lang['menu_deopatch_sepol'] + '\n', 'r')
-                            elif j.greps('.*\ failed', blog2):
+                            elif j.greps('.* failed', blog2):
                                 j.kprint(j.lang['menu_deopatch_fail'] + '\n', 'r')
                         else:
                             j.banner()
@@ -882,7 +882,7 @@ def superr():
 
             with j.cd(j.rd):
                 exall = j.findf('*')
-                extmp = j.greps('.*\.new\.dat|.*\.patch\.dat|.*\.transfer\.list', exall)
+                extmp = j.greps('.*.new.dat|.*.patch.dat|.*.transfer.list', exall)
                 exmod = j.getconf('mod_list', j.uconf, l=1)
                 exzipfiles = exzipfiles + extmp + exmod + cusdir
                 exfiles = []
@@ -933,7 +933,7 @@ def superr():
 
             with j.cd(j.rd):
                 exall = j.findf('*')
-                extmp = j.greps('.*_new\.img', exall)
+                extmp = j.greps('.*_new.img', exall)
                 exmod = j.getconf('mod_list', j.uconf, l=1)
                 exzipfiles = exzipfiles + extmp + exmod + cusdir
                 exfiles = []
@@ -1374,7 +1374,7 @@ def superr():
 
     def choose_img(title):
         with j.cd(j.rd):
-            findimg = j.greps('^boot\.img$|^recovery\.img$|^kernel\.elf$|^ramdisk\.img$', j.findf('*'))
+            findimg = j.greps('^boot.img$|^recovery.img$|^kernel.elf$|^ramdisk.img$', j.findf('*'))
 
         countimg = len(findimg)
         chosen = ''
@@ -1754,10 +1754,10 @@ def superr():
 
             with j.cd(j.rd):
                 findtmp = j.greps(
-                    '.*\.img$|.*\.tgz$|.*\.zip$|.*\.7z$|.*\.tar$|.*\.tar\.a$|.*\.tar\.md5$|.*\.win|.*chunk|.*\.ext4$|.*\.xz$|.*\.new\.dat|.*\.img\.lz4',
+                    '.*.img$|.*.tgz$|.*.zip$|.*.7z$|.*.tar$|.*.tar.a$|.*.tar.md5$|.*.win|.*chunk|.*.ext4$|.*.xz$|.*.new.dat|.*.img.lz4',
                     j.findf('*'))
                 findtmp = j.greps(j.fl('',
-                                       '.*boot|.*BOOT|.*recovery|.*RECOVERY|.*ramdisk|.*RAMDISK|.*kernel|.*KERNEL|.*\.sha2$|.*\.md5$|.*\.info$'),
+                                       '.*boot|.*BOOT|.*recovery|.*RECOVERY|.*ramdisk|.*RAMDISK|.*kernel|.*KERNEL|.*.sha2$|.*.md5$|.*.info$'),
                                   findtmp)
                 for i in findtmp:
                     if j.existd(i):
@@ -1998,7 +1998,7 @@ def superr():
 
                 if not j.greps(
                         j.fl('.*system.ext4.tar|.*system.ext4.tar.a|.*tar.md5|AP_.*tar|.*chunk.*|.*system/build.prop|.*system.new.dat|.*system_new.img|.*system.img|.*super.img|.*payload.bin|.*system_1.img|.*.pac$|.*.img.lz4',
-                             '.*\.so$'), ziptest):
+                             '.*.so$'), ziptest):
                     j.banner()
                     j.kprint(j.lang['warning'], 'yrbbo')
                     j.kprint(j.lang['extract_zip_fail'], 'r')
@@ -2107,12 +2107,12 @@ def superr():
                     j.kprint(j.lang['extract_img'], 'b')
 
                     if extraparts == 'y':
-                        tarulist = j.greps('.*' + '.*\.img|.*'.join(j.partslist) + '.*\.img|' + '.*ext4|.*'.join(
-                            j.partslist) + '.*ext4|.*boot.img|.*file_contexts|.*file_contexts.bin|.*cache.*\.img|.*cache.*ext4|.*factoryfs\.img|.*zImage|.*recovery\.img|.*modem\.bin|.*aboot\.mbn|.*NON-HLOS\.bin|.*sboot\.bin|.*sbl1\.mbn|.*sdi\.mbn|.*rpm\.mbn|.*tz\.mbn',
+                        tarulist = j.greps('.*' + '.*.img|.*'.join(j.partslist) + '.*.img|' + '.*ext4|.*'.join(
+                            j.partslist) + '.*ext4|.*boot.img|.*file_contexts|.*file_contexts.bin|.*cache.*.img|.*cache.*ext4|.*factoryfs.img|.*zImage|.*recovery.img|.*modem.bin|.*aboot.mbn|.*NON-HLOS.bin|.*sboot.bin|.*sbl1.mbn|.*sdi.mbn|.*rpm.mbn|.*tz.mbn',
                                            j.tarlist(j.rd + '/' + tarmd5))
                     else:
-                        tarulist = j.greps('.*' + '.*\.img|.*'.join(j.partslist) + '.*\.img|' + '.*ext4|.*'.join(
-                            j.partslist) + '.*ext4|.*boot.img|.*file_contexts|.*file_contexts.bin|.*cache.*\.img|.*cache.*ext4|.*factoryfs\.img|.*zImage',
+                        tarulist = j.greps('.*' + '.*.img|.*'.join(j.partslist) + '.*.img|' + '.*ext4|.*'.join(
+                            j.partslist) + '.*ext4|.*boot.img|.*file_contexts|.*file_contexts.bin|.*cache.*.img|.*cache.*ext4|.*factoryfs.img|.*zImage',
                                            j.tarlist(j.rd + '/' + tarmd5))
 
                     with j.cd(j.rd):
@@ -2182,13 +2182,13 @@ def superr():
                         for filename in zipulist:
                             if extraparts == 'y':
                                 tarulist = j.greps(
-                                    '.*' + '.*\.img|.*'.join(j.partslist) + '.*\.img|' + '.*ext4|.*'.join(
-                                        j.partslist) + '.*ext4|.*boot.img|.*file_contexts|.*file_contexts.bin|.*cache.*\.img|.*cache.*ext4|.*factoryfs\.img|.*zImage|.*recovery\.img|.*modem\.bin|.*aboot\.mbn|.*NON-HLOS\.bin|.*sboot\.bin|.*sbl1\.mbn|.*sdi\.mbn|.*rpm\.mbn|.*tz\.mbn',
+                                    '.*' + '.*.img|.*'.join(j.partslist) + '.*.img|' + '.*ext4|.*'.join(
+                                        j.partslist) + '.*ext4|.*boot.img|.*file_contexts|.*file_contexts.bin|.*cache.*.img|.*cache.*ext4|.*factoryfs.img|.*zImage|.*recovery.img|.*modem.bin|.*aboot.mbn|.*NON-HLOS.bin|.*sboot.bin|.*sbl1.mbn|.*sdi.mbn|.*rpm.mbn|.*tz.mbn',
                                     j.tarlist(filename))
                             else:
                                 tarulist = j.greps(
-                                    '.*' + '.*\.img|.*'.join(j.partslist) + '.*\.img|' + '.*ext4|.*'.join(
-                                        j.partslist) + '.*ext4|.*boot.img|.*file_contexts|.*file_contexts.bin|.*cache.*\.img|.*cache.*ext4|.*factoryfs\.img|.*zImage',
+                                    '.*' + '.*.img|.*'.join(j.partslist) + '.*.img|' + '.*ext4|.*'.join(
+                                        j.partslist) + '.*ext4|.*boot.img|.*file_contexts|.*file_contexts.bin|.*cache.*.img|.*cache.*ext4|.*factoryfs.img|.*zImage',
                                     j.tarlist(filename))
 
                             for i in tarulist:
@@ -2239,13 +2239,13 @@ def superr():
                             romimg = 'super.img'
                         else:
                             romimg = 'system.img'
-                elif j.greps(j.fl('.*system.*chunk.*', '.*\.so$'), ziptest):
+                elif j.greps(j.fl('.*system.*chunk.*', '.*.so$'), ziptest):
                     j.banner()
                     j.kprint(j.lang['extract_chunk'], 'b')
                     with j.cd(j.rd):
                         zipulist = j.greps(j.fl('.*' + '.*chunk.*|.*'.join(j.partslist) + '.*chunk.*|' + '.img|.*'.join(
                             j.partslist) + '.img|.*boot.img|.*file_contexts|.*file_contexts.bin',
-                                                '.*system_b.img.*|.*\.so$'), ziptest)
+                                                '.*system_b.img.*|.*.so$'), ziptest)
 
                         for i in zipulist:
                             j.appendf(j.zipef(romzip, i), j.logs + '/zip.log')
@@ -2272,7 +2272,7 @@ def superr():
                             romimg = 'super.img'
                         else:
                             romimg = 'system.img'
-                elif j.greps('.*system_1\..*img', ziptest):
+                elif j.greps('.*system_1..*img', ziptest):
                     j.banner()
                     j.kprint(j.lang['error'], 'yrbbo')
                     j.kprint(j.lang['extract_use_concat'] + '\n', 'r')
@@ -2530,14 +2530,14 @@ def superr():
             if rommd5:
                 with j.cd(j.rd):
                     tartest = j.tarlist(rommd5)
-                    if j.greps('.*super.*\.img|.*system.*\.img|.*system.*ext4', tartest):
+                    if j.greps('.*super.*.img|.*system.*.img|.*system.*ext4', tartest):
                         j.sudo_prep()
 
                         j.banner()
                         j.kprint(j.lang['extract_img'], 'b')
 
-                        tarulist = j.greps('.*' + '.*\.img|.*'.join(j.partslist) + '.*\.img|' + '.*ext4|.*'.join(
-                            j.partslist) + '.*ext4|.*boot.img|.*cache.*\.img|.*cache.*ext4', tartest)
+                        tarulist = j.greps('.*' + '.*.img|.*'.join(j.partslist) + '.*.img|' + '.*ext4|.*'.join(
+                            j.partslist) + '.*ext4|.*boot.img|.*cache.*.img|.*cache.*ext4', tartest)
 
                         with j.cd(j.rd):
                             for i in tarulist:
@@ -2719,8 +2719,8 @@ def superr():
 
                                     with j.cd(j.rd + '/cache'):
                                         cscfull = j.findr('**')
-                                        if j.greps('.*\.zip', cscfull):
-                                            cscfull = j.greps('.*\.zip', cscfull)[0]
+                                        if j.greps('.*.zip', cscfull):
+                                            cscfull = j.greps('.*.zip', cscfull)[0]
                                             cscdir = j.dirname(cscfull)
                                             csczip = j.basename(cscfull)
                                             with j.cd(cscdir):
@@ -2774,7 +2774,7 @@ def superr():
 
                     with j.cd(j.rd):
                         eximgl = j.greps(j.fl('',
-                                              'system\.img|system_other|cache|boot\.img|boot\.emmc|recovery\.img|ramdisk\.img|kernel\.img'),
+                                              'system.img|system_other|cache|boot.img|boot.emmc|recovery.img|ramdisk.img|kernel.img'),
                                          j.findf('*.img') + j.findf('*.win') + j.findf('*.win000'))
                         if eximgl:
                             for line in eximgl:
@@ -3440,7 +3440,7 @@ def superr():
                     if not j.grepf('#CUSTOM', j.usdir + '/updater-script'):
                         permtype = j.getconf('permtype', j.uconf)
                         if permtype == 'sparse_dat':
-                            j.awkadd('block_image_update\(.*"system"', '#CUSTOM', 'after', 'first',
+                            j.awkadd('block_image_update(.*"system"', '#CUSTOM', 'after', 'first',
                                      j.usdir + '/updater-script')
                         elif permtype == 'raw_img':
                             j.awkadd('.*system_new.*', '#CUSTOM', 'after', 'first', j.usdir + '/updater-script')
@@ -3791,17 +3791,17 @@ def superr():
 
         if extractdir == 'system':
             contest = j.greps(
-                j.fl('', '.* \?$|.*:system_file|^/vendor|^/oem' + ('|' + '|'.join(nocon) if nocon else '')), fcontexts)
+                j.fl('', '.* ?$|.*:system_file|^/vendor|^/oem' + ('|' + '|'.join(nocon) if nocon else '')), fcontexts)
         else:
             try:
                 if nocon:
-                    contest = j.greps(j.fl('^/' + extractdir, '.* \?$|' + '|'.join(nocon)), fcontexts)
+                    contest = j.greps(j.fl('^/' + extractdir, '.* ?$|' + '|'.join(nocon)), fcontexts)
                 else:
-                    contest = j.greps(j.fl('^/' + extractdir, '.* \?$|.*:' +
+                    contest = j.greps(j.fl('^/' + extractdir, '.* ?$|.*:' +
                                            j.greps('^/' + extractdir + ' ', fcontexts)[0].split()[1].split(':')[2]),
                                       fcontexts)
             except:
-                contest = j.greps(j.fl('^/' + extractdir, '.* \?$|.*:' + extractdir + '_file'), fcontexts)
+                contest = j.greps(j.fl('^/' + extractdir, '.* ?$|.*:' + extractdir + '_file'), fcontexts)
 
         filec = []
         for i in contest:
@@ -3882,7 +3882,7 @@ def superr():
                     newmlist.append(
                         'set_metadata("/' + dirr + i2 + '", "uid", ' + cyuid + ', "gid", ' + cygid + ', "mode", ' + cymode + ', "capabilities", ' + cap + ', "selabel", "' + cycon + '");')
 
-        newmlist = j.greps(j.fl('', '\.*"\?"'), newmlist)
+        newmlist = j.greps(j.fl('', '.*"?"'), newmlist)
         j.appendf('\n'.join(newmlist), j.prfiles + '/' + set_metadata1)
 
     def misc_tools():
@@ -4429,7 +4429,7 @@ def superr():
                     partup = whatimg.upper()
                     if not j.grepf('#' + partup, j.usdir + '/updater-script'):
                         if permtype == 'sparse_dat':
-                            j.awkadd('block_image_update\(.*', '#' + partup, 'after', 'first',
+                            j.awkadd('block_image_update(.*', '#' + partup, 'after', 'first',
                                      j.usdir + '/updater-script')
                         else:
                             j.awkadd('.*system_new.*', '#' + partup, 'after', 'first', j.usdir + '/updater-script')
@@ -4439,7 +4439,7 @@ def superr():
                     j.sedf('#PEXTRA', whatimg, j.usdir + '/updater-script')
                 elif whatimg == 'data':
                     if permtype == 'sparse_dat':
-                        j.awkadd('block_image_update\(.*', '#DATA', 'after', 'first', j.usdir + '/updater-script')
+                        j.awkadd('block_image_update(.*', '#DATA', 'after', 'first', j.usdir + '/updater-script')
                     else:
                         j.awkadd('.*system_new.*', '#DATA', 'after', 'first', j.usdir + '/updater-script')
 
@@ -4484,7 +4484,7 @@ def superr():
                 if whatimg in j.getconf('exdirs', j.uconf, l=1):
                     partup = whatimg.upper()
                     if not j.grepf('#' + partup, j.usdir + '/updater-script'):
-                        j.awkadd('^package_extract_dir\("system".*', '#' + partup, 'after', 'first',
+                        j.awkadd('^package_extract_dir("system".*', '#' + partup, 'after', 'first',
                                  j.usdir + '/updater-script')
 
                     if whatimg in ['vendor', 'oem', 'product']:
@@ -4499,7 +4499,7 @@ def superr():
                         j.appendf(j.readf(j.prfiles + '/set_metadataV'), j.prfiles + '/set_metadata')
 
                 elif whatimg == 'data':
-                    j.awkadd('^package_extract_dir\("system".*', '#DATA', 'after', 'first', j.usdir + '/updater-script')
+                    j.awkadd('^package_extract_dir("system".*', '#DATA', 'after', 'first', j.usdir + '/updater-script')
                     j.sedf('#DATA', j.readf(j.tools + '/updater/data-set_metadata.txt'), j.usdir + '/updater-script')
                     j.getconf('data-set_metadata', j.uconf, add='1')
 
@@ -4530,10 +4530,10 @@ def superr():
         if j.existf(deviceloc + '/superr_mmc'):
             if chosenimg == 'recovery' and j.grepf(' /recovery', deviceloc + '/superr_mmc'):
                 mmcrecovery = j.grepf(' /recovery', deviceloc + '/superr_mmc')[0].split(' ')[0]
-                j.sedf('file_getprop\("/tmp/config", "recovery"\)', mmcrecovery, j.usdir + '/updater-script')
+                j.sedf('file_getprop("/tmp/config", "recovery")', mmcrecovery, j.usdir + '/updater-script')
             elif chosenimg == 'boot' and j.grepf(' /boot', deviceloc + '/superr_mmc'):
                 mmcboot = j.grepf(' /boot$', deviceloc + '/superr_mmc')[0].split(' ')[0]
-                j.sedf('file_getprop\("/tmp/config", "boot"\)', mmcboot, j.usdir + '/updater-script')
+                j.sedf('file_getprop("/tmp/config", "boot")', mmcboot, j.usdir + '/updater-script')
             else:
                 if (chosenimg == 'boot'
                         and (j.existf(j.rd + '/system/init.rc')
@@ -4548,7 +4548,7 @@ def superr():
                     input(j.lang['enter_continue'])
 
             mmcsystem = j.grepf(' /system', deviceloc + '/superr_mmc')[0].split(' ')[0]
-            j.sedf('file_getprop\("/tmp/config", "system"\)', mmcsystem, j.usdir + '/updater-script')
+            j.sedf('file_getprop("/tmp/config", "system")', mmcsystem, j.usdir + '/updater-script')
 
     def plugins():
         if not j.romname:
@@ -4561,7 +4561,7 @@ def superr():
         choice = ''
         while not choice:
             with j.cd(j.tools + '/plugins'):
-                plugins = sorted(j.greps(j.fl('', '.*\.zip$'), j.findf('*')))
+                plugins = sorted(j.greps(j.fl('', '.*.zip$'), j.findf('*')))
             j.banner()
             j.kprint(j.lang['menu_plugin_menu'] + '\n', 'gb')
             j.kprint('1) ' + j.lang['menu_plugin_run'])
@@ -5462,7 +5462,7 @@ def superr():
 
             if not j.grepf('#ASSERT', j.usdir + '/updater-script'):
                 j.awktop('#ASSERT', j.usdir + '/updater-script')
-                j.appendf(j.grepf(' getprop\(|\(getprop\(', j.usdir + '/updater-script'),
+                j.appendf(j.grepf(' getprop(|(getprop(', j.usdir + '/updater-script'),
                           j.prfiles + '/assert_original')
 
             if not j.grepf('#SYM', j.usdir + '/updater-script'):
@@ -5485,7 +5485,7 @@ def superr():
                     j.grepvb(aromatest, j.usdir + '/updater-script')
                     del aromatest
 
-            proptest = j.grepf(' getprop\(|\(getprop\(|^symlink', j.usdir + '/updater-script')
+            proptest = j.grepf(' getprop(|(getprop(|^symlink', j.usdir + '/updater-script')
             j.grepvb(proptest, j.usdir + '/updater-script')
             j.delpath(j.prfiles + '/set_metadata', j.prfiles + '/set_perm')
 
@@ -5633,7 +5633,7 @@ def superr():
                     os.replace(j.prfiles + '/assert-2', j.prfiles + '/assert')
                     j.appendff(j.prfiles + '/assertcustom', j.prfiles + '/assert')
 
-            if not j.getconf('assert-no', j.mconf) and not j.grepf(' getprop\(|\(getprop\(',
+            if not j.getconf('assert-no', j.mconf) and not j.grepf(' getprop(|(getprop(',
                                                                    j.usdir + '/updater-script'):
                 j.awkadd('#ASSERT', j.readf(j.prfiles + '/assert'), 'after', 'first', j.usdir + '/updater-script')
 
@@ -5655,9 +5655,9 @@ def superr():
                                  j.usdir + '/updater-script')
 
                 j.awkadd('#PERM', j.readf(j.prfiles + '/' + permtype), 'after', 'first', j.usdir + '/updater-script')
-                j.sedf('set_metadata\("/system/', 'set_metadata(file_getprop("/tmp/config", "sysmnt")+"/',
+                j.sedf('set_metadata("/system/', 'set_metadata(file_getprop("/tmp/config", "sysmnt")+"/',
                        j.usdir + '/updater-script')
-                j.sedf('set_metadata_recursive\("/system/',
+                j.sedf('set_metadata_recursive("/system/',
                        'set_metadata_recursive(file_getprop("/tmp/config", "sysmnt")+"/', j.usdir + '/updater-script')
 
             if j.existf(j.prfiles + '/aroma_appupdater'):
@@ -5698,7 +5698,7 @@ def superr():
         j.kprint(j.lang['general_extracting'] + partition + ' ...', 'b')
 
         with j.cd(j.rd):
-            wintst = j.greps(j.fl('', '.*\.sha2$|.*\.md5$|.*\.info$'), j.findf('*' + partition + '*.win*'))
+            wintst = j.greps(j.fl('', '.*.sha2$|.*.md5$|.*.info$'), j.findf('*' + partition + '*.win*'))
             if len(wintst) > 1:
                 romwin = wintst
                 winsystem = j.greps('000', wintst)[0]
@@ -5921,7 +5921,7 @@ def superr():
                 sys.exit()
 
             with j.cd(j.tools + '/plugins'):
-                plugins44 = sorted(j.greps(j.fl('', '.*\.zip$'), j.findf('*')))
+                plugins44 = sorted(j.greps(j.fl('', '.*.zip$'), j.findf('*')))
 
             retv = j.mfunc2('auth = ' + str([j.srkuser, 1, 0, j.superrv, j.osbit(), j.platf, j.whoami(), j.dbtst]),
                             'out').decode()
