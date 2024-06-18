@@ -1783,10 +1783,11 @@ def dlfile(url, filename, bit=None):
     try:
         count = 0
         while count < 6:
-            print(f'{server1}/srkdl/?u={srkuser}&p={srkpass}&d={url}')
             if bit:
                 request = requests.get(f'{server1}/srkdl/?u={srkuser}&p={srkpass}&d={url}')
+                print(f'{server1}/srkdl/?u={srkuser}&p={srkpass}&d={url}')
             else:
+                print(url)
                 request = requests.get(url, stream=True)
             print(request.url)
 
