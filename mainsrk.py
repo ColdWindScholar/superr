@@ -11,10 +11,11 @@ import sys
 import types
 from shutil import which
 
+import imp
 import srktools as j
 
 
-def superr(mfunc=None):
+def superr():
     j.superrv = 'v3.2.1.3'
 
     j.server1 = 'https://sr-code.com'  # PRODUCTION SERVER
@@ -4686,9 +4687,8 @@ def superr(mfunc=None):
                             if j.grepf(' ', j.tools + '/plugins/' + plugin + '/' + plugin):
                                 plug_incompat()
                             else:
-                                theplug = mfunc(j.tools + '/plugins/' + plugin + '/' + plugin)
-
-                                theplug.main(j, plugin)
+                                p = imp.load_source('module', "mainsrk.py")
+                                p.main(j, plugin)
                     except Exception as e:
                         j.appendf(j.logtb(e), j.logs + '/plugin.log')
                         j.banner()
