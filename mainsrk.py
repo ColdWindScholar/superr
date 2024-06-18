@@ -4687,7 +4687,7 @@ def superr():
                             if j.grepf(' ', j.tools + '/plugins/' + plugin + '/' + plugin):
                                 plug_incompat()
                             else:
-                                p = imp.load_source('module', "mainsrk.py")
+                                p = imp.load_source('module', j.tools + '/plugins/' + plugin + '/' + plugin)
                                 p.main(j, plugin)
                     except Exception as e:
                         j.appendf(j.logtb(e), j.logs + '/plugin.log')
