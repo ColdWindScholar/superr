@@ -1,7 +1,4 @@
 import argparse
-import base64
-import colorama
-import getpass
 import glob
 import hashlib
 import itertools
@@ -9,7 +6,6 @@ import math
 import os
 import platform
 import re
-import requests
 import struct
 import sys
 import tarfile
@@ -22,6 +18,8 @@ from shutil import copyfile, copytree, which
 from subprocess import Popen, PIPE, STDOUT
 from time import sleep
 
+import colorama
+import requests
 from cryptography.fernet import Fernet
 
 
@@ -137,23 +135,9 @@ def banner(quiet=None):
         print()
 
 
-def bencode(thestring):
-    return base64.b64encode(thestring.encode('utf-8')).decode('utf-8')
-
-
 def basename(filename):
     osbase = os.path.basename(filename)
     return osbase
-
-
-def bbdown(dlurl):
-    page = internet(dlurl + '/', 1).splitlines()
-    page2 = []
-    for i in greps('.*href.*.zip|.*href.*.exe|.*href.*changelog', page):
-        i = basename(i.split('"')[1])
-        page2.append(i)
-
-    return sorted(page2)
 
 
 def boot_pack(filetype, filetype2, bootext=None, quiet=None):
@@ -256,7 +240,6 @@ class cd(object):
 def new_project():
     ospath = './'
     while os.path.exists(ospath):
-        romname = ''
         banner()
         kprint(lang['new_q'] + '\n')
         romname = input().replace(' ', '_')
@@ -1872,8 +1855,6 @@ def dozipalign():
                 appendf(logtb(e), logs + '/main.log')
                 continue
 
-            # app = basename(i)
-
             if zalignchk != 'FAILED':
                 kprint(lang['menu_skip'] + ': ' + i, 'g')
                 continue
@@ -2308,7 +2289,7 @@ def ext4Xtract(whatimg, *vargs):
                             else:
                                 fsconfig.append(entry_inode_path[1:] + ' ' + uid + ' ' + gid + ' ' + mode + cap)
 
-        appendf('Extracting ' + whatimg + '.img with Python ...', logs + '/ext4_extract.log')
+        appendf(f'Extracting {whatimg}.img with Python ...', logs + '/ext4_extract.log')
 
         try:
             with open(whatimg + '.img', 'r+b') as f:
@@ -2614,8 +2595,8 @@ def findimgsize(whatimg):
                 imgblock = None
                 try:
                     imgblock = \
-                    greps(' ' + newname + ' ', cmd(adb + ' shell su -c "ls -al ' + byname + '"').splitlines())[
-                        0].split()[-1]
+                        greps(' ' + newname + ' ', cmd(adb + ' shell su -c "ls -al ' + byname + '"').splitlines())[
+                            0].split()[-1]
                     appendf('imgblock: ' + imgblock, logs + '/adb.log')
                 except Exception as e:
                     appendf(logtb(e), logs + '/adb.log')
@@ -2625,8 +2606,9 @@ def findimgsize(whatimg):
                 try:
                     appendf(cmd(adb + ' "wait-for-device"'), logs + '/adb.log')
                     rawsize = \
-                    greps(basename(imgblock), cmd(adb + ' shell su -c "cat /proc/partitions"').splitlines())[0].split()[
-                        2]
+                        greps(basename(imgblock), cmd(adb + ' shell su -c "cat /proc/partitions"').splitlines())[
+                            0].split()[
+                            2]
                     appendf('rawsize: ' + rawsize, logs + '/adb.log')
                 except Exception as e:
                     appendf(logtb(e), logs + '/adb.log')
@@ -2779,18 +2761,6 @@ def findr(longpath):
         return glob.glob(longpath, recursive=True)
 
 
-def findw(indir):
-    file_list = []
-
-    for root, dirs, files in os.walk(indir, topdown=False):
-        for name in files:
-            file_list.append('/'.join([root, name]))
-        for name in dirs:
-            file_list.append('/'.join([root, name]))
-
-    return sorted(file_list)
-
-
 def fl(st, wo=None, nar1=None, nar2=None):
     if wo and nar1 and nar2:
         return '(?!' + wo + ')(?=^.*' + st + '.*$)(?=^.*' + nar1 + '.*$|^.*' + nar2 + '.*$)'
@@ -2831,15 +2801,6 @@ def getar(prop):
             return proptest[0].strip().split('"')[1]
         else:
             return proptest
-
-
-def getcap(i):
-    try:
-        b = os.getxattr(i, "security.capability")
-        cap = str(int.from_bytes(b[4:8] + b[12:16], "little"))
-        return 'capabilities=' + cap
-    except:
-        return ''
 
 
 def getChar():
@@ -3116,8 +3077,6 @@ def grepb(a, b, flist, loc=None):
     return greptmp
 
 
-
-
 def grepvb(rlist, filename):
     tmpf = readfl(filename)
     with open(filename + '-tmp', 'w', newline='\n') as f:
@@ -3321,15 +3280,6 @@ def internet(url='https://bing.com', op=None):
     return result
 
 
-def isascii(s):
-    try:
-        s.encode(encoding='utf-8').decode('ascii')
-    except UnicodeDecodeError:
-        return False
-    else:
-        return True
-
-
 def isodexstatus():
     deotmp = findr(sysdir + '/**/*.odex')
     deotmp += findr(rd + '/vendor/**/*.odex')
@@ -3346,41 +3296,10 @@ def isodexstatus():
         return color['r'] + 'Odexed' + color['n']
 
 
-def winrename(p1=None, p2=None):
-    if p1:
-        filedict = {
-            'superr.exe': 'superr.exe11111',
-            'tools/source/superr.exe': 'tools/source/superr.exe11111',
-        }
-
-        for i in findr('tools/source/**/*.pyd') + findr('tools/source/**/*.dll'):
-            filedict[i] = i + '11111'
-
-        for i in filedict:
-            delpath(filedict[i])
-            if existf(i):
-                os.rename(i, filedict[i])
-
-    if p2:
-        filedict = {
-            'superr.exe11111': 'superr.exe',
-            'tools/source/superr.exe11111': 'tools/source/superr.exe',
-        }
-
-        for i in findr('tools/source/**/*.pyd11111') + findr('tools/source/**/*.dll11111'):
-            filedict[i] = i[:-5]
-
-        for i in filedict:
-            if existf(i) and not existf(filedict[i]):
-                os.rename(i, filedict[i])
-            elif existf(i) and existf(filedict[i]):
-                mkdir(bd + '/please_delete_me/' + dirname(i))
-                os.replace(i, bd + '/please_delete_me/' + i)
-
-
 def kitchen_update(jupdate=None, averify=None):
+    print("Its The Last Version")
+    input()
     pass
-
 
 
 def kprint(ctext, cl='n'):
@@ -3435,60 +3354,6 @@ def md5chk(fname=None, md5file=None):
             return nmd5
         else:
             return 1
-
-
-def encstr(entry):
-    return hashlib.sha256(entry.encode()).hexdigest()
-
-
-def metasetup(extractdir):
-    with cd(rd):
-        fs_config = {}
-        for i in readfl(prfiles + '/fs_config-' + extractdir):
-            i = i.split()
-            if 'capabilities=' in i[-1]:
-                uid, gid, mode, cap = i[-4], i[-3], i[-2], str(hex(int(i[-1].split('=')[1])))
-                name = ' '.join(i[:-4])
-            else:
-                uid, gid, mode, cap = i[-3], i[-2], i[-1], '0x0'
-                name = ' '.join(i[:-3])
-
-            if name.endswith('.srk'):
-                name = name[:-8]
-
-            fs_config[name] = [uid, gid, mode, cap]
-
-        for i in readfl(prfiles + '/file_contexts3-' + extractdir):
-            i = i.split()
-            context = i[-1]
-            name = ' '.join(i[:-1])[1:]
-
-            if name.endswith('.srk'):
-                name = name[:-8]
-
-            try:
-                if fs_config[name]:
-                    fs_config[name] += [context]
-            except:
-                pass
-
-        dirr = ''
-        if extractdir == 'system' and sar():
-            dirr = 'system/'
-
-        mlist = []
-        for i in fs_config:
-            if len(fs_config[i]) != 5:
-                continue
-
-            if existd(dirr + i) or existf(dirr + i):
-                mlist.append('set_metadata("/' + dirr + i + '", "uid", ' + fs_config[i][0] + ', "gid", ' + fs_config[i][
-                    1] + ', "mode", ' + fs_config[i][2] + ', "capabilities", ' + fs_config[i][3] + ', "selabel", "' +
-                             fs_config[i][4] + '");')
-
-        del fs_config
-
-        return list(filter(None, mlist))
 
 
 def mfunc2(data, dtype):
@@ -3911,30 +3776,6 @@ def partsdat(whatimg, quiet=None):
             appendf(cmd(brotli + ' -' + brcomp + 'j ' + whatimg + '.new.dat'), logs + '/img_build.log')
 
 
-def pickfile(sdir, ftype=None, mul=None, dirr=None):
-    import tkinter as tk
-    from tkinter import filedialog
-
-    if dirr:
-        options = {'initialdir': sdir, 'title': 'Choose a directory:'}
-    else:
-        options = {'initialdir': sdir, 'title': 'Choose a file:'}
-
-    if ftype:
-        options['filetypes'] = ftype
-
-    root = tk.Tk()
-    root.withdraw()
-
-    if mul:
-        return list(filedialog.askopenfilenames(**options))
-    else:
-        if dirr:
-            return filedialog.askdirectory(**options)
-        else:
-            return filedialog.askopenfilename(**options)
-
-
 def plat():
     if existd('/mnt/c'):
         def cmd_mini(command):
@@ -4111,11 +3952,6 @@ def rampy(filetype):
         return issudo3 + tools + '/source/superr --mainram ' + bd + ' '
 
 
-def randm():
-    from random import randint
-    return randint(1000, 9999)
-
-
 def readf(filename):
     try:
         with open(filename, encoding=utftest(filename)) as f:
@@ -4242,28 +4078,19 @@ def table(it, rows):
 
 
 def tarlist(filename):
-    listtar = tarfile.TarFile(filename)
-    return listtar.getnames()
+    return tarfile.TarFile(filename).getnames()
 
 
 def taref(tarname, filename):
-    tarex = cmd(tar + ' -xf ' + tarname + ' ' + filename)
-
-    return tarex
-
-
-def tarp(tarname, filelist):
-    with tarfile.open(tarname, "w:gz") as tar1:
-        for name in filelist:
-            tar1.add(name)
+    return cmd(f'{tar} -xf {tarname} {filename}')
 
 
 def taru(tarname, outdir=None):
     if outdir:
         mkdir(outdir)
-        tarex = cmd(tar + ' -xf ' + tarname + ' -C ' + outdir)
+        tarex = cmd(f'{tar} -xf {tarname} -C {outdir}')
     else:
-        tarex = cmd(tar + ' -xf ' + tarname)
+        tarex = cmd(f'{tar} -xf {tarname}')
 
     return tarex
 
@@ -4282,7 +4109,7 @@ def timegt(short=None):
         return [start_date, end_date]
     else:
         if getconf('offline_auth', mconf) == 'enabled':
-            if (datetime.now() > datetime.strptime(days_left, date_pattern)):
+            if datetime.now() > datetime.strptime(days_left, date_pattern):
                 delpath(tools + '/auth.key')
 
                 while True:
@@ -4446,9 +4273,6 @@ def ubinary(ubdir):
 
     delpath(ubdir + '/updater-script')
     appendf('# Dummy file; update-binary is a shell script.', ubdir + '/updater-script')
-
-
-
 
 
 def utftest(filename):
@@ -4679,5 +4503,3 @@ else:
     zipadjust = ostools + '/zipadjust'
     vdexext = ostools + '/vdexExtractor'
     brotli = ostools + '/brotli'
-
-
