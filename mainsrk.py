@@ -2383,7 +2383,7 @@ def superr():
                                         data = f.seek(offset)
                                         data = f.read(15360)
                                         while data:
-                                            devnull = o.write(data)
+                                            o.write(data)
                                             data = f.read(15360)
 
                                 if j.existf(rimg) and not j.existf(rimg.replace('.raw', '')):
@@ -2523,8 +2523,6 @@ def superr():
 
                     j.zipu(romxz)
                     os.replace(ziplist[0], 'system.img')
-
-                    romxz = ''
                     romimg = 'system.img'
 
             if rommd5:
@@ -2623,7 +2621,6 @@ def superr():
                     os.system(j.lz4 + ' -qB6 --content-size ' + romlz4)
 
                     romimg = romlz4[:-4]
-                    romlz4 = ''
 
             if romimg:
                 j.sudo_prep()
@@ -3737,7 +3734,6 @@ def superr():
             else:
                 return '1'
 
-        metalist = []
         vinblk = []
         nocon = []
 
@@ -4306,7 +4302,6 @@ def superr():
                         while not choice3:
                             j.banner()
                             if not j.getconf('brotli_comp', j.mconf):
-                                slstat = ''
                                 j.kprint(j.lang['title_current'] + color['r'] + j.lang['disabled'], 'b')
                             else:
                                 slstat = j.getconf('brotli_comp', j.mconf)
@@ -4409,7 +4404,6 @@ def superr():
         j.banner()
         j.kprint(j.lang['img_add'] + whatimg2 + ' ...', 'b')
         permtype = j.getconf('permtype', j.uconf)
-        partbyname = ''
         if j.existf(deviceloc + '/superr_mmc') and j.grepf(whatimg, deviceloc + '/superr_mmc'):
             partbyname = j.grepf(whatimg, deviceloc + '/superr_mmc')[0].split()[0]
         else:
@@ -5700,7 +5694,6 @@ def superr():
         with j.cd(j.rd):
             wintst = j.greps(j.fl('', '.*.sha2$|.*.md5$|.*.info$'), j.findf('*' + partition + '*.win*'))
             if len(wintst) > 1:
-                romwin = wintst
                 winsystem = j.greps('000', wintst)[0]
                 istar = wintst
                 tartest = j.tarlist(winsystem)
@@ -5970,8 +5963,6 @@ def superr():
                        'cust', 'generic', 'system_other']
 
         j.getconf('partition_extract_list', j.mconf, add=j.partslist, l=1)
-
-
 
     loop = 0
     while loop == 0:

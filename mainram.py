@@ -183,7 +183,7 @@ def ramdisk(j, base, func, romname, filetype, action, extra):
                         data = data.replace(swap, result[swap])
 
                     with open(filename + '_new', 'wb') as o:
-                        devnull = o.write(data)
+                        o.write(data)
                     os.replace(filename + '_new', filename)
 
                     if j.platf != 'win':

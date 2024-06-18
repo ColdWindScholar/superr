@@ -1307,7 +1307,6 @@ def deodex_start(quiet=None):
                         if result:
                             begin = result[0] + 15
                             bnum = 1
-                            dex = b''
                             while True:
                                 if data[begin + bnum] == 32:
                                     dex = data[begin:bnum + begin]
@@ -1326,7 +1325,6 @@ def deodex_start(quiet=None):
             banner(quiet)
 
             for i in grepv('00_project_files', findr(rd2 + '/**/*.vdex')):
-                thedir = dirname(i)
                 thefile = basename(i)
                 if thefile.startswith('boot-'):
                     thefile = thefile[5:]
