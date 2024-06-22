@@ -2720,7 +2720,7 @@ def ext4Xtract(whatimg, *vargs):
             print(cmd('sudo ' + tools + '/source/superrl.py --otherfile '
                       + tools + '/source/getmeta output ' + whatimg + ' ' + prfiles))
         else:
-            appendf(cmd(f'sudo {tools_local}startup.py  --otherfile {tools_local}getmeta.py output {whatimg} {prfiles}'), logs + '/ext4_extract.log')
+            appendf(cmd(f'sudo {tools_local}startup.py --otherfile {tools_local}getmeta.py output {whatimg} {prfiles}'), logs + '/ext4_extract.log')
 
         cmd('sudo chmod -R a+rwX ' + whatimg)
         cmd('sudo chown -hR ' + whoami() + ':' + whoami() + ' ' + prfiles)
