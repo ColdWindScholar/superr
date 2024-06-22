@@ -708,7 +708,7 @@ def superr():
 
             if choice in ['1', '2', '4']:
                 appsym = sorted(glob.glob(
-                    j.sysdir + '/app/*') + glob.glob(j.sysdir + '/priv-app/*') + j.findf(j.rd + '/vendor/app/*'))
+                    j.sysdir + '/app/*') + glob.glob(j.sysdir + '/priv-app/*') + glob.glob(j.rd + '/vendor/app/*'))
                 symlib = ['ui_print("Creating symlinks...");',
                           'ui_print(" ");']
                 for i in j.grepf('/system/app|/system/priv-app', j.prfiles + '/symlinks-system'):
@@ -1872,7 +1872,7 @@ def superr():
             with j.cd(j.rd):
                 findtmp = j.greps(
                     '.*\.img$|.*\.tgz$|.*\.zip$|.*\.7z$|.*\.tar$|.*\.tar\.a$|.*\.tar\.md5$|.*\.win|.*chunk|.*\.ext4$|.*\.xz$|.*\.new\.dat|.*\.img\.lz4|.*\.ext4\.lz4',
-                    j.findf('*'))
+                    glob.glob('*'))
                 findtmp = j.greps(j.fl(
                     '',
                     '.*boot|.*BOOT|.*recovery|.*RECOVERY|.*ramdisk|.*RAMDISK|.*kernel|.*KERNEL|.*\.sha2$|.*\.md5$|.*\.info$'),
@@ -2342,7 +2342,7 @@ def superr():
 
                             j.delpath(filename)
 
-                        for i in j.findf('*.lz4'):
+                        for i in glob.glob('*.lz4'):
                             j.kprint(
                                 j.lang['general_extracting'] + i[:-4] + ' ...', 'y')
                             os.system(j.lz4 + ' -q ' + i)
@@ -2372,7 +2372,7 @@ def superr():
                         for i in zipulist:
                             j.appendf(j.zipef(romzip, i), j.logs + '/zip.log')
 
-                        for i in j.findf('*.img.lz4') + j.findf('*.ext4.lz4'):
+                        for i in glob.glob('*.img.lz4') + glob.glob('*.ext4.lz4'):
                             j.kprint(
                                 j.lang['general_extracting'] + i + ' ...', 'y')
                             os.system(j.lz4 + ' -qB6 --content-size ' + i)
@@ -2397,7 +2397,7 @@ def superr():
 
                         romzip = ''
                         romchunk = sorted(
-                            j.grepv('system_other', j.findf('*system*chunk*')))
+                            j.grepv('system_other', glob.glob('*system*chunk*')))
                 elif j.greps('.*payload.bin', ziptest):
                     j.sudo_prep()
 
@@ -2445,7 +2445,7 @@ def superr():
 
                                 j.cmd(j.pacextract + ' -f ' + pacname)
 
-                                for x in j.findf('*.img'):
+                                for x in glob.glob('*.img'):
                                     if x in pacimglist:
                                         os.replace(x, '../' + x)
 
@@ -2469,7 +2469,7 @@ def superr():
                         j.appendf(j.zipu(romzip), j.logs + '/zip.log')
 
                     with j.cd(j.rd + '/META-INF'):
-                        j.delpath(*j.greps('.*RSA$|.*SF$|.*MF$', j.findf('*')))
+                        j.delpath(*j.greps('.*RSA$|.*SF$|.*MF$', glob.glob('*')))
 
                     j.delpath(j.rd + '/META-INF/com/android')
 
@@ -2489,7 +2489,7 @@ def superr():
                         j.get_symlinks()
 
                         with j.cd(j.prfiles):
-                            j.delpath(*j.findf('debloat_test*'))
+                            j.delpath(*glob.glob('debloat_test*'))
 
                         update_project()
 
@@ -2504,7 +2504,7 @@ def superr():
                                         + ' system.img.raw'), j.logs + '/main.log')
 
                         for i in j.partslist:
-                            tmpchunk = j.findf(i + '.img_sparsechunk*')
+                            tmpchunk = glob.glob(i + '.img_sparsechunk*')
                             if tmpchunk:
                                 j.appendf(
                                     j.cmd(j.simg2img + ' ' + ' '.join(tmpchunk) + ' ' + i + '.img.raw'),
@@ -2513,7 +2513,7 @@ def superr():
                         for rimg in [x + '.img.raw' for x in j.partslist]:
                             if j.existf(rimg):
                                 j.delpath(
-                                    *j.findf(rimg.replace('.img.raw', '') + '*chunk*'))
+                                    *glob.glob(rimg.replace('.img.raw', '') + '*chunk*'))
                                 with open(rimg, 'rb') as f:
                                     data = f.read(500000)
                                     moto = re.search(b'\x4d\x4f\x54\x4f', data)
@@ -2724,7 +2724,7 @@ def superr():
                         for i in zipulist:
                             j.appendf(j.taref(romtar, i), j.logs + '/zip.log')
 
-                        for i in j.findf('*.img.lz4'):
+                        for i in glob.glob('*.img.lz4'):
                             j.kprint(
                                 j.lang['general_extracting'] + i + ' ...', 'y')
                             os.system(j.lz4 + ' -qB6 --content-size ' + i)
@@ -2863,7 +2863,7 @@ def superr():
                                                 j.appendf(
                                                     j.zipu(csczip), j.logs + '/zip.log')
                                                 with j.cd('system'):
-                                                    for i in j.findf('*'):
+                                                    for i in glob.glob('*'):
                                                         if j.existd(i):
                                                             j.mvdir(
                                                                 i, j.sysdir + '/' + i)
@@ -2918,8 +2918,8 @@ def superr():
                     with j.cd(j.rd):
                         eximgl = j.greps(j.fl('',
                                               'system\.img|system_other|cache|boot\.img|boot\.emmc|recovery\.img|ramdisk\.img|kernel\.img|super\.img'),
-                                         j.findf(
-                                             '*.img') + j.findf('*.win') + j.findf('*.win000'))
+                                         glob.glob(
+                                             '*.img') + glob.glob('*.win') + glob.glob('*.win000'))
                         if eximgl:
                             for line in eximgl:
                                 if line.endswith('.img'):
@@ -3662,9 +3662,9 @@ def superr():
                     for i in debloat:
                         i = i.strip()
                         if i.startswith('system'):
-                            tmp = j.findf(nsysdir + i)
+                            tmp = glob.glob(nsysdir + i)
                         else:
-                            tmp = j.findf(i)
+                            tmp = glob.glob(i)
 
                         for a in tmp:
                             if a not in debtmp:
@@ -3691,9 +3691,9 @@ def superr():
             with j.cd(j.rd):
                 for i in j.readfl(j.tools + '/root/bloat'):
                     if i.startswith('system'):
-                        tmp = j.findf(nsysdir + i)
+                        tmp = glob.glob(nsysdir + i)
                     else:
-                        tmp = j.findf(i)
+                        tmp = glob.glob(i)
 
                     for a in tmp:
                         if a not in debtmp:
@@ -3749,9 +3749,9 @@ def superr():
             with j.cd(j.rd):
                 for i in j.readfl(j.tools + '/root/knox'):
                     if i.startswith('system'):
-                        tmp = j.findf(nsysdir + i)
+                        tmp = glob.glob(nsysdir + i)
                     else:
-                        tmp = j.findf(i)
+                        tmp = glob.glob(i)
 
                     for a in tmp:
                         if a not in knotmp:
@@ -3779,7 +3779,7 @@ def superr():
                 roots = 'Magisk'
             elif j.existd(j.rd + '/rootzip'):
                 try:
-                    roots = os.path.basename(j.findf(j.rd + '/rootzip/*.zip')[0])
+                    roots = os.path.basename(glob.glob(j.rd + '/rootzip/*.zip')[0])
                 except:
                     pass
 
@@ -3853,13 +3853,13 @@ def superr():
         if extractdir == 'system':
             metalist = [dirr + 'system -R', dirr + 'system/bin -R']
             if j.sar():
-                roottmp = j.findf('system/*')
+                roottmp = glob.glob('system/*')
                 if 'system/system' in roottmp:
                     roottmp.remove('system/system')
                 metalist = sorted(roottmp) + metalist
 
             metalist = metalist + sorted(j.findr(dirr + 'system/bin/**'))
-            if j.findf(dirr + extractdir + '/vendor/*'):
+            if glob.glob(dirr + extractdir + '/vendor/*'):
                 for i in ['app', 'bin', 'etc', 'lib', 'lib64', 'rfs']:
                     dirmeta('vendor/' + i)
 
@@ -4207,7 +4207,7 @@ def superr():
                 with j.cd(j.prfiles):
                     j.cp('srk.conf', srksupd + '/srk_u.conf')
                     j.cpdir('logs', srksupd + '/logs')
-                    for i in j.findf('deodex_*'):
+                    for i in glob.glob('deodex_*'):
                         j.appendf(i, srksupf)
 
                 if j.existd(j.rd + '/META-INF'):
@@ -4223,7 +4223,7 @@ def superr():
 
                 with j.cd(srksupd):
                     upname = 'support_' + xdauser + '_' + j.timest() + '.zip'
-                    j.appendf(j.zipp(upname, j.findf('*')), j.logs + '/zip.log')
+                    j.appendf(j.zipp(upname, glob.glob('*')), j.logs + '/zip.log')
                     j.banner()
                     print(j.lang['support_upload'])
                     reply = j.getChar()
@@ -4523,7 +4523,7 @@ def superr():
             j.mkdir(j.prfiles + '/old_rom_files/' + j.romname
                     + '.' + timestamp + '/00_project_files')
             with j.cd(j.prfiles):
-                prtmp = j.findf('*')
+                prtmp = glob.glob('*')
                 prtmp.remove('old_rom_files')
                 for i in prtmp:
                     if j.existd(i):
@@ -4746,7 +4746,7 @@ def superr():
             j.timegt()
 
             with j.cd(j.tools + '/plugins'):
-                plugins = sorted(j.greps(j.fl('', '.*\.zip$'), j.findf('*')))
+                plugins = sorted(j.greps(j.fl('', '.*\.zip$'), glob.glob('*')))
             j.banner()
             j.kprint(j.lang['menu_plugin_menu'] + '\n', 'gb')
             print('1) ' + j.lang['menu_plugin_run'])
@@ -5049,9 +5049,9 @@ def superr():
         with j.cd(j.tools + '/root/root_zips'):
             if rootver == 'Other':
                 rootzip = j.greps(
-                    j.fl('', '.*SuperSU|.*Magisk'), j.findf('*.zip'))
+                    j.fl('', '.*SuperSU|.*Magisk'), glob.glob('*.zip'))
             else:
-                rootzip = j.findf('*' + rootver + '*.zip')
+                rootzip = glob.glob('*' + rootver + '*.zip')
 
             if not rootzip:
                 j.banner()
@@ -5077,7 +5077,7 @@ def superr():
                     except:
                         j.delpath(rootver + '.zip')
 
-                rootzip = j.findf('*' + rootver + '*.zip')
+                rootzip = glob.glob('*' + rootver + '*.zip')
 
         if len(rootzip) == 1:
             rootzip = rootzip[0]
@@ -5196,14 +5196,14 @@ def superr():
         for i in testf:
             if j.existf(i) and j.grepf('.*xbin', i):
                 j.delpath(i)
-                for x in j.findf(j.prfiles + '/symlinks-*'):
+                for x in glob.glob(j.prfiles + '/symlinks-*'):
                     j.grepvf('/'.join(i.split('/')[-3:]), x)
 
         if j.existf(j.prfiles + '/symunroot'):
             j.appendff(j.prfiles + '/symunroot', j.prfiles + '/symlinks-system')
 
         for line in j.readfl(j.tools + '/root/root_files'):
-            for i in [j.usdir + '/updater-script'] + j.findf(j.prfiles + '/symlinks*'):
+            for i in [j.usdir + '/updater-script'] + glob.glob(j.prfiles + '/symlinks*'):
                 newscript = []
                 for x in j.readfl(i):
                     if i.endswith('updater-script') and line == 'busybox':
@@ -5233,7 +5233,7 @@ def superr():
                         j.delpath(line3)
 
     def root_busybox():
-        bbpath = j.findf(j.tools + '/root/busybox/*.zip')
+        bbpath = glob.glob(j.tools + '/root/busybox/*.zip')
         if not bbpath:
             with j.cd(j.tools + '/root/busybox'):
                 j.banner()
@@ -5250,7 +5250,7 @@ def superr():
                 except IndexError:
                     pass
 
-            bbpath = j.findf(j.tools + '/root/busybox/*.zip')
+            bbpath = glob.glob(j.tools + '/root/busybox/*.zip')
 
         with j.cd(j.usdir):
             if bbpath:
@@ -5729,7 +5729,7 @@ def superr():
 
                 if not j.existf(j.prfiles + '/set_metadata1'):
                     tmpf = []
-                    for i in j.findf(j.prfiles + '/symlinks-*'):
+                    for i in glob.glob(j.prfiles + '/symlinks-*'):
                         tmpf += j.readfl(i)
 
                     if not tmpf:
@@ -5805,15 +5805,15 @@ def superr():
 
             with j.cd(j.rd):
                 if j.sar():
-                    apptmp = j.findf('system/system/app/*')
-                    privtmp = j.findf('system/system/priv-app/*')
+                    apptmp = glob.glob('system/system/app/*')
+                    privtmp = glob.glob('system/system/priv-app/*')
                 else:
-                    apptmp = j.findf('system/app/*')
-                    privtmp = j.findf('system/priv-app/*')
+                    apptmp = glob.glob('system/app/*')
+                    privtmp = glob.glob('system/priv-app/*')
                 appsym = sorted(apptmp + privtmp, key=str.lower)
 
             tmpf = []
-            for i in j.findf(j.prfiles + '/symlinks*'):
+            for i in glob.glob(j.prfiles + '/symlinks*'):
                 tmpf = tmpf + j.readfl(i)
 
             tsym = j.greps('/system/app|/system/priv-app', tmpf)
@@ -5930,7 +5930,7 @@ def superr():
 
         with j.cd(j.rd):
             wintst = j.greps(
-                j.fl('', '.*\.sha2$|.*\.md5$|.*\.info$'), j.findf('*' + partition + '*.win*'))
+                j.fl('', '.*\.sha2$|.*\.md5$|.*\.info$'), glob.glob('*' + partition + '*.win*'))
             if len(wintst) > 1:
                 romwin = wintst
                 winsystem = j.greps('000', wintst)[0]
@@ -5987,7 +5987,7 @@ def superr():
 
     if not j.getconf('language', j.mconf):
         with j.cd(j.tools + '/language'):
-            ftmp = j.greps(j.fl('', 'default_srk.py'), j.findf('*_srk.py'))
+            ftmp = j.greps(j.fl('', 'default_srk.py'), glob.glob('*_srk.py'))
 
         langfile = ''
         if len(ftmp) >= 1:
@@ -5997,7 +5997,7 @@ def superr():
                 if langfile and '.zip' in langfile:
                     with j.cd(j.tools + '/language'):
                         ftmp = j.greps(j.fl('', 'default_srk.py'),
-                                       j.findf('*_srk.py'))
+                                       glob.glob('*_srk.py'))
                     langfile = ''
 
             j.delpath(j.tools + '/language/default_srk.py',
@@ -6213,7 +6213,7 @@ def superr():
                 sys.exit()
 
             with j.cd(j.tools + '/plugins'):
-                plugins44 = sorted(j.greps(j.fl('', '.*\.zip$'), j.findf('*')))
+                plugins44 = sorted(j.greps(j.fl('', '.*\.zip$'), glob.glob('*')))
 
             retv = j.mfunc2('auth = ' + str([j.srkuser, 1, 0, j.superrv,
                                              j.osbit(), j.platf, j.whoami(), j.dbtst]), 'out').decode()
@@ -6270,9 +6270,9 @@ def superr():
     while loop == 0:
         main = 0
         if not j.romname:
-            if j.findf('superr_*'):
+            if glob.glob('superr_*'):
                 cholist = []
-                for i in sorted(j.findf('superr_*'), key=str.lower):
+                for i in sorted(glob.glob('superr_*'), key=str.lower):
                     cholist.append(i.replace('superr_', ''))
                 countdir = len(cholist)
                 if countdir == 1:

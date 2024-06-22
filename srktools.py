@@ -472,9 +472,9 @@ def deodex_start(quiet=None):
     def choose_jartitle(jarname, jartitle):
         with cd(tools + '/smali/current'):
             if jarname == 'smali':
-                findbak = greps(fl('', 'baksmali'), findf('*' + jarname + '*.jar'))
+                findbak = greps(fl('', 'baksmali'), glob.glob('*' + jarname + '*.jar'))
             else:
-                findbak = findf('*' + jarname + '*.jar')
+                findbak = glob.glob('*' + jarname + '*.jar')
 
         if len(findbak) == 1:
             return tools + os.sep + 'smali' + os.sep + 'current' + os.sep + findbak[0]
@@ -504,7 +504,7 @@ def deodex_start(quiet=None):
                 continue
 
             if choice == '1':
-                oattmp = findf(tools + '/smali/old/*oat2dex*.jar')
+                oattmp = glob.glob(tools + '/smali/old/*oat2dex*.jar')
                 return oattmp[0]
             elif choice == '2':
                 return choose_jartitle('oat2dex', lang['title_cho_oat2dex'])
@@ -523,13 +523,13 @@ def deodex_start(quiet=None):
                 kprint(lang['deodex_move_odex'], 'b')
                 odexarch = ''
                 with cd('squashfs-root'):
-                    if greps('arm64', findf('*')):
+                    if greps('arm64', glob.glob('*')):
                         odexarch = 'arm64'
-                    elif greps('arm', findf('*')):
+                    elif greps('arm', glob.glob('*')):
                         odexarch = 'arm'
 
                     with cd(odexarch):
-                        for i in findf('*'):
+                        for i in glob.glob('*'):
                             odexapp = str(i.replace('.odex', ''))
                             os.replace(i, sqshdir + '/applications/'
                                        + odexapp + '/oat/' + odexarch + '/' + i)
@@ -549,14 +549,14 @@ def deodex_start(quiet=None):
                 kprint(lang['deodex_move_odex'], 'b')
                 with cd('squashfs-root'):
                     odexarch = ''
-                    if greps('arm64', findf('*')):
+                    if greps('arm64', glob.glob('*')):
                         odexarch = 'arm64'
-                    elif greps('arm', findf('*')):
+                    elif greps('arm', glob.glob('*')):
                         odexarch = 'arm'
 
                     with cd(odexarch):
                         if sqshtype != 'framework':
-                            for i in findf('*.odex'):
+                            for i in glob.glob('*.odex'):
                                 tmpapp = str(i.replace('.odex', ''))
                                 mkdir(sysdir + '/' + sqshtype + '/'
                                       + tmpapp + '/oat/' + odexarch)
@@ -564,7 +564,7 @@ def deodex_start(quiet=None):
                                            + '/' + tmpapp + '/oat/' + odexarch + '/' + i)
                         else:
                             mkdir(sysdir + '/' + sqshtype + '/oat/' + odexarch)
-                            for i in findf('*.odex'):
+                            for i in glob.glob('*.odex'):
                                 tmpapp = str(i.replace('.odex', ''))
                                 if existd(framedir + '/' + tmpapp):
                                     mkdir(framedir + '/' + tmpapp + '/oat/' + odexarch)
@@ -663,9 +663,9 @@ def deodex_start(quiet=None):
 
                 try:
                     app2 = basename(
-                        findf(deoappdir + '/' + app + '/*.apk')[0]).replace('.apk', '')
+                        glob.glob(deoappdir + '/' + app + '/*.apk')[0]).replace('.apk', '')
                 except:
-                    if not findf(deoappdir + '/' + app + '/*.apk'):
+                    if not glob.glob(deoappdir + '/' + app + '/*.apk'):
                         app2 = app
                         cmd(aapt + ' a -fk ' + deoappdir + '/'
                             + app + '/' + app + '.apk fakesrkfile')
@@ -685,7 +685,7 @@ def deodex_start(quiet=None):
                 print()
                 print(lang['deodex_deodexing'] + app + '\n')
                 with cd(deoappdir + '/' + app + '/' + deoarch):
-                    mvfiles = findf('*')
+                    mvfiles = glob.glob('*')
                     dodex = []
                     for i in mvfiles:
                         os.replace(i, framedir + '/' + deoarch2 + '/' + i)
@@ -712,7 +712,7 @@ def deodex_start(quiet=None):
                                 'java -Xmx' + heapsize + 'm -jar ' + baksmali
                                 + ' deodex -b boot.oat ' + app2 + '.odex/' + apkdex
                                 + ' -o smali'), logs + '/deodex.log')
-                            if findf('smali/*'):
+                            if glob.glob('smali/*'):
                                 appendf(cmd(
                                     'java -Xmx' + heapsize + 'm -jar ' + smali
                                     + ' assemble -a ' + api + ' smali -o ' + dexclass),
@@ -723,7 +723,7 @@ def deodex_start(quiet=None):
                                         + '/' + dexclass, logs + '/deodex_fail_list')
                                 continue
 
-                        for i in findf('classes*.dex'):
+                        for i in glob.glob('classes*.dex'):
                             os.replace(i, deoappdir + '/' + app + '/' + i)
                         delpath(*dodex)
 
@@ -736,14 +736,14 @@ def deodex_start(quiet=None):
 
                         os.replace(app2 + '.dex', deoappdir
                                    + '/' + app + '/classes.dex')
-                        for i in findf('*-classes*.dex'):
+                        for i in glob.glob('*-classes*.dex'):
                             os.replace(i, deoappdir + '/' + app
                                        + '/' + i.split('-')[-1])
 
                         delpath(*dodex)
 
                         broken = None
-                        for i in findf('*_classes*.cdex'):
+                        for i in glob.glob('*_classes*.cdex'):
                             appendf(
                                 '\n'.join(grepv('^==', cmd(vdexcon + ' ' + i).splitlines())), logs + '/deodex.log')
                             if existf(i + '.new'):
@@ -754,14 +754,14 @@ def deodex_start(quiet=None):
                                         + '.apk', logs + '/deodex_fail_list')
                                 appendf(deoappdir + '/' + app + '/' + app2
                                         + '.apk', logs + '/deodex_cdex_fail')
-                                for x in findf('*_classes*'):
+                                for x in glob.glob('*_classes*'):
                                     delpath(x)
 
                                 broken = 1
                                 break
 
                         if not broken:
-                            for i in findf('*_classes*'):
+                            for i in glob.glob('*_classes*'):
                                 os.replace(i, deoappdir + '/' + app
                                            + '/' + i.split('_')[-1])
                             delpath(*dodex)
@@ -837,7 +837,7 @@ def deodex_start(quiet=None):
 
                 if basename(adir).startswith('.'):
                     with cd(adir):
-                        newapp = findf('*.apk').split('.')[0]
+                        newapp = glob.glob('*.apk').split('.')[0]
                     newappdir = dirname(adir) + os.sep + newapp
                     mvdir(adir, newappdir)
                     extramv[rd + os.sep + newappdir] = rd + os.sep + adir
@@ -878,7 +878,7 @@ def deodex_start(quiet=None):
             delpath('/'.join([dname, 'oat']))
 
         if existd(sysdir + '/vendor/framework'):
-            for i in findf(sysdir + '/vendor/framework/*.jar'):
+            for i in glob.glob(sysdir + '/vendor/framework/*.jar'):
                 if not greps('.*classes\.dex', zipl(i)):
                     os.replace(i, framedir + '/' + basename(i))
                     extramv[framedir + os.sep + basename(i)] = i
@@ -886,7 +886,7 @@ def deodex_start(quiet=None):
             for i in [arch, arch2]:
                 if not i:
                     continue
-                for a in findf(sysdir + '/vendor/framework/oat/' + i + '/*'):
+                for a in glob.glob(sysdir + '/vendor/framework/oat/' + i + '/*'):
                     os.replace(a, framedir + '/oat/' + i + '/' + basename(a))
 
             delpath(sysdir + '/vendor/framework/oat')
@@ -1004,7 +1004,7 @@ def deodex_start(quiet=None):
                         appendf(sdcmd, logs + '/deodex.log')
                         appendf(cmd(sdcmd), logs + '/deodex.log')
 
-                        if findf('smali/*'):
+                        if glob.glob('smali/*'):
                             sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + smali + ' assemble -a ' + \
                                     api + ' smali -o ' + framedir + os.sep + line3 + '__' + dexclass
                             appendf(sdcmd, logs + '/deodex.log')
@@ -1017,7 +1017,7 @@ def deodex_start(quiet=None):
                     frametmp = sorted(findf('*.odex'), key=str.lower)
                     for frame in frametmp:
                         frname = frame.replace('.odex', '')
-                        for ftype in findf(frname + '.*'):
+                        for ftype in glob.glob(frname + '.*'):
                             os.replace(ftype, framedir + '/'
                                        + deoarch2 + '/' + basename(ftype))
 
@@ -1046,7 +1046,7 @@ def deodex_start(quiet=None):
                                 appendf(sdcmd, logs + '/deodex.log')
                                 appendf(cmd(sdcmd), logs + '/deodex.log')
 
-                                if findf('smali/*'):
+                                if glob.glob('smali/*'):
                                     sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + smali + \
                                             ' assemble -a ' + api + ' smali -o ' + dexclass
                                     appendf(sdcmd, logs + '/deodex.log')
@@ -1075,15 +1075,15 @@ def deodex_start(quiet=None):
                             appendf(cmd('java -Xmx' + heapsize + 'm -jar '
                                         + oat2dex + ' ' + frame + ' odex'), logs + '/deodex.log')
                             delpath(frame)
-                            for i in findf('*.dex'):
+                            for i in glob.glob('*.dex'):
                                 os.replace(i, framedir + '/' + deoarch + '/' + i)
 
             with cd(framedir + '/' + deoarch2 + '/dex'):
-                dextmp = findf('*')
+                dextmp = glob.glob('*')
                 for i in dextmp:
                     os.replace(i, framedir + '/' + deoarch + '/' + i)
             with cd(framedir + '/' + deoarch):
-                dextmp = findf('*.dex')
+                dextmp = glob.glob('*.dex')
                 for line in dextmp:
                     if 'classes' not in line:
                         frame = line.replace('.dex', '.jar__classes.dex')
@@ -1301,7 +1301,7 @@ def deodex_start(quiet=None):
         kprint(lang['deodex_move_odex'], 'b')
 
         with cd(framedir):
-            for i in findf('*.vdex'):
+            for i in glob.glob('*.vdex'):
                 os.replace(i, framedir + '/' + arch + '/' + i)
 
         with cd(rd):
@@ -1418,7 +1418,7 @@ def deodex_start(quiet=None):
                     else:
                         appendf(retv, logs + '/deodex.log')
 
-                    if not findf(thefile[:-5] + '_classes*dex'):
+                    if not glob.glob(thefile[:-5] + '_classes*dex'):
                         print('\n' + basename(mainfile) + ': '
                               + lang['deodex_no_dex'] + '\n')
 
@@ -1431,7 +1431,7 @@ def deodex_start(quiet=None):
                         continue
 
                     broken = None
-                    for cdex in findf('*_classes*.cdex'):
+                    for cdex in glob.glob('*_classes*.cdex'):
                         appendf('\n'.join(
                             grepv('^==', cmd(vdexcon + ' ' + cdex).splitlines())), logs + '/deodex.log')
 
@@ -1444,7 +1444,7 @@ def deodex_start(quiet=None):
                                     logs + '/deodex_fail_list')
                             appendf(mainfile.replace(rd, ''),
                                     logs + '/deodex_cdex_fail')
-                            for x in findf('*_classes*'):
+                            for x in glob.glob('*_classes*'):
                                 delpath(x)
 
                             broken = 1
@@ -1453,7 +1453,7 @@ def deodex_start(quiet=None):
                     os.replace(thefile, i)
 
                     if not broken:
-                        for classes in findf('*_classes*'):
+                        for classes in glob.glob('*_classes*'):
                             os.replace(classes, classes.split('_')[-1])
 
                         appendf(cmd(aapt + ' add -fk ' + basename(mainfile)
@@ -1569,7 +1569,7 @@ def deodex_start(quiet=None):
                 appendf(cmd('java -Xmx' + heapsize + 'm -jar ' + baksmali + ' -a ' + api + ' -d ' + framedir + ' -x '
                             + deoappdir + os.sep + app + '.odex -o ' + deoappdir + os.sep + 'smali'),
                         logs + '/deodex.log')
-                if findf(deoappdir + os.sep + 'smali/*'):
+                if glob.glob(deoappdir + os.sep + 'smali/*'):
                     appendf(cmd('java -Xmx' + heapsize + 'm -jar ' + smali + ' -a ' + api + ' ' + deoappdir
                                 + os.sep + 'smali -o ' + deoappdir + os.sep + 'classes.dex'), logs + '/deodex.log')
                     appendf(cmd(aapt + ' add -fk ' + deoappdir + os.sep + app + '.' + deoext
@@ -1723,7 +1723,7 @@ def deodex_start(quiet=None):
         for i in sqshtmp:
             deodex_sqsh(i)
 
-    for i in [usdir + '/updater-script'] + findf(prfiles + '/symlinks*'):
+    for i in [usdir + '/updater-script'] + glob.glob(prfiles + '/symlinks*'):
         grepvf(
             '.*odex\.app|.*odex\.priv-app|.*odex\.framework|.*orig\.applications|.*\.vdex\"', i)
 
@@ -1776,8 +1776,8 @@ def deodex_start(quiet=None):
 
     if deodext == 'old':
         smali = greps(fl('', '.*baksmali'),
-                      findf(tools + '/smali/old/*smali*'))[0]
-        baksmali = findf(tools + '/smali/old/*baksmali*')[0]
+                      glob.glob(tools + '/smali/old/*smali*'))[0]
+        baksmali = glob.glob(tools + '/smali/old/*baksmali*')[0]
         deodex_old()
         return
     elif deodext in ['l', 'm']:
@@ -2706,7 +2706,7 @@ def ext4Xtract(whatimg, *vargs):
                 delpath('output')
                 return 1
 
-        if not findf('output/*'):
+        if not glob.glob('output/*'):
             appendf('ERROR: ' + whatimg + '.img is not a valid ext4 img.',
                     logs + '/ext4_extract.log')
             delpath('output')
@@ -3503,7 +3503,7 @@ def get_symlinks(quiet=None):
         banner()
         kprint(lang['perm_check_symlinks'], 'b')
 
-    if findf(prfiles + '/symlinks*'):
+    if glob.glob(prfiles + '/symlinks*'):
         return
 
     symlinks = {}
@@ -3645,7 +3645,7 @@ def isodexstatus():
     # deotmp += findr(rd+'/product/**/*.odex')
     # deotmp += findr(rd+'/system_ext/**/*.odex')
     deotmp = grepv('.*00_project_files', findr(rd + '/**/*.odex'))
-    deotmp += findf(sysdir + '/*.sqsh')
+    deotmp += glob.glob(sysdir + '/*.sqsh')
     deotmp += findr(sysdir + '/framework/**/boot*.oat')
 
     if not deotmp:
@@ -3667,7 +3667,7 @@ def kitchen_update(jupdate=None, averify=None):
             input(lang['enter_main_menu'])
     else:
         localzip = sorted(
-            findf('update_' + (platf if platf not in ['wsl', 'wsl2'] else 'lin') + '*.zip'))
+            glob.glob('update_' + (platf if platf not in ['wsl', 'wsl2'] else 'lin') + '*.zip'))
         if localzip:
             localzip = localzip[-1]
             ziplist = zipl(localzip)
@@ -3697,7 +3697,7 @@ def kitchen_update(jupdate=None, averify=None):
                         for i in findr('tools/source/**'):
                             if i and not existd(i) and i not in source_files:
                                 delpath(i)
-                                if not findf(dirname(i) + '/*'):
+                                if not glob.glob(dirname(i) + '/*'):
                                     delpath(dirname(i))
 
                     internet(server1 + '/errlog2/?e=' + mfunc2('auth = '
@@ -3837,7 +3837,7 @@ def kitchen_update(jupdate=None, averify=None):
                 for i in findr('tools/source/**'):
                     if i and not existd(i) and i not in source_files:
                         delpath(i)
-                        if not findf(dirname(i) + '/*'):
+                        if not glob.glob(dirname(i) + '/*'):
                             delpath(dirname(i))
 
                 getconf('firstrun', mconf, add='1')
@@ -3847,7 +3847,7 @@ def kitchen_update(jupdate=None, averify=None):
                         language_check(langt)
 
                     for i in grepf(fl('', '#'), 'depends/deldeps'):
-                        for d in findf(i):
+                        for d in glob.glob(i):
                             delpath(d)
 
                 upchk = 1
@@ -4490,7 +4490,7 @@ def partlz4(chosenimg, keep=None):
         os.replace('temp_lz4/' + imgname, imgname)
 
         if keep:
-            for i in findf('temp_lz4/*'):
+            for i in glob.glob('temp_lz4/*'):
                 os.replace(i, work_img)
 
         delpath('temp_lz4')
@@ -4867,7 +4867,7 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
         newimglist = (fromcli[:-1] if fromcli else None)
         if not newimglist:
             newimglist = []
-            for i in findf('*.img'):
+            for i in glob.glob('*.img'):
                 pname = i[:-4]
                 if pname.endswith('_new'):
                     pname = pname[:-4]
@@ -5100,12 +5100,12 @@ def super_unpack(romimg, fromcli=None):
             banner()
         kprint(lang['boot_unpack'] + 'super.img ...', 'b')
 
-        now_img = findf('*.img')
+        now_img = glob.glob('*.img')
 
         appendf(cmd(superx + ' -K H4dEuE7ETGps6AUv ' + romimg), logs + '/main.log')
 
         ab = None
-        for i in findf('*_a.img'):
+        for i in glob.glob('*_a.img'):
             if fsize(i) > 0:
                 os.replace(i, i.replace('_a', ''))
             else:
@@ -5113,7 +5113,7 @@ def super_unpack(romimg, fromcli=None):
 
             ab = 1
 
-        for i in findf('*_b.img'):
+        for i in glob.glob('*_b.img'):
             if fsize(i) > 0 and not existf(i.replace('_b', '')):
                 os.replace(i, i.replace('_b', ''))
             else:
@@ -5122,7 +5122,7 @@ def super_unpack(romimg, fromcli=None):
             ab = 1
 
         later_img = []
-        for i in findf('*.img'):
+        for i in glob.glob('*.img'):
             if i not in now_img:
                 later_img.append(i)
 
