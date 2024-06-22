@@ -242,7 +242,7 @@ def ramdisk(j, base, func, romname, filetype, action, extra):
         with j.cd(fstdir):
             ffstab1 = []
             fstmp = j.greps(j.fl(
-                '', '.*goldfish.*|.*ranchu.*|.*charger.*|.*\.fwup|.*zram.*|.*nodata.*|.*\.fota|.*mofd_v1.*|.*\.ftm\.|.*\.sdboot'), j.findf('*fstab*'))
+                '', '.*goldfish.*|.*ranchu.*|.*charger.*|.*\.fwup|.*zram.*|.*nodata.*|.*\.fota|.*mofd_v1.*|.*\.ftm\.|.*\.sdboot'), glob.glob('*fstab*'))
 
             for d in fstmp:
                 if os.path.islink(d):
