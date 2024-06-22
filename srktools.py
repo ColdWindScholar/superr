@@ -2837,7 +2837,6 @@ def findimgsize(whatimg):
                 imgblock = grepf(whatimg, deviceloc
                                  + '/superr_mmc')[0].split()[0].split('/')[3]
             else:
-                tmpbn = {}
                 newname = ''
                 if existf(deviceloc + '/superr_appbyname'):
                     tmpbn = {'system': 'APP', 'vendor': 'VNR',
@@ -3041,9 +3040,9 @@ def fl(st, wo=None, nar1=None, nar2=None):
     elif nar1 and not nar2 and not wo:
         return '(?=^.*' + st + '.*$)(?=^.*' + nar1 + '.*$)'
     elif wo and not nar1 and not nar2:
-        return '(?!' + wo + ')(?=^.*' + st + '.*$)'
+        return f'(?!{wo})(?=^.*' + st + '.*$)'
     elif not nar1 and not nar2 and not wo:
-        return '(?=^.*' + st + '.*$)'
+        return f'(?=^.*{st}.*$)'
 
 
 def gen_min_contexts(whatimg):
