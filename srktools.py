@@ -27,8 +27,7 @@ import lpdump as lpunpack
 
 def adb_byname(deviceloc):
     try:
-        byname = cmd(
-            adb + ' shell "find /dev -name by-name 2>/dev/null"').splitlines()[0].strip()
+        byname = cmd(f'{adb} shell "find /dev -name by-name 2>/dev/null"').splitlines()[0].strip()
     except Exception as e:
         appendf(logtb(e), logs + '/adb.log')
 
@@ -163,7 +162,7 @@ def boot_pack(filetype, filetype2, bootext=None, quiet=None):
     get_devicename()
     if not existf(prfiles + '/' + filetype2 + '_orig/' + filetype2):
         mkdir(prfiles + '/' + filetype2 + '_orig')
-        cp(rd + '/' + filetype2, prfiles + '/' + filetype2 + '_orig/' + filetype2)
+        copyfile(rd + '/' + filetype2, prfiles + '/' + filetype2 + '_orig/' + filetype2)
 
     with cd(bootdir):
         appendf(cmd(issudo2 + AIK + '/repackimg.sh --local'), logs + '/boot.log')
@@ -178,7 +177,7 @@ def boot_pack(filetype, filetype2, bootext=None, quiet=None):
             else:
                 appendf('ERROR: boot repack problem', logs + '/boot.log')
         else:
-            cp('image-new.img', rd + '/' + filetype2)
+            copyfile('image-new.img', rd + '/' + filetype2)
             appendf(cmd(issudo2 + AIK + '/cleanup.sh --local'), logs + '/boot.log')
 
     with cd(bd):
@@ -228,7 +227,7 @@ def boot_unpack(filetype, filetype2, bootext=None, quiet=None):
     return
 
 
-class cd(object):
+class cd:
     def __init__(self, path):
         self.old_dir = os.getcwd()
         self.new_dir = path
@@ -398,8 +397,7 @@ def cmd(command):
                   stdout=PIPE, stderr=STDOUT, universal_newlines=True)
 
     try:
-        test1 = test1.communicate()
-        test1 = test1[0].strip()
+        test1 = test1.communicate()[0].strip()
     except:
         test1 = ''
 
@@ -409,7 +407,7 @@ def cmd(command):
 def configure(abi='arm'):
     delpath(rd + '/config', rd + '/install')
     cpdir(tools + '/updater/install', rd + '/install')
-    cp(tools + '/updater/binary/busybox-' + abi, rd + '/install/bin/busybox')
+    copyfile(tools + '/updater/binary/busybox-' + abi, rd + '/install/bin/busybox')
 
 
 def cp(filename, outfile):
@@ -3193,10 +3191,10 @@ def get_contexts():
         def cpcon(condir):
             for f in condir:
                 if existf(f + c):
-                    cp(f + c, prfiles + c)
+                    copyfile(f + c, prfiles + c)
                     break
                 if existf(f + b):
-                    cp(f + b, prfiles + b)
+                    copyfile(f + b, prfiles + b)
                     break
                 if existf(f + p):
                     appendf(readf(f + p), prfiles + c)
@@ -3240,7 +3238,7 @@ def get_contexts():
                 if conlist[0].startswith('/'):
                     appendf(conlist[0], prfiles + c)
             else:
-                cp(tools + '/boot' + c, prfiles + c)
+                copyfile(tools + '/boot' + c, prfiles + c)
                 conlist = greps(fl('u:|\/', 'ER'), conlist)
                 conlist = greps(fl('', '.*abcd'), conlist)
                 contest = []
@@ -4124,7 +4122,7 @@ def partimg(whatimg, sparseimg='', fromplug=None, frommenu=None, quiet=None):
             delpath(prfiles + '/file_contexts_min')
 
             if existf(prfiles + '/file_contexts_custom'):
-                cp(prfiles + '/file_contexts_custom', prfiles + '/file_contexts_min')
+                copyfile(prfiles + '/file_contexts_custom', prfiles + '/file_contexts_min')
             else:
                 gen_min_contexts(whatimg)
 
@@ -4333,7 +4331,7 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
             delpath(prfiles + '/file_contexts_min')
 
             if existf(prfiles + '/file_contexts_custom'):
-                cp(prfiles + '/file_contexts_custom', prfiles + '/file_contexts_min')
+                copyfile(prfiles + '/file_contexts_custom', prfiles + '/file_contexts_min')
             else:
                 gen_min_contexts(whatimg)
 
@@ -5295,7 +5293,7 @@ def ubinary(ubdir):
     banner()
     kprint(lang['cust_convert_binary'], 'b')
     delpath(ubdir + '/update-binary')
-    cp(tools + '/updater/custom/ubinary', ubdir + '/update-binary')
+    copyfile(tools + '/updater/custom/ubinary', ubdir + '/update-binary')
     uscript = readfl(ubdir + '/updater-script')
 
     for line in uscript:

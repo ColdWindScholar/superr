@@ -3,6 +3,7 @@ import glob
 # by SuperR. @XDA
 
 import os
+from shutil import copyfile
 
 
 def main(j, indir, partition, filedir):
@@ -57,7 +58,7 @@ def main(j, indir, partition, filedir):
 
             if case_fix == 'Yes' and j.findfiles(j.basename(i), os.path.dirname(fname)):
                 cnt = len(j.findfiles(os.path.basename(i)+'.*', os.path.dirname(fname)))
-                j.cp(i, fname+'.ex'+str(cnt)+'.srk')
+                copyfile(i, fname+'.ex'+str(cnt)+'.srk')
 
                 nfname = fname.replace(partition+'/', '', 1)
 
@@ -66,7 +67,7 @@ def main(j, indir, partition, filedir):
                     j.getconf('case_files_'+partition, uconf,
                               add=ci_files+[nfname], l=1)
             else:
-                j.cp(i, fname)
+                copyfile(i, fname)
         elif os.path.isdir(i):
             j.mkdir(fname)
 
