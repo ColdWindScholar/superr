@@ -25,6 +25,7 @@ import requests
 from cryptography.fernet import Fernet
 import lpdump as lpunpack
 
+
 def adb_byname(deviceloc):
     try:
         byname = cmd(f'{adb} shell "find /dev -name by-name 2>/dev/null"').splitlines()[0].strip()
@@ -410,13 +411,6 @@ def configure(abi='arm'):
     copyfile(tools + '/updater/binary/busybox-' + abi, rd + '/install/bin/busybox')
 
 
-def cp(filename, outfile):
-    try:
-        copyfile(filename, outfile)
-    except:
-        pass
-
-
 def cpdir(srcdir, dstdir):
     copytree(srcdir, dstdir, symlinks=True)
 
@@ -425,12 +419,12 @@ def delpath(*longpath):
     for i in longpath:
         if os.path.isdir(i):
             while existd(i):
-                cmd('rm -rf "' + i + '"')
+                cmd(f'rm -rf "{i}"')
         else:
             try:
                 os.remove(i)
             except:
-                cmd('rm -rf "' + i + '"')
+                cmd(f'rm -rf "{i}"')
 
 
 def deodex_start(quiet=None):
@@ -5645,4 +5639,3 @@ brotli = ostools + '/brotli'
 superp = ostools + '/superp'
 last_used = datetime.now()
 offline_auth = getconf('offline_auth', mconf)
-
