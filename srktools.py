@@ -1,27 +1,27 @@
-import sys
-import os
-import re
+import argparse
+import base64
 import glob
-import zipfile
-import tarfile
-import requests
-import struct
-import traceback
 import hashlib
-import platform
 import itertools
 import math
-import base64
-import getpass
-import types
-import argparse
+import os
+import platform
+import re
+import struct
+import sys
+import tarfile
 import tempfile
-from datetime import datetime, timedelta
-from time import sleep
+import traceback
+import types
+import zipfile
 from binascii import hexlify
-from subprocess import Popen, PIPE, STDOUT
 from collections import OrderedDict
+from datetime import datetime, timedelta
 from shutil import copyfile, copytree, which
+from subprocess import Popen, PIPE, STDOUT
+from time import sleep
+
+import requests
 from cryptography.fernet import Fernet
 
 

@@ -22,17 +22,15 @@ def superr():
     # j.server1 = 'http://127.0.0.1:5000' # DEVELOPMENT
 
     color = j.color
-    depends = ''
 
     if j.platf not in ['mac', 'lin', 'wsl', 'wsl2']:
         print('Unknown platform')
         sys.exit()
 
     userid = None
-    if which('id'):
-        if j.cmd('id -u') == '0':
-            userid = 'root'
-    elif j.cmd('echo $EUID') == '0':
+    if os.getuid() == '0':
+        userid = 'root'
+    elif os.geteuid() == '0':
         userid = 'root'
 
     if userid:
@@ -2126,7 +2124,7 @@ def superr():
 
             if any([romzip, romtar, romimg, romdat, romlz4]) and ((not romimg and not romdat and not romlz4) or (
                     romimg == 'system.img' or romdat.startswith('system') or romlz4.startswith(
-                    'system') or romlz4.startswith('super') or romimg == 'super.img')):
+                'system') or romlz4.startswith('super') or romimg == 'super.img')):
                 moveoldfiles(romzip, romtar, romimg, romdat)
 
             if romzip:
@@ -2136,8 +2134,9 @@ def superr():
                     ziptest = j.zipl(j.rd + '/' + romzip)
 
                 if not j.greps(
-                        j.fl('.*system.ext4.tar|.*system.ext4.tar.a|.*tar.md5|AP_.*tar|.*chunk.*|.*system/build.prop|.*system.new.dat|.*super.new.dat|.*system_new.img|.*system.img|.*super.img|.*payload.bin|.*system_1.img|.*.pac$|.*.img.lz4|.*.ext4.lz4',
-                             '.*\.so$'), ziptest):
+                        j.fl(
+                            '.*system.ext4.tar|.*system.ext4.tar.a|.*tar.md5|AP_.*tar|.*chunk.*|.*system/build.prop|.*system.new.dat|.*super.new.dat|.*system_new.img|.*system.img|.*super.img|.*payload.bin|.*system_1.img|.*.pac$|.*.img.lz4|.*.ext4.lz4',
+                            '.*\.so$'), ziptest):
                     j.banner()
                     j.kprint(j.lang['warning'], 'yrbbo')
                     j.kprint(j.lang['extract_zip_fail'], 'r')
@@ -2841,7 +2840,7 @@ def superr():
                             j.imgextract('cache.img')
                             if j.existd(j.rd + '/cache') and (
                                     j.getprop('ro.product.manufacturer') == 'samsung' or j.getprop(
-                                    'ro.product.system.manufacturer') == 'samsung'):
+                                'ro.product.system.manufacturer') == 'samsung'):
                                 reply = 'y'
                                 if not j.autorom() and ex_all_img != 'Yes':
                                     print(
@@ -5904,7 +5903,7 @@ def superr():
                 for i in j.getconf('exdirs', j.uconf, l=1):
                     if not j.grepf('package_extract_dir("' + i + '.*', j.usdir + '/updater-script') and not j.grepf(
                             i + '.transfer', j.usdir + '/updater-script') and not j.grepf(
-                            'package_extract_file("' + i + '.*', j.usdir + '/updater-script'):
+                        'package_extract_file("' + i + '.*', j.usdir + '/updater-script'):
                         partadd(i)
 
                 j.getconf('exdone', j.uconf, add='1')
