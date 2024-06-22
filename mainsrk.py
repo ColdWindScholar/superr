@@ -4059,11 +4059,7 @@ def superr():
             if choice == '1':  # START Offline Authorization Menu
                 choice2 = ''
                 while not choice2:
-                    if j.offline_auth == 'enabled':
-                        offline_status = color['g'] + j.lang['enabled']
-                    else:
-                        offline_status = color['r'] + j.lang['disabled']
-
+                    offline_status = color['g'] + j.lang['enabled']
                     cnt = '1'
                     j.banner()
                     j.kprint(j.lang['menu_offline_auth'] + '\n', 'ryb')
@@ -4071,9 +4067,8 @@ def superr():
                              + str(j.auth_days) + '\n', 'y')
                     print('1) ' + j.lang['menu_offline_enable'] + ' (' + color['b']
                           + j.lang['title_current'] + offline_status + color['n'] + ')')
-                    if j.offline_auth == 'enabled':
-                        cnt = '2'
-                        print('2) ' + j.lang['menu_offline_renew'] + ' (' + color['b']
+                    cnt = '2'
+                    print('2) ' + j.lang['menu_offline_renew'] + ' (' + color['b']
                               + j.lang['expires'] + color['g']
                               + j.days_left.split('-')[0] + color['n'] + ')')
 
@@ -4093,18 +4088,10 @@ def superr():
                         choice = ''
                     elif choice2 == '1':
                         j.delpath(j.tools + '/auth.key')
-                        if j.offline_auth == 'enabled':
-                            j.days_left = color['r'] + j.lang['disabled']
-                            j.getconf('offline_auth', j.mconf, 'rem')
-                            j.offline_auth = 'disabled'
-                        else:
-                            j.getconf('offline_auth', j.mconf, add='enabled')
-                            j.offline_auth = 'enabled'
-                            j.banner()
-                            j.kprint(j.lang['auth_reset'], 'g')
-                            j.kprint(j.lang['auth_reset2'] + '\n', 'y')
-                            input(j.lang['enter_continue'])
-                            sys.exit(3)
+                        j.days_left = color['r'] + j.lang['disabled']
+                        j.getconf('offline_auth', j.mconf, 'rem')
+
+
 
                         choice2 = ''
                     elif choice2 == '2':
@@ -4868,10 +4855,10 @@ def superr():
                 j.banner()
                 j.kprint(j.lang['tools_dl_install'], 'b')
                 with j.cd(j.tools + '/plugins'):
-                    j.dlfile('plugins/' + plug + '.zip', plug + '.zip', 1)
-                    j.internet(j.server1 + '/dllog/?f=PLUG_'
-                               + plug + '.zip&u=' + j.srkuser)
+                    j.dlfile(f'https://github.com/ColdWindScholar/superr_files/raw/plugin/{plug}.zip', plug + '.zip')
                     j.appendf(j.zipu(plug + '.zip'), j.logs + '/zip.log')
+                    if not os.path.exists(plug + '/plugmd5'):
+                        j.touch(plug + '/plugmd5')
                     j.appendf(j.md5chk(plug + '.zip'), plug + '/plugmd5')
                     j.delpath(plug + '.zip')
 

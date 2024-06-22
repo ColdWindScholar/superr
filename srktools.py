@@ -3123,7 +3123,6 @@ def getconf(conf, version, rem=None, add=None, repl=None, l=None):
                 full = sorted(readfl(version) + [conf + '=' + ' '.join(add)])
             else:
                 full = sorted(readfl(version) + [conf + '=' + add])
-
             delpath(version)
             appendf('\n'.join(full), version)
         return
@@ -3146,7 +3145,7 @@ def getconf(conf, version, rem=None, add=None, repl=None, l=None):
                 return []
         else:
             try:
-                return grepf('^' + conf + '=', version)[0].split('=', 1)[1]
+                return grepf(f'^{conf}=', version)[0].split('=', 1)[1]
             except:
                 return ''
 
@@ -5200,25 +5199,7 @@ def timegt(short=None):
                 else:
                     sys.exit()
 
-        if offline_auth == 'enabled':
-            if start_date > datetime.strptime(days_left, date_pattern):
-                delpath(tools + '/auth.key')
 
-                while True:
-                    banner()
-                    kprint(lang['auth_expired'] + '\n', 'r')
-                    print('1) ' + lang['menu_renew_now'])
-                    kprint('q = ' + lang['menu_quit'] + '\n', 'm')
-                    print(lang['select'])
-                    reply = getChar()
-
-                    if reply not in ['1', 'q']:
-                        continue
-
-                    if reply == '1':
-                        sys.exit(3)
-                    else:
-                        sys.exit()
 
     last_used = start_date
 
@@ -5582,4 +5563,4 @@ vdexext = ostools + '/vdexExtractor'
 brotli = ostools + '/brotli'
 superp = ostools + '/superp'
 last_used = datetime.now()
-offline_auth = getconf('offline_auth', mconf)
+

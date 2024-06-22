@@ -44,7 +44,6 @@ def main(j, args, func_dict):
         j.server1 = 'https://sr-code.com'
         j.superrv = 'v5.5.5.5'
         j.uconf = j.prfiles+os.sep+'srk.conf'
-        j.offline_auth = 'enabled'
 
         j.srkuser, j.srkpass, j.dbtst, j.days_left, latest_ver = j.user_auth()
 
