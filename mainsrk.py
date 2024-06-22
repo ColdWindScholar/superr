@@ -5393,7 +5393,7 @@ def superr():
         if reply == 'y':
             j.banner()
             j.kprint(j.lang['sign_ram_check'], 'b')
-            zipbyte = j.fsize(j.rd + '/' + signzipname + '.zip')
+            zipbyte = os.stat(j.rd + '/' + signzipname + '.zip').st_size
             zipmb = int(zipbyte / 1024 / 1024 + 1)
             heapsize = int(j.get_heapsize())
             ramest = int(zipmb * 3.48 + 1)
