@@ -6212,7 +6212,7 @@ def superr():
             retv = j.mfunc2('auth = ' + str([j.srkuser, 1, 0, j.superrv,
                                              j.osbit(), j.platf, j.whoami(), j.dbtst]), 'out').decode()
 
-            j.internet(j.server1 + '/estats/?e=' + retv)
+            j.internet(f'{j.server1}/estats/?e={retv}')
 
             del retv
 

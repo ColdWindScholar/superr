@@ -4240,7 +4240,6 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
         build_args = ['-j', '0']
 
         if existf(whatimg + '.img'):
-            superblock = {}
             try:
                 superblock = ext4_header(whatimg + '.img')
             except:
@@ -4474,30 +4473,6 @@ def partsdat(whatimg, quiet=None):
             return whatimg + '.new.dat'
 
 
-def pickfile(sdir, ftype=None, mul=None, dirr=None):
-    import tkinter as tk
-    from tkinter import filedialog
-
-    if dirr:
-        options = {'initialdir': sdir, 'title': 'Choose a directory:'}
-    else:
-        options = {'initialdir': sdir, 'title': 'Choose a file:'}
-
-    if ftype:
-        options['filetypes'] = ftype
-
-    root = tk.Tk()
-    root.withdraw()
-
-    if mul:
-        return list(filedialog.askopenfilenames(**options))
-    else:
-        if dirr:
-            return filedialog.askdirectory(**options)
-        else:
-            return filedialog.askopenfilename(**options)
-
-
 def plat():
     if existd('/mnt/c'):
         if which('wsl.exe'):
@@ -4601,7 +4576,7 @@ def plug_update(plugins, getlist=None, quiet=None):
         if i not in pluglist[0]:
             continue
 
-        if not existf(tools + '/plugins/' + i + '/plugmd5'):
+        if not existf(tools + f'/plugins/{i}/plugmd5'):
             if quiet:
                 upplugs.append(i)
             else:
@@ -4616,7 +4591,7 @@ def plug_update(plugins, getlist=None, quiet=None):
 
             continue
 
-        if readf(tools + '/plugins/' + i + '/plugmd5') != pluglist[1][i]:
+        if readf(tools + f'/plugins/{i}/plugmd5') != pluglist[1][i]:
             upplugs.append(i)
 
     if upplugs:
@@ -4643,15 +4618,10 @@ def plug_update(plugins, getlist=None, quiet=None):
                 delpath(i + '.zip')
 
 
-def rampy(filetype=None):
+def rampy():
     issudo3 = issudo2 or 'sudo '
 
     return issudo3 + tools_local + f'startup.py --mainram {bd} '
-
-
-def randm():
-    from random import randint
-    return randint(1000, 9999)
 
 
 def readf(filename):
