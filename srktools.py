@@ -19,7 +19,7 @@ def adb_byname(deviceloc):
 
 	devicename = get_devicename()
 	deviceloc = tools+os.sep+'devices'+os.sep+devicename
-	
+
 	if not byname or 'by-name' not in byname:
 		delpath(deviceloc+'/superr_byname')
 		appendf('by-name: '+byname, logs+'/adb.log')
@@ -251,7 +251,7 @@ def check_ci(whatimg, old=None, new=None):
 				if y:
 					a = y[0].split()[0] + '.ex' + str(cnt) + '.srk '
 					sedf(y[0].split()[0]+' ', a, prfiles+'/file_contexts3-'+whatimg)
-	
+
 	if new and ci_files:
 		for i in ci_files:
 			x = greps(i+'.ex.*.srk ', readfl(prfiles+'/fs_config-'+whatimg))
@@ -1106,7 +1106,7 @@ def deodex_start(quiet=None):
 				if dtype == 'm':
 					kprint('\n'+lang['deodex_try_smali'], 'g')
 
-				
+
 				if not quiet:
 					print()
 					input(lang['enter_continue'])
@@ -1154,7 +1154,7 @@ def deodex_start(quiet=None):
 		if platf == 'win':
 			sysdir2 = sysdir.replace(os.sep, '/')
 			rd2 = rd.replace(os.sep, '/')
-		
+
 		if not quiet:
 			if (not existf(framedir+'/'+arch+'/boot.oat')
 					and not existf(framedir+'/'+arch+'/boot-ext.oat')):
@@ -1225,7 +1225,7 @@ def deodex_start(quiet=None):
 
 		banner(quiet)
 		kprint(lang['deodex_move_odex'], 'b')
-		
+
 		with cd(framedir):
 			for i in findf('*.vdex'):
 				os.replace(i, framedir+'/'+arch+'/'+i)
@@ -1243,15 +1243,15 @@ def deodex_start(quiet=None):
 						boat = 'boot.oat'
 					elif existf('boot-ext.oat') and existf('boot-ext.vdex'):
 						boat = 'boot-ext.oat'
-						
-					if boat:	
+
+					if boat:
 						with open(boat, 'rb') as f:
 							data = f.read()
 
 						result = []
 						for i in re.finditer(b'--dex-location=', data):
 							result.append(i.start())
-						
+
 						if result:
 							begin = result[0]+15
 							bnum = 1
@@ -1270,7 +1270,7 @@ def deodex_start(quiet=None):
 						else:
 							if existf(boat[:-4]+'.vdex'):
 								os.rename(boat[:-4]+'.vdex', boat[:-4]+'.vdex2')
-			
+
 			banner(quiet)
 
 			for i in grepv('00_project_files', findr(rd2+'/**/*.vdex')):
@@ -1320,7 +1320,7 @@ def deodex_start(quiet=None):
 					retv = cmd(vdexext+' -i '+thefile)
 					if greps('\[ERROR\]|\[WARNING\]', retv.split()):
 						retv = cmd(vdexext+' -i '+thefile+' --ignore-crc-error')
-						
+
 						if greps('\[ERROR\]|\[WARNING\]', retv.split()):
 							appendf(retv, logs+'/deodex.log')
 							appendf(mainfile.replace(rd2, ''), logs+'/deodex_fail_list')
@@ -1388,7 +1388,7 @@ def deodex_start(quiet=None):
 
 		banner(quiet)
 		kprint(lang['deodex_clean'], 'b')
-		
+
 		if existf(framedir+'/'+arch+'/boot.vdex2'):
 			os.rename(framedir+'/'+arch+'/boot.vdex2', framedir+'/'+arch+'/boot.vdex')
 
@@ -1435,7 +1435,7 @@ def deodex_start(quiet=None):
 			if delarch:
 				for i in grepv('00_project_files', findr('**/framework/'+arch)):
 					delpath(i)
-				
+
 				if arch2:
 					for i in grepv('00_project_files', findr('**/framework/'+arch2)):
 						delpath(i)
@@ -1455,7 +1455,7 @@ def deodex_start(quiet=None):
 				exit_deo()
 
 		return
-	
+
 	def deodex_old():
 		if not autorom() and not quiet:
 			banner()
@@ -1777,7 +1777,7 @@ def dozipalign():
 
 		if reply != 'y':
 			alltmp = grepv('.*/framework/', alltmp)
-		
+
 		for i in alltmp:
 			try:
 				zalignchk = cmd(zipalign+' -c -v 4 '+i).splitlines()[-1].split()[1]
@@ -1998,7 +1998,7 @@ def e2fsdroid_run(argv, build_features):
 		return "Size of the filesystem is required"
 
 	mainlog = ['\n[INFO] Building '+('sparse ' if args.android_sparse else '')+args.partition+'_new.img\n']
-	
+
 	mke2fs_cmd, e2fsdroid_cmd = ConstructE2fsCommands(args)
 
 	# truncate output file since mke2fs will keep verity section in existing file
@@ -2035,7 +2035,7 @@ def e2fsdroid_run(argv, build_features):
 	# print(output)
 	if ret != 0:
 		os.remove(args.output_file)
-	
+
 	return '\n'.join(mainlog)
 
 def escape_char(thestring):
@@ -2141,7 +2141,7 @@ def ext4Xtract(whatimg, *vargs):
 								ci_files = getconf('case_files_'+whatimg, uconf, l=1)
 								if new_fp not in ci_files:
 									getconf('case_files_'+whatimg, uconf, add=ci_files+[new_fp], l=1)
-								
+
 								wdone = 1
 
 							if not wdone:
@@ -2202,7 +2202,7 @@ def ext4Xtract(whatimg, *vargs):
 								fsconfig.append(entry_inode_path[1:]+' '+uid+' '+gid+' '+mode+cap)
 
 		appendf('Extracting '+whatimg+'.img with Python ...', logs+'/ext4_extract.log')
-		
+
 		try:
 			with open(whatimg+'.img', 'r+b') as f:
 				root = ext4.Volume(f, ignore_flags=True)
@@ -2257,7 +2257,7 @@ def ext4Xtract(whatimg, *vargs):
 							fsconfig = [whatimg+' 0 2000 0755']
 
 			case_fix = getconf('case_fix', mconf)
-			
+
 			try:
 				scan_dir(root)
 			except Exception as e:
@@ -2270,7 +2270,7 @@ def ext4Xtract(whatimg, *vargs):
 				return 3
 
 		delpath(prfiles+'/symlinks-'+whatimg, prfiles+'/fs_config-'+whatimg, prfiles+'/file_contexts3-'+whatimg)
-		
+
 		if not vargs or 's' in vargs:
 			for i in sorted(symlinks):
 				try:
@@ -2305,7 +2305,7 @@ def ext4Xtract(whatimg, *vargs):
 
 			if case_files:
 				getconf('case_files_'+whatimg, uconf, add=case_files, l=1)
-		
+
 		return 0
 
 	def ext4Xtract_m():
@@ -2351,7 +2351,7 @@ def ext4Xtract(whatimg, *vargs):
 
 	def ext4Xtract_7():
 		appendf('Extracting '+whatimg+'.img with 7-zip ...', logs+'/ext4_extract.log')
-		
+
 		delpath(whatimg, prfiles+'/symlinks-'+whatimg, prfiles+'/fs_config-'+whatimg, prfiles+'/file_contexts3-'+whatimg)
 		appendf(cmd(p7z+' x -y -o'+whatimg+' '+whatimg+'.img'), logs+'/main.log')
 		delpath(whatimg+os.sep+'[SYS]')
@@ -2427,7 +2427,7 @@ def ext4Xtract(whatimg, *vargs):
 				return 1
 		elif xtractv == 4:
 			return 4
-	
+
 	return 0
 
 def findimgsize(whatimg):
@@ -2543,7 +2543,7 @@ def findimgsize(whatimg):
 				kprint(lang['build_man_img_size']+'\n\n'+man_img_size)
 				if getChar() == 'y':
 					whatsize = man_img_size
-				
+
 			if not whatsize:
 				banner()
 				kprint(lang['extract_manual_bytes']+whatimg+':')
@@ -2889,7 +2889,7 @@ def get_heapsize():
 
 def getlang(lfile, tools1=None):
 	if not tools1: tools1 = tools
-	
+
 	with cd(tools1+'/language'):
 		coding = grepf(' coding: ', lfile)
 		if coding:
@@ -3151,7 +3151,7 @@ def imgrename(new=None):
 			imgdict[i+'_new.img'] = i+'.img'
 
 		imgdict['factoryfs.img'] = 'system.img'
-	
+
 	with cd(rd):
 		for i in list(imgdict):
 			if existf(i):
@@ -3285,12 +3285,12 @@ def kitchen_update(jupdate=None, averify=None):
 							delpath(i)
 							if not findf(dirname(i)+'/*'):
 								delpath(dirname(i))
-					
+
 					banner()
 					kprint(lang['success']+'\n', 'g')
 					input(lang['enter_continue'])
 					sys.exit(3)
-		
+
 		banner()
 		kprint(lang['update_check_kitchen'], 'b')
 		changelog = internet(server1+'/changelog/?v=donate&c=c', 1)
@@ -3572,7 +3572,7 @@ def metasetup(extractdir):
 
 def mfunc2(data, dtype):
 	xtr_cc = [76, 107, 115, 95, 105, 71, 66, 99, 54, 107, 49, 83, 103, 86, 112, 76, 99, 69, 90, 78, 102, 99, 101, 71, 56, 105, 108, 86, 45, 114, 55, 100, 66, 51, 119, 49, 52, 109, 53, 116, 51, 116, 107, 61]
-	
+
 	if dtype == 'in':
 		if not data:
 			del xtr_cc
@@ -3586,13 +3586,13 @@ def mfunc2(data, dtype):
 			data = data.encode()
 
 		del xtr_cc
-		
+
 		try:
 			mod = types.ModuleType('mod')
 			exec(data, mod.__dict__)
 		except:
 			mod = None
-		
+
 		del data
 
 		return mod
@@ -3630,7 +3630,7 @@ def partimg(whatimg, sparseimg='', fromplug=None, frommenu=None, quiet=None):
 		if not quiet:
 			banner()
 		kprint(lang['error'], 'yrbbo')
-			
+
 		if message:
 			print(message)
 		else:
@@ -3692,7 +3692,7 @@ def partimg(whatimg, sparseimg='', fromplug=None, frommenu=None, quiet=None):
 			fcontexts = ' -S '+prfiles+'/file_contexts'
 
 		api = getprop('ro.build.version.sdk')
-		
+
 		if not fcontexts and api > '20':
 			if not quiet:
 				banner()
@@ -3812,7 +3812,7 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
 				if features:
 					if 'has_journal' in features:
 						build_args = []
-					
+
 					sb_conf = getconf('shared_blocks', mconf)
 					if sb_conf == 'Yes':
 						build_args = ['-c'] + build_args
@@ -3820,7 +3820,7 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
 						pass
 					elif 'shared_blocks' in features:
 						build_args = ['-c'] + build_args
-					
+
 					build_features = []
 					for i in features.split():
 						if i in complete_features:
@@ -3933,7 +3933,7 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
 
 			if existf(whatimg+'_new.img_2'):
 				os.replace(whatimg+'_new.img_2', whatimg+'_new.img')
-		
+
 		if addlf:
 			mkdir('system/lost+found')
 
@@ -4005,7 +4005,7 @@ def plat():
 				test1 = ''
 
 			return test1
-		
+
 		if which('wsl.exe'):
 			wsltmp = cmd_mini('wsl.exe -l -v')
 			wsltmp = wsltmp.replace('\x00', '').split('\n\n')
@@ -4021,7 +4021,7 @@ def plat():
 					return 'wsl2'
 				else:
 					wsltmp = ['/bin/sh:']
-		
+
 		if not wsltmp[0].startswith('/bin/sh:'):
 			count = 0
 			good = None
@@ -4034,14 +4034,14 @@ def plat():
 
 			if good:
 				wsltmp = wsltmp[count].split()[-1]
-			
+
 				if wsltmp == '2':
 					return 'wsl2'
 				elif wsltmp == '1':
 					return 'wsl'
 
 		return ''
-	
+
 	platf = platform.platform()
 
 	if platf.startswith('Win'):
@@ -4069,7 +4069,7 @@ def plug_update(plugins, getlist=None, quiet=None):
 		plugdict = {}
 		for i in pluglist1:
 			plugdict[i.split()[0]] = i.split()[1]
-		
+
 		pluglist = []
 		for i in plugdict:
 			if getlist == '2':
@@ -4082,7 +4082,7 @@ def plug_update(plugins, getlist=None, quiet=None):
 
 	banner()
 	kprint(lang['menu_plugin_get'], 'b')
-	
+
 	pluglist = get_plug_list()
 
 	if pluglist == 1:
@@ -4093,7 +4093,7 @@ def plug_update(plugins, getlist=None, quiet=None):
 			input(lang['enter_continue'])
 
 		return 1
-	
+
 	if getlist:
 		return pluglist[0]
 
@@ -4148,7 +4148,7 @@ def rampy(filetype):
 	if platf == 'win':
 		import ctypes
 
-		rampy2 = tools+os.sep+'source'+os.sep+'superr.exe '+tools+'/source/mainram '+bd+' '
+		rampy2 = tools_local+f'python {tools_local}startup.py --mainram {bd} '
 
 		if ctypes.windll.shell32.IsUserAnAdmin() == 0:
 			if (existd(rd+'/'+filetype+'img/ramdisk/.backup')
@@ -4157,13 +4157,7 @@ def rampy(filetype):
 				return AIK+os.sep+'android_win_tools'+os.sep+'sudo.exe '+rampy2
 
 		return rampy2
-	else:
-		issudo3 = issudo2 or 'sudo '
 
-		if existf(tools+'/source/ramdiskl.py'):
-			return issudo3+tools+'/source/ramdiskl.py '+tools+'/source/mainram '+bd+' '
-
-		return issudo3+tools+'/source/superr --mainram '+bd+' '
 
 def randm():
 	from random import randint
@@ -4428,7 +4422,7 @@ def ubinary(ubdir):
 				testvar2 = '/'+testvar2
 			else:
 				testvar2 = line.split('"')[3]
-				
+
 			if any(['supersu' in line, 'busybox' in line, 'root' in line]):
 				appendf('package_extract_dir '+testvar+' /tmp', ubdir+'/update-binary')
 			else:
@@ -4555,7 +4549,7 @@ def user_auth(jupdate=None):
 				dbtst = greps('.* '+kdrive+' ', cmd('mount').splitlines())
 				mpoint = dbtst[0].split()[0].split('/')[-1]
 				mpoint = ''.join([i for i in mpoint if not i.isdigit()])
-				
+
 				if cmd("lsblk -do name,rm | grep "+mpoint+" | awk '{print $2}'").strip() != '0':
 					banner()
 					kprint(lang['startup_remdisk_error']+'\n', 'r')
@@ -4674,7 +4668,7 @@ def user_auth(jupdate=None):
 					f.write(mfunc2('auth = '+str([srkuser, srkpass, auth.auth[2], auth.auth[3], auth.auth[4], time_comp, auth.auth[6]]), 'out'))
 
 				end_time = auth.auth[4]
-				
+
 				del auth
 
 				return [srkuser, srkpass, dbtst, end_time, '']
@@ -4684,7 +4678,7 @@ def user_auth(jupdate=None):
 			banner()
 			kprint(lang['update_no_internet']+'\n', 'r')
 			input(lang['enter_exit'])
-			sys.exit()			
+			sys.exit()
 
 		# Delete md5_pass from the list when all users have converted to sha256 passwords
 		retv = mfunc2('auth = '+str([srkuser, srkpass, platf, superrv[1::2], whoami(), dbtst, stime.auth[0], md5_pass]), 'out').decode()
@@ -4709,7 +4703,7 @@ def user_auth(jupdate=None):
 		if ttmp.auth[5] != superrv[1::2]:
 			ttmp.auth[0] = 'unknown'
 			internet(server1+'/errlog2/?e='+mfunc2('auth = '+str(['UNKNOWN_VERSION:', srkuser, ttmp.auth[5]]), 'out').decode())
-		
+
 		if ttmp.auth[3] != dbtst:
 			ttmp.auth[0] = 'unknown'
 			if ttmp.auth[3].startswith('dbtst-fake'):
@@ -4771,7 +4765,7 @@ def user_auth(jupdate=None):
 
 		# Delete this when all users have converted to sha256 passwords
 		getconf('keepauth', mconf, add='Yes')
-		
+
 		time_comp = timegt(1)
 		if getconf('offline_auth', mconf) == 'enabled':
 			with open(tools+'/auth.key', 'wb') as f:
@@ -4780,7 +4774,7 @@ def user_auth(jupdate=None):
 			internet(server1+'/errlog2/?e='+mfunc2('auth = '+str(['OFFLINE_AUTH:', srkuser, superrv+' ENDS:'+time_comp[1]]), 'out').decode())
 		else:
 			time_comp[1] = lang['disabled']
-		
+
 		getconf('srkuser', mconf, add=srkuser)
 
 		if not getconf('keeppass', mconf):
@@ -4883,7 +4877,7 @@ def zipp(zipname, filelist, comp='5', p7z1=None):
 
 def zipu(zipname, outdir=None, p7z1=None):
 	if not p7z1: p7z1 = p7z
-	
+
 	if outdir:
 		return cmd(p7z1+' x -y '+'-o"'+outdir+'" "'+zipname+'"')
 	else:
@@ -4940,6 +4934,7 @@ androidversion = None
 
 bd = os.getcwd()
 tools = bd+os.sep+'tools'
+tools_local = bd+os.sep
 mconf = tools+os.sep+'srk.conf'
 tsize = 60
 
