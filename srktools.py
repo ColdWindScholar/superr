@@ -2597,9 +2597,7 @@ def ext4Xtract(whatimg, *vargs):
 
                 if dirr:
                     try:
-                        fsconfig = [
-                            whatimg + ' ' + str(root.inode.i_uid) + ' ' + str(root.inode.i_gid) + ' ' + getperm(
-                                root.mode_str)]
+                        fsconfig = [f'{whatimg} {str(root.inode.i_uid)} {str(root.inode.i_gid)} {getperm(root.mode_str)}']
                     except:
                         if whatimg in ['system', 'product', 'system_ext']:
                             fsconfig = [whatimg + ' 0 0 0755']
@@ -3451,13 +3449,8 @@ def greps(searcht, gstr):
 
 
 def grepv(searcht, thelist):
-    vtmp = []
-    for line in thelist:
-        if re.search(searcht, line):
-            continue
-        else:
-            vtmp.append(line)
-    return vtmp
+    return [line for line in thelist if not re.search(searcht, line)]
+
 
 
 def grepvf(searcht, filename):
