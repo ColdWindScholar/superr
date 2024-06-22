@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 from shutil import copyfile, copytree, which
 from subprocess import Popen, PIPE, STDOUT
 from time import sleep
-
+from os.path import basename
 import requests
 from cryptography.fernet import Fernet
 
@@ -142,8 +142,7 @@ def bencode(thestring):
     return base64.b64encode(thestring.encode('utf-8')).decode('utf-8')
 
 
-def basename(filename):
-    return os.path.basename(filename)
+
 
 
 def bbdown(dlurl):
