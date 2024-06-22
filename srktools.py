@@ -532,7 +532,7 @@ def deodex_start(quiet=None):
 
                     with cd(odexarch):
                         for i in findf('*'):
-                            odexapp = i.replace('.odex', '')
+                            odexapp = str(i.replace('.odex', ''))
                             os.replace(i, sqshdir + '/applications/'
                                        + odexapp + '/oat/' + odexarch + '/' + i)
                             os.replace(sqshdir + '/squashfs-root/' + odexapp + '/' + odexapp
@@ -559,7 +559,7 @@ def deodex_start(quiet=None):
                     with cd(odexarch):
                         if sqshtype != 'framework':
                             for i in findf('*.odex'):
-                                tmpapp = i.replace('.odex', '')
+                                tmpapp = str(i.replace('.odex', ''))
                                 mkdir(sysdir + '/' + sqshtype + '/'
                                       + tmpapp + '/oat/' + odexarch)
                                 os.replace(i, sysdir + '/' + sqshtype
@@ -567,7 +567,7 @@ def deodex_start(quiet=None):
                         else:
                             mkdir(sysdir + '/' + sqshtype + '/oat/' + odexarch)
                             for i in findf('*.odex'):
-                                tmpapp = i.replace('.odex', '')
+                                tmpapp = str(i.replace('.odex', ''))
                                 if existd(framedir + '/' + tmpapp):
                                     mkdir(framedir + '/' + tmpapp + '/oat/' + odexarch)
                                     os.replace(i, framedir + '/'
@@ -1353,7 +1353,7 @@ def deodex_start(quiet=None):
 
             for i in grepv('00_project_files', findr(rd2 + '/**/*.vdex')):
                 thedir = dirname(i)
-                thefile = basename(i)
+                thefile = str(basename(i))
                 if thefile.startswith('boot-'):
                     thefile = thefile[5:]
 
@@ -4646,7 +4646,7 @@ def plug_update(plugins, getlist=None, quiet=None):
             else:
                 pluglist.append(i)
 
-        return (sorted(pluglist), plugdict)
+        return sorted(pluglist), plugdict
 
     banner()
     kprint(lang['menu_plugin_get'], 'b')
@@ -4914,7 +4914,7 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
             if imgname.endswith('_new'):
                 imgname = imgname[:-4]
 
-            imgsize = None
+
 
             if fromcli or superlist:
                 reply = 'y'
@@ -5307,7 +5307,7 @@ def timegt(short=None):
                     sys.exit()
 
         if offline_auth == 'enabled':
-            if (start_date > datetime.strptime(days_left, date_pattern)):
+            if start_date > datetime.strptime(days_left, date_pattern):
                 delpath(tools + '/auth.key')
 
                 while True:
@@ -5502,7 +5502,6 @@ def utftest(filename):
         return 'latin1'
     else:
         f.close()
-
         return 'utf8'
 
 
@@ -5627,7 +5626,7 @@ romname = None
 prfiles: str = ''
 uconf = None
 logs: str = ''
-usdir = None
+usdir: str = ''
 lang: dict = {}
 issudo2: str = ''
 srkuser = None
