@@ -5409,10 +5409,7 @@ def superr():
             j.banner()
             j.kprint(j.lang['sign_signing'] + signzipname + '.zip ...', 'b')
             with j.cd(j.rd):
-                j.appendf(j.cmd('java -Xmx' + str(
-                    heapsize) + 'm -jar ' + j.tools + '/signapk/signapk.jar -w ' + j.tools + '/signapk/testkey.x509.pem '
-                                + j.tools + '/signapk/testkey.pk8 ' + signzipname + '.zip ' + signzipname
-                                + '-signed.zip'), j.logs + '/sign.log')
+                j.appendf(j.cmd(f'java -Xmx{heapsize}m -jar {j.tools}/signapk/signapk.jar -w {j.tools}/signapk/testkey.x509.pem {j.tools}/signapk/testkey.pk8 {signzipname}.zip {signzipname}-signed.zip'), j.logs + '/sign.log')
                 ubtmp = j.greps('.*update-binary', j.zipl(signzipname + '.zip'))
                 if ubtmp:
                     j.appendf(j.zipef(signzipname + '.zip',
