@@ -1024,7 +1024,7 @@ def superr():
                             '/')[0] + '_exfiles/' + '/'.join(i.split('/')[1:])[:-8]
                         new_exl.append(newpath)
 
-                        j.mkdir(j.dirname(newpath))
+                        j.mkdir(os.path.dirname(newpath))
 
                         os.replace(i, newpath)
 

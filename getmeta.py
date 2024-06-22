@@ -53,10 +53,10 @@ def main(j, indir, partition, filedir):
         if os.path.islink(i):
             symlinks.append('symlink("'+os.readlink(i)+'", "/'+fname+'");')
         elif os.path.isfile(i):
-            j.mkdir(j.dirname(fname))
+            j.mkdir(os.path.dirname(fname))
 
-            if case_fix == 'Yes' and j.findfiles(j.basename(i), j.dirname(fname)):
-                cnt = len(j.findfiles(os.path.basename(i)+'.*', j.dirname(fname)))
+            if case_fix == 'Yes' and j.findfiles(j.basename(i), os.path.dirname(fname)):
+                cnt = len(j.findfiles(os.path.basename(i)+'.*', os.path.dirname(fname)))
                 j.cp(i, fname+'.ex'+str(cnt)+'.srk')
 
                 nfname = fname.replace(partition+'/', '', 1)

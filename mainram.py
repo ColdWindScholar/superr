@@ -234,7 +234,7 @@ def ramdisk(j, base, func, romname, filetype, action, extra):
         else:
             fstdir = None
             for i in j.findr(bootdir+'/ramdisk/**/*fstab*'):
-                fstdir = j.dirname(i).replace('/', os.sep)
+                fstdir = os.path.dirname(i).replace('/', os.sep)
                 break
             if not fstdir:
                 return 1
