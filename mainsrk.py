@@ -2,7 +2,7 @@
 #
 # SuperR's Kitchen v3.x - By SuperR.
 #
-
+import glob
 import os
 import sys
 import importlib
@@ -707,8 +707,8 @@ def superr():
                        j.usdir + '/updater-script')
 
             if choice in ['1', '2', '4']:
-                appsym = sorted(j.findf(
-                    j.sysdir + '/app/*') + j.findf(j.sysdir + '/priv-app/*') + j.findf(j.rd + '/vendor/app/*'))
+                appsym = sorted(glob.glob(
+                    j.sysdir + '/app/*') + glob.glob(j.sysdir + '/priv-app/*') + j.findf(j.rd + '/vendor/app/*'))
                 symlib = ['ui_print("Creating symlinks...");',
                           'ui_print(" ");']
                 for i in j.grepf('/system/app|/system/priv-app', j.prfiles + '/symlinks-system'):
@@ -906,7 +906,7 @@ def superr():
                     if j.partimg(line, ' -s') == 1:
                         j.delpath(j.rd + '/META-INF')
                         os.replace(j.rd + '/META-INF1', j.rd + '/META-INF')
-                        for i in j.greps('.*.dat$|.*.list$', j.findf(j.rd + '/*')):
+                        for i in j.greps('.*.dat$|.*.list$',glob.glob(j.rd + '/*')):
                             j.delpath(i)
                         return 1
                     else:
@@ -915,7 +915,7 @@ def superr():
                     if j.partimg2(line, 'sparse') == 1:
                         j.delpath(j.rd + '/META-INF')
                         os.replace(j.rd + '/META-INF1', j.rd + '/META-INF')
-                        for i in j.greps('.*.dat$|.*.list$', j.findf(j.rd + '/*')):
+                        for i in j.greps('.*.dat$|.*.list$', glob.glob(j.rd + '/*')):
                             j.delpath(i)
                         return 1
                     else:
@@ -933,7 +933,7 @@ def superr():
                 exzipfiles.remove('data')
 
             with j.cd(j.rd):
-                exall = j.findf('*')
+                exall = glob.glob('*')
                 extmp = j.greps(
                     '.*\.new\.dat|.*\.patch\.dat|.*\.transfer\.list', exall)
                 exmod = j.getconf('mod_list', j.uconf, l=1)
@@ -987,7 +987,7 @@ def superr():
                 exzipfiles.remove('data')
 
             with j.cd(j.rd):
-                exall = j.findf('*')
+                exall = glob.glob('*')
                 extmp = j.greps('.*_new\.img', exall)
                 exmod = j.getconf('mod_list', j.uconf, l=1)
                 exzipfiles = exzipfiles + extmp + exmod + cusdir
@@ -1032,7 +1032,7 @@ def superr():
                         if x not in tmp_exl:
                             tmp_exl.append(x)
 
-                exall = j.findf('*')
+                exall = glob.glob('*')
                 exmod = j.getconf('mod_list', j.uconf, l=1)
                 exdirs = j.getconf('exdirs', j.uconf, l=1)
 
@@ -1091,7 +1091,7 @@ def superr():
         global main
         j.timegt()
 
-        if j.findf(j.prfiles + '/fs_config*') or j.existf(deviceloc + '/capfiles-' + api):
+        if glob.glob(j.prfiles + '/fs_config*') or j.existf(deviceloc + '/capfiles-' + api):
             fsconf = color['g'] + j.lang['yes'] + color['n']
         else:
             fsconf = color['r'] + j.lang['no'] + color['n']
@@ -1151,7 +1151,7 @@ def superr():
                     imglist += ['data']
 
                 with j.cd(j.prfiles):
-                    for i in j.findf('fs_config-*'):
+                    for i in glob.glob('fs_config-*'):
                         i = i.split('-')[1]
                         if j.existd(j.rd + '/' + i):
                             if i not in imglist:
@@ -1241,7 +1241,7 @@ def superr():
                 continue
             elif choice == '4':  # START Sign Existing zip
                 with j.cd(j.rd):
-                    ziplist = j.findf('*.zip')
+                    ziplist = glob.glob('*.zip')
                 countzip = len(ziplist)
                 if countzip == 1:
                     signzipname = ziplist[0].replace('.zip', '')
@@ -1480,7 +1480,7 @@ def superr():
     def choose_img(title):
         with j.cd(j.rd):
             findimg = j.greps(
-                '^boot\.img$|^recovery\.img$|^kernel\.elf$|^ramdisk\.img$', j.findf('*'))
+                '^boot\.img$|^recovery\.img$|^kernel\.elf$|^ramdisk\.img$', glob.glob('*'))
 
         countimg = len(findimg)
         chosen = ''
@@ -1518,7 +1518,7 @@ def superr():
             if j.getconf(i, j.uconf):
                 j.getconf(i, j.uconf, 'rem')
 
-        j.delpath(*j.findf('data-*'))
+        j.delpath(*glob.glob('data-*'))
 
     def debloat_rom():
         global main
@@ -1766,7 +1766,7 @@ def superr():
 
     def delete_project(curromname):
         switch = 0
-        dellist = j.findf('superr_*')
+        dellist = glob.glob('superr_*')
         dellist.sort()
         countdir = len(dellist)
         if countdir == 0:
@@ -1816,7 +1816,7 @@ def superr():
                 return nline
 
             if plist == 'all' or get_dat_line(plist) == 'system':
-                plist = j.findf('*.new.dat*')
+                plist = glob.glob('*.new.dat*')
                 if j.greps('super.new.*', plist):
                     finalimg = 'super.img'
                 else:
@@ -1853,7 +1853,7 @@ def superr():
 
         loop = 0
         while loop == 0:
-            if not j.findf('superr_*'):
+            if not glob.glob('superr_*'):
                 j.banner()
                 j.kprint(j.lang['error'], 'yrbbo')
                 j.kprint(j.lang['no_project'] + '\n', 'r')
