@@ -2635,8 +2635,8 @@ def ext4Xtract(whatimg, *vargs):
             del fsconfig
 
         if not vargs or 'c' in vargs:
-            if not greps('/' + whatimg + ' ', contexts):
-                rootcon = '/' + whatimg + ' u:object_r:' + whatimg + '_file:s0'
+            if not greps(f'/{whatimg} ', contexts):
+                rootcon = f'/{whatimg} u:object_r:{whatimg}_file:s0'
                 try:
                     rootcon = '/' + whatimg + ' ' + \
                               greps('/' + whatimg + '/bin |/' + whatimg
@@ -2662,23 +2662,21 @@ def ext4Xtract(whatimg, *vargs):
         return 0
 
     def ext4Xtract_m():
-        appendf('Extracting ' + whatimg + '.img with Mount ...',
+        appendf(f'Extracting {whatimg}.img with Mount ...',
                 logs + '/ext4_extract.log')
 
         mkdir('output')
 
-        appendf(cmd('sudo mount -t auto -o loop,ro ' + whatimg
-                    + '.img output/'), logs + '/ext4_extract.log')
+        appendf(cmd(f'sudo mount -t auto -o loop,ro {whatimg}.img output/'), logs + '/ext4_extract.log')
 
         geotest = cmd('dmesg | tail -n 1')
 
         if 'geometry' in geotest:
             geotest = geotest.strip().split()[7]
             appendf(geotest, logs + '/ext4_extract.log')
-            appendf(cmd('truncate -o -s ' + geotest + ' ' + whatimg + '.img'),
+            appendf(cmd(f'truncate -o -s {geotest} {whatimg}.img'),
                     logs + '/ext4_extract.log')
-            appendf(cmd('sudo mount -t auto -o loop,ro ' + whatimg
-                        + '.img output/'), logs + '/ext4_extract.log')
+            appendf(cmd(f'sudo mount -t auto -o loop,ro {whatimg}.img output/'), logs + '/ext4_extract.log')
 
             geotest = cmd('dmesg | tail -n 1')
             if 'geometry' in geotest:
@@ -2687,21 +2685,16 @@ def ext4Xtract(whatimg, *vargs):
                 return 1
 
         if not glob.glob('output/*'):
-            appendf('ERROR: ' + whatimg + '.img is not a valid ext4 img.',
+            appendf(f'ERROR: {whatimg}.img is not a valid ext4 img.',
                     logs + '/ext4_extract.log')
             delpath('output')
             return 1
 
         mkdir(whatimg)
-
-        if existf(tools + '/source/superrl.py'):
-            print(cmd('sudo ' + tools + '/source/superrl.py --otherfile '
-                      + tools + '/source/getmeta output ' + whatimg + ' ' + prfiles))
-        else:
-            appendf(cmd(f'sudo {tools_local}startup.py --otherfile {tools_local}getmeta.py output {whatimg} {prfiles}'),
+        appendf(cmd(f'sudo {tools_local}startup.py --otherfile {tools_local}getmeta.py output {whatimg} {prfiles}'),
                     logs + '/ext4_extract.log')
 
-        cmd('sudo chmod -R a+rwX ' + whatimg)
+        cmd(f'sudo chmod -R a+rwX {whatimg}')
         cmd('sudo chown -hR ' + whoami() + ':' + whoami() + ' ' + prfiles)
 
         cmd('sudo umount output/')
@@ -2710,7 +2703,7 @@ def ext4Xtract(whatimg, *vargs):
         return 0
 
     def ext4Xtract_7():
-        appendf('Extracting ' + whatimg + '.img with 7-zip ...',
+        appendf(f'Extracting {whatimg}.img with 7-zip ...',
                 logs + '/ext4_extract.log')
 
         delpath(whatimg, prfiles + '/symlinks-' + whatimg, prfiles
