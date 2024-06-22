@@ -3890,12 +3890,15 @@ def language_check(lang1):
     banner()
     kprint(f'Checking language file {lang1} ...', 'b')
     lang_add = []
-    for i in readfl(tools + '/language/english_srk.py'):
+    lang_ = []
+    for i in readfl(f'{tools}/language/{lang1}_srk.py'):
+        lang_.append(i.split("=")[0].strip())
+    for i in readfl(f'{tools}/language/english_srk.py'):
         if not i or i.startswith('#'):
             continue
 
-        line2 = i.split('=')[0]
-        if not grepf(f'^{line2}' + line2, tools + f'/language/{lang1}_srk.py'):
+        line2 = i.split('=')[0].strip()
+        if line2 not in lang_:
             lang_add.append(i)
 
     if lang_add:
