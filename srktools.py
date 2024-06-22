@@ -3063,7 +3063,7 @@ def fl(st, wo=None, nar1=None, nar2=None):
     if wo and nar1 and nar2:
         return '(?!' + wo + ')(?=^.*' + st + '.*$)(?=^.*' + nar1 + '.*$|^.*' + nar2 + '.*$)'
     elif nar1 and nar2 and not wo:
-        return '(?=^.*' + st + '.*$)(?=^.*' + nar1 + '.*$|^.*' + nar2 + '.*$)'
+        return f'(?=^.*{st}.*$)(?=^.*{nar1}.*$|^.*{nar2}.*$)'
     elif nar1 and not nar2 and not wo:
         return '(?=^.*' + st + '.*$)(?=^.*' + nar1 + '.*$)'
     elif wo and not nar1 and not nar2:
