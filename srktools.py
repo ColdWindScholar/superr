@@ -3888,11 +3888,11 @@ def kprint(ctext, cl=None):
 
 def language_check(lang1):
     banner()
-    kprint('Checking language file ' + lang1 + ' ...', 'b')
+    kprint(f'Checking language file {lang1} ...', 'b')
 
     lines = []
     count = 0
-    for i in readfl(tools + '/language/' + lang1 + '_srk.py'):
+    for i in readfl(f'{tools}/language/{lang1}_srk.py'):
         count += 1
         i = i.strip()
 
@@ -3901,16 +3901,6 @@ def language_check(lang1):
 
         if ' = "' not in i or not i.endswith('"'):
             lines.append(str(count))
-
-    if lines:
-        internet(server1 + '/errlog2/?e=' + mfunc2('auth = '
-                                                   + str(['LANGUAGE BROKEN:', lang1, 'lines:' + ','.join(lines)]),
-                                                   'out').decode())
-
-        banner()
-        kprint('There is something wrong with this language file\n', 'r')
-        input('Press ENTER to exit')
-        sys.exit(1)
 
     lang_add = []
     for i in readfl(tools + '/language/english_srk.py'):
