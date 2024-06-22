@@ -59,7 +59,7 @@ def adb_byname(deviceloc):
     appendf(amnt, logs + '/adb.log')
     amnt = amnt.splitlines()
     bytest = {'/APP': 'appbyname'}
-    for i in list(bytest):
+    for i in bytest.keys():
         if greps('.*' + i, amnt):
             appendf('0', deviceloc + '/superr_' + bytest[i])
             break
@@ -68,7 +68,7 @@ def adb_byname(deviceloc):
 
 
 def appendf(string, fileout):
-    if type(string).__name__ == 'list':
+    if isinstance(string, list):
         with open(fileout, 'a', encoding='utf8', newline='\n') as f:
             for i in string:
                 print(i, file=f)
@@ -79,8 +79,7 @@ def appendf(string, fileout):
 
 def appendff(filein, fileout):
     with open(fileout, 'a', encoding='utf8', newline='\n') as text_file:
-        apptest = readf(filein)
-        print(apptest, file=text_file)
+        print(readf(filein), file=text_file)
 
 
 def autorom():
