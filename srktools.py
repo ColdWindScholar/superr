@@ -20,7 +20,7 @@ from datetime import datetime, timedelta
 from shutil import copyfile, copytree, which
 from subprocess import Popen, PIPE, STDOUT
 from time import sleep
-from os.path import basename
+from os.path import basename, dirname
 import requests
 from cryptography.fernet import Fernet
 
@@ -1793,8 +1793,7 @@ def deodex_start(quiet=None):
     return
 
 
-def dirname(filename):
-    return os.path.dirname(filename)
+
 
 
 def dlfile(url, filename, bit=None):
