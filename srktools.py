@@ -4027,7 +4027,7 @@ def mfunc2(data, dtype):
 
 def mkdir(dirpath):
     if not os.path.isdir(dirpath):
-        os.makedirs(dirpath)
+        os.makedirs(dirpath, exist_ok=True)
 
 
 def mvdir(src_dir, dst_dir):

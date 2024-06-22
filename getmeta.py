@@ -54,7 +54,7 @@ def main(j, indir, partition, filedir):
         if os.path.islink(i):
             symlinks.append('symlink("'+os.readlink(i)+'", "/'+fname+'");')
         elif os.path.isfile(i):
-            j.mkdir(os.path.dirname(fname))
+            os.makedirs(os.path.dirname(fname), exist_ok=True)
 
             if case_fix == 'Yes' and j.findfiles(j.basename(i), os.path.dirname(fname)):
                 cnt = len(j.findfiles(os.path.basename(i)+'.*', os.path.dirname(fname)))
@@ -69,7 +69,7 @@ def main(j, indir, partition, filedir):
             else:
                 copyfile(i, fname)
         elif os.path.isdir(i):
-            j.mkdir(fname)
+            os.makedirs(fname, exist_ok=True)
 
         if issar:
             fname = fname.replace(partition+'/', '', 1)

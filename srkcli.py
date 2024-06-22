@@ -48,7 +48,7 @@ def main(j, args, func_dict):
 
         j.srkuser, j.srkpass, j.dbtst, j.days_left, latest_ver = j.user_auth()
 
-        j.mkdir(j.logs)
+        os.makedirs(j.logs, exist_ok=True)
 
     with j.cd(j.rd):
         if j.sar():

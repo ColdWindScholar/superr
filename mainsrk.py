@@ -42,8 +42,6 @@ def superr():
     except:
         pass
 
-
-
     depends = j.tools + '/depends/l'
 
     def assert_devices(assertch=None):
@@ -446,9 +444,9 @@ def superr():
 
                         j.cpdir(j.tools + '/updater/META-INF', j.rd + '/META-INF')
                         copyfile(j.tools + '/updater/binary/update-binary-meta',
-                             j.usdir + '/update-binary')
+                                 j.usdir + '/update-binary')
                         copyfile(j.tools + '/updater/binary/busybox-arm',
-                             j.rd + '/install/bin/busybox')
+                                 j.rd + '/install/bin/busybox')
                         j.delpath(j.usdir + '/updater-script')
                         sigtitle = ''
                         if chosenimg == 'recovery':
@@ -460,7 +458,7 @@ def superr():
                             sigzip = signature + '-kernel'
                             sigtitle = signature.replace('_', ' ') + ' Kernel'
                             copyfile(j.tools + '/updater/custom/updater-script-kernel',
-                                 j.usdir + '/updater-script')
+                                     j.usdir + '/updater-script')
 
                         if not j.existf(j.prfiles + '/assert'):
                             j.appendf(
@@ -549,7 +547,7 @@ def superr():
                             j.delpath(chosenimg + 'img', chosenimg2)
 
                             copyfile(j.prfiles + '/' + chosenimg2
-                                 + '_orig/' + chosenimg2, chosenimg2)
+                                     + '_orig/' + chosenimg2, chosenimg2)
                             j.delpath(j.prfiles + '/' + chosenimg2 + '_orig')
                         choice = ''
                         continue
@@ -670,13 +668,13 @@ def superr():
 
             j.cpdir(j.tools + '/updater/META-INF', j.rd + '/META-INF')
             copyfile(j.tools + '/updater/binary/update-binary-meta',
-                 j.usdir + '/update-binary')
+                     j.usdir + '/update-binary')
             if not j.existd(j.rd + '/install'):
                 j.configure()
 
             j.delpath(j.usdir + '/updater-script')
             copyfile(j.tools + '/updater/custom/updater-script-system',
-                 j.usdir + '/updater-script')
+                     j.usdir + '/updater-script')
             part_setup('boot')
             if not j.existf(j.prfiles + '/assert'):
                 j.appendf(j.readf(j.tools + '/updater/custom/assert'),
@@ -905,7 +903,7 @@ def superr():
                     if j.partimg(line, ' -s') == 1:
                         j.delpath(j.rd + '/META-INF')
                         os.replace(j.rd + '/META-INF1', j.rd + '/META-INF')
-                        for i in j.greps('.*.dat$|.*.list$',glob.glob(j.rd + '/*')):
+                        for i in j.greps('.*.dat$|.*.list$', glob.glob(j.rd + '/*')):
                             j.delpath(i)
                         return 1
                     else:
@@ -1363,7 +1361,7 @@ def superr():
                     j.getconf('permtype', j.uconf, add=permtype)
                     j.cpdir(j.tools + '/updater/META-INF', j.rd + '/META-INF')
                     copyfile(j.tools + '/updater/binary/update-binary-meta',
-                         j.usdir + '/update-binary')
+                             j.usdir + '/update-binary')
 
                 if j.getconf('permtype', j.uconf):
                     permtest = j.grepb('#PERM', 'set_progress', j.readfl(
@@ -1377,7 +1375,7 @@ def superr():
                               j.prfiles + '/set_metadata', j.prfiles + '/set_perm')
                     j.cpdir(j.tools + '/updater/META-INF', j.rd + '/META-INF')
                     copyfile(j.tools + '/updater/binary/update-binary-meta',
-                         j.usdir + '/update-binary')
+                             j.usdir + '/update-binary')
 
                 if not j.existf(j.prfiles + '/set_metadata1'):
                     for i in ['system'] + j.getconf('exdirs', j.uconf, l=1):
@@ -1401,7 +1399,7 @@ def superr():
                     j.getconf('permtype', j.uconf, add=permtype)
                     j.cpdir(j.tools + '/updater/META-INF', j.rd + '/META-INF')
                     copyfile(j.tools + '/updater/binary/update-binary-meta',
-                         j.usdir + '/update-binary')
+                             j.usdir + '/update-binary')
 
                 if j.getconf('permtype', j.uconf):
                     permtest = j.grepb('#PERM', 'set_progress', j.readfl(
@@ -1414,7 +1412,7 @@ def superr():
                     j.getconf('exdone', j.uconf, 'rem')
                     j.cpdir(j.tools + '/updater/META-INF', j.rd + '/META-INF')
                     copyfile(j.tools + '/updater/binary/update-binary-meta',
-                         j.usdir + '/update-binary')
+                             j.usdir + '/update-binary')
 
                 j.configure()
                 permtype = 'set_perm'
@@ -1431,7 +1429,7 @@ def superr():
                 j.cpdir(j.tools + '/updater/META-INF-DAT/META-INF',
                         j.rd + '/META-INF')
                 copyfile(j.tools + '/updater/binary/update-binary-'
-                     + abi, j.usdir + '/update-binary')
+                         + abi, j.usdir + '/update-binary')
                 if abi == 'meta':
                     j.configure()
                 else:
@@ -1447,7 +1445,7 @@ def superr():
                 j.cpdir(j.tools + '/updater/META-INF-IMG/META-INF',
                         j.rd + '/META-INF')
                 copyfile(j.tools + '/updater/binary/update-binary-meta',
-                     j.usdir + '/update-binary')
+                         j.usdir + '/update-binary')
                 j.configure()
 
                 permtype = 'raw_img'
@@ -1849,7 +1847,6 @@ def superr():
 
             return finalimg
 
-
         loop = 0
         while loop == 0:
             if not glob.glob('superr_*'):
@@ -2168,7 +2165,7 @@ def superr():
                     romzip = ''
                     j.cpdir(j.tools + '/updater/META-INF', j.rd + '/META-INF')
                     copyfile(j.tools + '/updater/binary/update-binary-meta',
-                         j.usdir + '/update-binary')
+                             j.usdir + '/update-binary')
                     j.configure()
                     update_project()
                 elif j.greps('.*.new.dat', ziptest):
@@ -2729,7 +2726,6 @@ def superr():
                             os.system(j.lz4 + ' -qB6 --content-size ' + i)
                             j.delpath(i)
 
-
                         if j.existf('super.img'):
                             romimg = 'super.img'
                         else:
@@ -2984,7 +2980,7 @@ def superr():
                         j.delpath(j.rd + '/META-INF', j.rd + '/install')
                         j.cpdir(j.tools + '/updater/META-INF', j.rd + '/META-INF')
                         copyfile(j.tools + '/updater/binary/update-binary-meta',
-                             j.usdir + '/update-binary')
+                                 j.usdir + '/update-binary')
                         j.configure()
                         j.delpath(j.prfiles + '/debloat_test',
                                   j.prfiles + '/debloat_test_custom')
@@ -5408,7 +5404,9 @@ def superr():
             j.banner()
             j.kprint(j.lang['sign_signing'] + signzipname + '.zip ...', 'b')
             with j.cd(j.rd):
-                j.appendf(j.cmd(f'java -Xmx{heapsize}m -jar {j.tools}/signapk/signapk.jar -w {j.tools}/signapk/testkey.x509.pem {j.tools}/signapk/testkey.pk8 {signzipname}.zip {signzipname}-signed.zip'), j.logs + '/sign.log')
+                j.appendf(j.cmd(
+                    f'java -Xmx{heapsize}m -jar {j.tools}/signapk/signapk.jar -w {j.tools}/signapk/testkey.x509.pem {j.tools}/signapk/testkey.pk8 {signzipname}.zip {signzipname}-signed.zip'),
+                          j.logs + '/sign.log')
                 ubtmp = j.greps('.*update-binary', j.zipl(signzipname + '.zip'))
                 if ubtmp:
                     j.appendf(j.zipef(signzipname + '.zip',
@@ -5597,7 +5595,7 @@ def superr():
                                     metasetup(i)
 
                         copyfile(j.tools + '/updater/binary/update-binary-meta',
-                             j.usdir + '/update-binary')
+                                 j.usdir + '/update-binary')
                         j.getconf('permtype', j.uconf, add=permtype)
                     elif choice == '2':  # set_perm chosen
                         if api > '18':
@@ -5609,7 +5607,7 @@ def superr():
 
                         permtype = 'set_perm'
                         copyfile(j.tools + '/updater/binary/update-binary-meta',
-                             j.usdir + '/update-binary')
+                                 j.usdir + '/update-binary')
                         j.getconf('permtype', j.uconf, add=permtype)
                     elif choice == '3':  # Sparse dat chosen
                         if api < '21':
@@ -5622,7 +5620,7 @@ def superr():
                         j.cpdir(j.tools + '/updater/META-INF-DAT/META-INF',
                                 j.rd + '/META-INF')
                         copyfile(j.tools + '/updater/binary/update-binary-'
-                             + abi, j.usdir + '/update-binary')
+                                 + abi, j.usdir + '/update-binary')
                         j.configure(abi.replace('_64', '').replace('64', ''))
                         j.getconf('permtype', j.uconf, add=permtype)
 
@@ -5637,7 +5635,7 @@ def superr():
                                 j.rd + '/META-INF')
                         j.configure()
                         copyfile(j.tools + '/updater/binary/update-binary-meta',
-                             j.usdir + '/update-binary')
+                                 j.usdir + '/update-binary')
                         permtype = 'raw_img'
                         j.getconf('permtype', j.uconf, add=permtype)
 
