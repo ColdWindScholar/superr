@@ -1532,7 +1532,7 @@ def superr():
                         continue
 
                     debdir = j.dirname(i)
-                    debfile = j.basename(i)
+                    debfile = os.path.basename(i)
 
                     if choice2 == '1':
                         j.mkdir(j.prfiles + '/debloated_files/' + debdir)
@@ -1850,7 +1850,7 @@ def superr():
 
             return finalimg
 
-        istar = None
+
         loop = 0
         while loop == 0:
             if not j.findf('superr_*'):
@@ -2437,7 +2437,7 @@ def superr():
 
                         for i in zipulist:
                             j.mkdir('tmppac')
-                            pacname = j.basename(i)
+                            pacname = os.path.basename(i)
 
                             with j.cd('tmppac'):
                                 j.appendf(j.zipef('../' + romzip, i),
@@ -2610,7 +2610,7 @@ def superr():
 
                 eximage = j.greps('image-', tartest)[0]
                 exdir = j.dirname(eximage)
-                imagezip = j.basename(eximage)
+                imagezip = os.path.basename(eximage)
                 j.banner()
                 j.kprint(j.lang['extract_files'], 'b')
                 with j.cd(j.rd):
@@ -2652,7 +2652,7 @@ def superr():
                         '.*' + '.img|.*'.join(j.partslist) + '.img|.*boot.img', j.findr('tmptar/**/*.img'))
 
                     for i in tarulist:
-                        os.replace(i, j.basename(i))
+                        os.replace(i, os.path.basename(i))
 
                     j.delpath('tmptar')
 
@@ -2858,7 +2858,7 @@ def superr():
                                             cscfull = j.greps(
                                                 '.*\.zip', cscfull)[0]
                                             cscdir = j.dirname(cscfull)
-                                            csczip = j.basename(cscfull)
+                                            csczip = os.path.basename(cscfull)
                                             with j.cd(cscdir):
                                                 j.appendf(
                                                     j.zipu(csczip), j.logs + '/zip.log')
@@ -3349,7 +3349,7 @@ def superr():
             with j.cd(j.tools):
                 for i in md5tmp:
                     j.delpath(i)
-                    ibase = j.basename(i)
+                    ibase = os.path.basename(i)
                     j.dlfile(i + '.zip', ibase + '.zip', 1)
                     j.zipu(ibase + '.zip')
                     j.delpath(ibase + '.zip')
@@ -3376,7 +3376,7 @@ def superr():
             with j.cd(j.tools + '/updater/binary'):
                 for i in ubcheck:
                     j.delpath(j.tools + '/' + i)
-                    j.dlfile(i, j.basename(i), 1)
+                    j.dlfile(i, os.path.basename(i), 1)
 
         del ubcheck
 
@@ -3426,7 +3426,7 @@ def superr():
             else:
                 toolprint = []
                 for i in toolsfail:
-                    toolprint.append(j.basename(i))
+                    toolprint.append(os.path.basename(i))
                     if i != tooldir:
                         j.delpath(j.tools + '/' + i)
 
@@ -3779,7 +3779,7 @@ def superr():
                 roots = 'Magisk'
             elif j.existd(j.rd + '/rootzip'):
                 try:
-                    roots = j.basename(j.findf(j.rd + '/rootzip/*.zip')[0])
+                    roots = os.path.basename(j.findf(j.rd + '/rootzip/*.zip')[0])
                 except:
                     pass
 
@@ -5254,7 +5254,7 @@ def superr():
 
         with j.cd(j.usdir):
             if bbpath:
-                busybox = j.basename(bbpath[0])
+                busybox = os.path.basename(bbpath[0])
                 if not j.grepf('^#BUSYBOX', 'updater-script'):
                     j.awkadd('#ROOT', '#BUSYBOX', 'after',
                              'last', 'updater-script')

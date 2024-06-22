@@ -56,7 +56,7 @@ def main(j, indir, partition, filedir):
             j.mkdir(j.dirname(fname))
 
             if case_fix == 'Yes' and j.findfiles(j.basename(i), j.dirname(fname)):
-                cnt = len(j.findfiles(j.basename(i)+'.*', j.dirname(fname)))
+                cnt = len(j.findfiles(os.path.basename(i)+'.*', j.dirname(fname)))
                 j.cp(i, fname+'.ex'+str(cnt)+'.srk')
 
                 nfname = fname.replace(partition+'/', '', 1)
