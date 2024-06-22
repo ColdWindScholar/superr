@@ -3017,10 +3017,6 @@ def fsize(filename):
     return os.stat(filename).st_size
 
 
-def findf(longpath):
-    return glob.glob(longpath)
-
-
 def findfiles(whatfile, where='.', infile=None):
     import fnmatch
 
