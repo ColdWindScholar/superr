@@ -1089,7 +1089,7 @@ def deodex_start(quiet=None):
                     continue
                 line2 = line.split('__')[0]
                 frametmp2 = sorted(
-                    greps('^' + line2 + '__.*', frametmp), key=str.lower)
+                    greps(f'^{line2}__.*', frametmp), key=str.lower)
                 for line3 in frametmp2:
                     line4 = line3.split('__')[1]
                     os.replace(line3, line4)
@@ -3447,12 +3447,7 @@ def grepff(searcht, filename, newfile):
 
 
 def greps(searcht, gstr):
-    searcht = searcht.replace('+', '\+')
-    gstest = []
-    for line in gstr:
-        if re.search(searcht, line):
-            gstest.append(line)
-    return gstest
+    return [line for line in gstr if re.search(searcht.replace('+', '\+'), line)]
 
 
 def grepv(searcht, thelist):
