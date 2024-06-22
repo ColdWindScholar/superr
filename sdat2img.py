@@ -43,7 +43,7 @@ def main(TRANSFER_LIST_FILE, NEW_DATA_FILE, OUTPUT_IMAGE_FILE):
                 sys.exit(1)
 
         trans_list.close()
-        return (version, new_blocks, commands)
+        return version, new_blocks, commands
 
     BLOCK_SIZE = 4096
     version, new_blocks, commands = parse_transfer_list_file(TRANSFER_LIST_FILE)

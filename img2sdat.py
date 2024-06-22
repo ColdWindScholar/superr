@@ -1,39 +1,24 @@
-
 from __future__ import print_function
 
-import blockimgdiff
 import os
-import sparse_img
-import sys
 import tempfile
+
+import blockimgdiff
+import sparse_img
 
 
 def main(INPUT_IMAGE, OUTDIR='.', VERSION=None, PREFIX='system'):
-    global input
     __version__ = '1.6'
-    if sys.hexversion < 34013184:
-        (
-         print >> sys.stderr, 'Python 2.7 or newer is required.')
-        try:
-            input = raw_input
-        except NameError:
-            pass
 
-        input('Press ENTER to exit...')
-        sys.exit(1)
-    else:
-        print('img2sdat binary - version: %s\n' % __version__)
+    print('img2sdat binary - version: %s\n' % __version__)
     if not os.path.isdir(OUTDIR):
         os.makedirs(OUTDIR)
     OUTDIR = OUTDIR + '/' + PREFIX
     if not VERSION:
         VERSION = 4
         while True:
-            print('            1. Android Lollipop 5.0\n            2. Android Lollipop 5.1\n            3. Android Marshmallow 6.0\n            4. Android Nougat 7.0/7.1/8.0/8.1\n            ')
-            try:
-                input = raw_input
-            except NameError:
-                pass
+            print(
+                '            1. Android Lollipop 5.0\n            2. Android Lollipop 5.1\n            3. Android Marshmallow 6.0\n            4. Android Nougat 7.0/7.1/8.0/8.1\n            ')
 
             item = input('Choose system version: ')
             if item == '1':
@@ -60,10 +45,12 @@ def main(INPUT_IMAGE, OUTDIR='.', VERSION=None, PREFIX='system'):
 
 if __name__ == '__main__':
     import argparse
+
     parser = argparse.ArgumentParser(description='Visit xda thread for more information.')
     parser.add_argument('image', help='input system image')
     parser.add_argument('-o', '--outdir', help='output directory (current directory by default)')
-    parser.add_argument('-v', '--version', help='transfer list version number, will be asked by default - more info on xda thread)')
+    parser.add_argument('-v', '--version',
+                        help='transfer list version number, will be asked by default - more info on xda thread)')
     parser.add_argument('-p', '--prefix', help='name of image (prefix.new.dat)')
     args = parser.parse_args()
     INPUT_IMAGE = args.image
