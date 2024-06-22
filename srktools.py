@@ -185,7 +185,7 @@ def boot_pack(filetype, filetype2, bootext=None, quiet=None):
             appendf(cmd(issudo2 + AIK + '/cleanup.sh --local'), logs + '/boot.log')
 
     with cd(bd):
-        appendf(cmd(rampy() + 'delram ' + romname + ' ' + filetype), logs + '/boot.log')
+        appendf(cmd(rampy() + f'delram {romname} {filetype}'), logs + '/boot.log')
 
     if not bootext and not quiet:
         banner()
@@ -244,13 +244,11 @@ class cd(object):
 
 
 def new_project():
-    ospath = './'
-    while os.path.exists(ospath):
-        romname = ''
+    while os.path.exists('./'):
         banner()
         kprint(lang['new_q'] + '\n')
         romname = input().replace(' ', '_')
-        ospath = './superr_' + romname
+        ospath = f'./superr_{romname}'
         if os.path.exists(ospath):
             kprint('\n' + lang['new_already'] + '\n')
             input(lang['enter_try_again'])
@@ -714,8 +712,7 @@ def deodex_start(quiet=None):
                                 + ' -o smali'), logs + '/deodex.log')
                             if glob.glob('smali/*'):
                                 appendf(cmd(
-                                    'java -Xmx' + heapsize + 'm -jar ' + smali
-                                    + ' assemble -a ' + api + ' smali -o ' + dexclass),
+                                    f'java -Xmx{heapsize}m -jar {smali} assemble -a {api} smali -o {dexclass}'),
                                     logs + '/deodex.log')
                             delpath('smali')
                             if not existf(dexclass):
@@ -3861,7 +3858,7 @@ def kitchen_update(jupdate=None, averify=None):
                 if ilcv != ilnv:
                     with cd(bd):
                         dlfile(server1 + '/next/srkil/srkil', 'srkil')
-                        retval = cmd(
+                        cmd(
                             'chmod +x srkil; ./srkil -u; ./srkil -i; rm -f srkil')
 
         if not jupdate and not getconf('updatecheck', mconf):
