@@ -3,6 +3,8 @@
 import sys
 import argparse
 from collections import OrderedDict
+import imp
+import srktools as j
 
 func_dict = OrderedDict([
     ('unpack_img', 'partition.img'),
@@ -22,7 +24,7 @@ def do_parse():
 
     def req_check(argr):
         for i in argr:
-            if '--'+i in sys.argv or '-'+i[0] in sys.argv:
+            if '--' + i in sys.argv or '-' + i[0] in sys.argv:
                 return True
         return False
 
@@ -51,14 +53,14 @@ def do_parse():
         nargs='+',
         metavar=('FUNCTION', 'ARGS'),
         help='\nFUNCTION OPTIONS/EXAMPLES:\n'
-        + '-'.ljust(26, '-')+'\n-f '
-        + '\n-f '.join([i+' '+func_dict[i] for i in func_dict])
+             + '-'.ljust(26, '-') + '\n-f '
+             + '\n-f '.join([i + ' ' + func_dict[i] for i in func_dict])
     )
     optional.add_argument(
         '-p', '--project',
         required=req_check(['function']),
         metavar='DIRECTORY',
-        help='\nEXAMPLE:\n'+'-'.ljust(8, '-')+'\n-p superr_Name\n '
+        help='\nEXAMPLE:\n' + '-'.ljust(8, '-') + '\n-p superr_Name\n '
     )
     optional.add_argument(
         '-h', '--help',
@@ -69,11 +71,11 @@ def do_parse():
     return parser.parse_args()
 
 
-def main(j, mfunc):
+def main():
     args = do_parse()
 
     if args.function:
-        srkcli = mfunc(sys._MEIPASS+'/srkcli')
+        srkcli = imp.load_source('module', 'srkcli')
         srkcli.main(j, args, func_dict)
     elif args.mainram:
         syslen = len(args.mainram)
@@ -97,11 +99,15 @@ def main(j, mfunc):
             print('ramdisk cannot be run outside the kitchen')
             sys.exit(1)
 
-        mainram = mfunc(base+'/tools/source/mainram')
+        mainram = imp.load_source('module', 'mainram')
         mainram.ramdisk(j, base, func, romname, filetype, action, extra)
     elif args.otherfile:
-        otherfile = mfunc(args.otherfile[0])
+        otherfile = imp.load_source('module', args.otherfile[0])
         otherfile.main(j, *args.otherfile[1:])
     else:
-        mainsrk = mfunc(sys._MEIPASS+'/mainsrk')
-        mainsrk.superr(j, mfunc)
+        mainsrk = imp.load_source('module', 'mainsrk')
+        mainsrk.superr()
+
+
+if __name__ == '__main__':
+    main()

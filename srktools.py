@@ -150,8 +150,7 @@ def bbdown(dlurl):
     page = internet(dlurl + '/', 1).splitlines()
     page2 = []
     for i in greps('.*href.*.zip|.*href.*.exe|.*href.*changelog', page):
-        i = basename(i.split('"')[1])
-        page2.append(i)
+        page2.append(basename(i.split('"')[1]))
 
     return sorted(page2)
 
@@ -4709,7 +4708,7 @@ def plug_update(plugins, getlist=None, quiet=None):
                 delpath(i)
                 dlfile('plugins/' + i + '.zip', i + '.zip', 1)
                 internet(server1 + '/dllog/?f=PLUG_' + i + '.zip&u=' + srkuser)
-                tmpz = zipu(i + '.zip')
+                zipu(i + '.zip')
                 appendf(pluglist[1][i], i + '/plugmd5')
                 delpath(i + '.zip')
 
@@ -4717,10 +4716,7 @@ def plug_update(plugins, getlist=None, quiet=None):
 def rampy(filetype=None):
     issudo3 = issudo2 or 'sudo '
 
-    if existf(tools + '/source/superrl.py'):
-        return issudo3 + tools + '/source/superrl.py --mainram ' + bd + ' '
-
-    return issudo3 + tools + '/source/superr --mainram ' + bd + ' '
+    return issudo3 + tools_local + f'startup.py --mainram {bd} '
 
 
 def randm():
@@ -5639,6 +5635,7 @@ androidversion = None
 
 bd = os.getcwd()
 tools = bd + os.sep + 'tools'
+tools_local = bd + os.sep
 mconf = tools + os.sep + 'srk.conf'
 tsize = 60
 
