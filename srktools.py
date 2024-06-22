@@ -972,8 +972,7 @@ def deodex_start(quiet=None):
 
                     print('\n' + lang['deodex_deodexing'] + line + '\n')
 
-                    classes = cmd('java -Xmx' + heapsize + 'm -jar '
-                                  + baksmali + ' list dex ' + line).splitlines()
+                    classes = cmd(f'java -Xmx{heapsize}m -jar {baksmali} list dex {line}').splitlines()
                     appendf(classes, logs + '/deodex.log')
                     for line2 in classes:
                         line2 = basename(line2)
@@ -984,8 +983,7 @@ def deodex_start(quiet=None):
                             line3 = line2.split(':')[0]
                             dexclass = line2.split(':')[1]
 
-                        sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + baksmali + \
-                                ' deodex -b boot.oat ' + line + os.sep + line2 + ' -o smali'
+                        sdcmd = f'java -Xmx{heapsize}m -jar {baksmali} deodex -b boot.oat {line}{os.sep}{line2} -o smali'
                         appendf(sdcmd, logs + '/deodex.log')
                         appendf(cmd(sdcmd), logs + '/deodex.log')
 
@@ -1017,7 +1015,7 @@ def deodex_start(quiet=None):
 
                         with cd(framedir + '/' + deoarch2):
                             classes = cmd(
-                                'java -Xmx' + heapsize + 'm -jar ' + baksmali + ' list dex ' + frame).splitlines()
+                                f'java -Xmx{heapsize}m -jar {baksmali} list dex {frame}').splitlines()
                             appendf(classes, logs + os.sep + 'deodex.log')
                             for line in classes:
                                 apkdex = basename(line)
@@ -1026,14 +1024,12 @@ def deodex_start(quiet=None):
                                 else:
                                     dexclass = apkdex.replace(':', '__')
 
-                                sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + baksmali + \
-                                        ' deodex -b boot.oat ' + frame + '/' + apkdex + ' -o smali'
+                                sdcmd = f'java -Xmx{heapsize}m -jar {baksmali} deodex -b boot.oat {frame}/{apkdex} -o smali'
                                 appendf(sdcmd, logs + '/deodex.log')
                                 appendf(cmd(sdcmd), logs + '/deodex.log')
 
                                 if glob.glob('smali/*'):
-                                    sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + smali + \
-                                            ' assemble -a ' + api + ' smali -o ' + dexclass
+                                    sdcmd = f'java -Xmx{heapsize}m -jar {smali} assemble -a {api} smali -o {dexclass}'
                                     appendf(sdcmd, logs + '/deodex.log')
                                     appendf(cmd(sdcmd), logs + '/deodex.log')
                                     try:
@@ -1057,8 +1053,7 @@ def deodex_start(quiet=None):
                         print('\n' + lang['deodex_deodexing'] + frame + '\n')
 
                         with cd(framedir + '/' + deoarch2):
-                            appendf(cmd('java -Xmx' + heapsize + 'm -jar '
-                                        + oat2dex + ' ' + frame + ' odex'), logs + '/deodex.log')
+                            appendf(cmd(f'java -Xmx{heapsize}m -jar {oat2dex} {frame} odex'), logs + '/deodex.log')
                             delpath(frame)
                             for i in glob.glob('*.dex'):
                                 os.replace(i, framedir + '/' + deoarch + '/' + i)
@@ -1197,7 +1192,7 @@ def deodex_start(quiet=None):
         return
 
     def deodex_vdex(dtype):
-        arch, arch2 = '', ''
+        arch = arch2 = ''
         for i in ['arm64', 'x86_64', 'arm', 'x86']:
             arch = findr(framedir + '/**/' + i)
             if arch:
@@ -2597,7 +2592,8 @@ def ext4Xtract(whatimg, *vargs):
 
                 if dirr:
                     try:
-                        fsconfig = [f'{whatimg} {str(root.inode.i_uid)} {str(root.inode.i_gid)} {getperm(root.mode_str)}']
+                        fsconfig = [
+                            f'{whatimg} {str(root.inode.i_uid)} {str(root.inode.i_gid)} {getperm(root.mode_str)}']
                     except:
                         if whatimg in ['system', 'product', 'system_ext']:
                             fsconfig = [whatimg + ' 0 0 0755']
@@ -2692,7 +2688,7 @@ def ext4Xtract(whatimg, *vargs):
 
         mkdir(whatimg)
         appendf(cmd(f'sudo {tools_local}startup.py --otherfile {tools_local}getmeta.py output {whatimg} {prfiles}'),
-                    logs + '/ext4_extract.log')
+                logs + '/ext4_extract.log')
 
         cmd(f'sudo chmod -R a+rwX {whatimg}')
         cmd('sudo chown -hR ' + whoami() + ':' + whoami() + ' ' + prfiles)
@@ -3442,7 +3438,6 @@ def greps(searcht, gstr):
 
 def grepv(searcht, thelist):
     return [line for line in thelist if not re.search(searcht, line)]
-
 
 
 def grepvf(searcht, filename):
