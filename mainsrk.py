@@ -2536,7 +2536,7 @@ def superr():
                                         data = f.seek(offset)
                                         data = f.read(15360)
                                         while data:
-                                            devnull = o.write(data)
+                                            o.write(data)
                                             data = f.read(15360)
 
                                 if j.existf(rimg) and not j.existf(rimg.replace('.raw', '')):
@@ -2730,7 +2730,7 @@ def superr():
                             os.system(j.lz4 + ' -qB6 --content-size ' + i)
                             j.delpath(i)
 
-                        romtar = ''
+
                         if j.existf('super.img'):
                             romimg = 'super.img'
                         else:
