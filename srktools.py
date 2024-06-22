@@ -3889,31 +3889,17 @@ def kprint(ctext, cl=None):
 def language_check(lang1):
     banner()
     kprint(f'Checking language file {lang1} ...', 'b')
-
-    lines = []
-    count = 0
-    for i in readfl(f'{tools}/language/{lang1}_srk.py'):
-        count += 1
-        i = i.strip()
-
-        if not i or i.startswith('#'):
-            continue
-
-        if ' = "' not in i or not i.endswith('"'):
-            lines.append(str(count))
-
     lang_add = []
     for i in readfl(tools + '/language/english_srk.py'):
         if not i or i.startswith('#'):
             continue
 
         line2 = i.split('=')[0]
-        if not grepf('^' + line2, tools + '/language/' + lang1 + '_srk.py'):
+        if not grepf(f'^{line2}' + line2, tools + f'/language/{lang1}_srk.py'):
             lang_add.append(i)
 
     if lang_add:
-        appendf('\n# Needs translation\n' + '\n'.join(lang_add),
-                tools + '/language/' + lang1 + '_srk.py')
+        appendf('\n# Needs translation\n' + '\n'.join(lang_add),f'{tools}/language/{lang1}_srk.py')
 
         return 1
     else:
@@ -4718,7 +4704,7 @@ def readf(filename):
 def readfl(filename):
     try:
         with open(filename, 'r', encoding=utftest(filename)) as f:
-            return f.read().splitlines()
+            return f.readlines()
     except:
         return []
 
