@@ -28,40 +28,40 @@ from cryptography.fernet import Fernet
 def adb_byname(deviceloc):
     try:
         byname = cmd(
-            adb+' shell "find /dev -name by-name 2>/dev/null"').splitlines()[0].strip()
+            adb + ' shell "find /dev -name by-name 2>/dev/null"').splitlines()[0].strip()
     except Exception as e:
-        appendf(logtb(e), logs+'/adb.log')
+        appendf(logtb(e), logs + '/adb.log')
 
     if not byname or 'by-name' not in byname:
         try:
             byname = cmd(
-                adb+' shell su -c "find /dev -name by-name 2>/dev/null"').splitlines()[0].strip()
+                adb + ' shell su -c "find /dev -name by-name 2>/dev/null"').splitlines()[0].strip()
         except Exception as e:
-            appendf(logtb(e), logs+'/adb.log')
+            appendf(logtb(e), logs + '/adb.log')
 
     devicename = get_devicename()
-    deviceloc = tools+os.sep+'devices'+os.sep+devicename
+    deviceloc = tools + os.sep + 'devices' + os.sep + devicename
 
     if not byname or 'by-name' not in byname:
-        delpath(deviceloc+'/superr_byname')
-        appendf('by-name: '+byname, logs+'/adb.log')
+        delpath(deviceloc + '/superr_byname')
+        appendf('by-name: ' + byname, logs + '/adb.log')
         banner()
         kprint(lang['error'], 'yrbbo')
         kprint(lang['byname_error_device'], 'r')
-        kprint(lang['byname_error_device2']+'\n', 'r')
+        kprint(lang['byname_error_device2'] + '\n', 'r')
         input(lang['enter_continue'])
         return 1
 
-    if not existf(deviceloc+'/superr_byname'):
-        appendf(byname, deviceloc+'/superr_byname')
+    if not existf(deviceloc + '/superr_byname'):
+        appendf(byname, deviceloc + '/superr_byname')
 
-    amnt = cmd(adb+' shell "mount"')
-    appendf(amnt, logs+'/adb.log')
+    amnt = cmd(adb + ' shell "mount"')
+    appendf(amnt, logs + '/adb.log')
     amnt = amnt.splitlines()
     bytest = {'/APP': 'appbyname'}
     for i in list(bytest):
-        if greps('.*'+i, amnt):
-            appendf('0', deviceloc+'/superr_'+bytest[i])
+        if greps('.*' + i, amnt):
+            appendf('0', deviceloc + '/superr_' + bytest[i])
             break
 
     return byname
@@ -84,7 +84,7 @@ def appendff(filein, fileout):
 
 
 def autorom():
-    if existf(prfiles+'/AR-config'):
+    if existf(prfiles + '/AR-config'):
         return 1
     else:
         return None
@@ -99,11 +99,11 @@ def awkadd(searcht, newline, loc, freq, filename):
                     awktest.append(i)
         if awktest:
             countmatch = len(awktest)
-            with open(filename, 'r') as f, open(filename+'-tmp', 'w', newline='\n') as ft:
+            with open(filename, 'r') as f, open(filename + '-tmp', 'w', newline='\n') as ft:
                 for i, line in enumerate(f):
                     position = ''
                     if freq == 'last':
-                        position = awktest[countmatch-1]
+                        position = awktest[countmatch - 1]
                     elif freq == 'first':
                         position = awktest[0]
                     elif freq == 'all':
@@ -117,7 +117,7 @@ def awkadd(searcht, newline, loc, freq, filename):
                             ft.write('{}\n{}'.format(newline, line))
                     else:
                         ft.write(line)
-            os.replace(filename+'-tmp', filename)
+            os.replace(filename + '-tmp', filename)
 
 
 def awktop(line, filename):
@@ -132,8 +132,8 @@ def banner(quiet=None):
         clears()
         print()
         print('-'.center(tsize, '-'))
-        kprint(intro1+"SuperR's Kitchen".center(tsize))
-        kprint(intro2+'by SuperR'.center(tsize))
+        kprint(intro1 + "SuperR's Kitchen".center(tsize))
+        kprint(intro2 + 'by SuperR'.center(tsize))
         print('-'.center(tsize, '-'))
         print()
 
@@ -143,14 +143,13 @@ def bencode(thestring):
 
 
 def basename(filename):
-    osbase = os.path.basename(filename)
-    return osbase
+    return os.path.basename(filename)
 
 
 def bbdown(dlurl):
-    page = internet(dlurl+'/', 1).splitlines()
+    page = internet(dlurl + '/', 1).splitlines()
     page2 = []
-    for i in greps('.*href.*\.zip|.*href.*\.exe|.*href.*changelog', page):
+    for i in greps('.*href.*.zip|.*href.*.exe|.*href.*changelog', page):
         i = basename(i.split('"')[1])
         page2.append(i)
 
@@ -162,37 +161,37 @@ def boot_pack(filetype, filetype2, bootext=None, quiet=None):
         banner()
 
     if not bootext:
-        kprint(lang['boot_repack']+filetype2+' ...\n', 'b')
+        kprint(lang['boot_repack'] + filetype2 + ' ...\n', 'b')
 
-    bootdir = rd+'/'+filetype+'img'
+    bootdir = rd + '/' + filetype + 'img'
 
     get_devicename()
-    if not existf(prfiles+'/'+filetype2+'_orig/'+filetype2):
-        mkdir(prfiles+'/'+filetype2+'_orig')
-        cp(rd+'/'+filetype2, prfiles+'/'+filetype2+'_orig/'+filetype2)
+    if not existf(prfiles + '/' + filetype2 + '_orig/' + filetype2):
+        mkdir(prfiles + '/' + filetype2 + '_orig')
+        cp(rd + '/' + filetype2, prfiles + '/' + filetype2 + '_orig/' + filetype2)
 
     with cd(bootdir):
-        appendf(cmd(issudo2+AIK+'/repackimg.sh --local'), logs+'/boot.log')
+        appendf(cmd(issudo2 + AIK + '/repackimg.sh --local'), logs + '/boot.log')
         chown('image-new.img')
 
         if not existf('image-new.img'):
             if not quiet:
                 banner()
                 kprint(lang['error'], 'yrbbo')
-                kprint(lang['boot_repack_problem']+filetype+'\n', 'r')
+                kprint(lang['boot_repack_problem'] + filetype + '\n', 'r')
                 input(lang['enter_continue'])
             else:
-                appendf('ERROR: boot repack problem', logs+'/boot.log')
+                appendf('ERROR: boot repack problem', logs + '/boot.log')
         else:
-            cp('image-new.img', rd+'/'+filetype2)
-            appendf(cmd(issudo2+AIK+'/cleanup.sh --local'), logs+'/boot.log')
+            cp('image-new.img', rd + '/' + filetype2)
+            appendf(cmd(issudo2 + AIK + '/cleanup.sh --local'), logs + '/boot.log')
 
     with cd(bd):
-        appendf(cmd(rampy()+'delram '+romname+' '+filetype), logs+'/boot.log')
+        appendf(cmd(rampy() + 'delram ' + romname + ' ' + filetype), logs + '/boot.log')
 
     if not bootext and not quiet:
         banner()
-        kprint(filetype+'.img'+lang['boot_packed_d']+'\n', 'g')
+        kprint(filetype + '.img' + lang['boot_packed_d'] + '\n', 'g')
         input(lang['enter_continue'])
 
     return
@@ -203,33 +202,33 @@ def boot_unpack(filetype, filetype2, bootext=None, quiet=None):
         banner()
 
     if not bootext:
-        kprint(lang['boot_unpack']+filetype2+' ...\n', 'b')
+        kprint(lang['boot_unpack'] + filetype2 + ' ...\n', 'b')
 
-    bootdir = rd+'/'+filetype+'img'
+    bootdir = rd + '/' + filetype + 'img'
     get_devicename()
 
-    if existf(rd+'/'+filetype2):
+    if existf(rd + '/' + filetype2):
         mkdir(bootdir)
-        os.replace(rd+'/'+filetype2, bootdir+'/'+filetype2)
+        os.replace(rd + '/' + filetype2, bootdir + '/' + filetype2)
 
         with cd(bootdir):
-            appendf(cmd(issudo2+AIK+'/unpackimg.sh --local '
-                    + filetype2), logs+'/boot.log')
+            appendf(cmd(issudo2 + AIK + '/unpackimg.sh --local '
+                        + filetype2), logs + '/boot.log')
 
-            os.replace(filetype2, rd+'/'+filetype2)
+            os.replace(filetype2, rd + '/' + filetype2)
 
         if (filetype == 'boot'
-                        and not existf(bootdir+'/ramdisk/default.prop')
-                        and not os.path.islink(bootdir+'/ramdisk/default.prop')):
-            appendf('INFO: No default.prop in ramdisk', logs+'/boot.log')
+                and not existf(bootdir + '/ramdisk/default.prop')
+                and not os.path.islink(bootdir + '/ramdisk/default.prop')):
+            appendf('INFO: No default.prop in ramdisk', logs + '/boot.log')
     else:
         if not quiet:
             banner()
             kprint(lang['error'], 'yrbbo')
-            kprint(lang['boot_need_img']+'\n', 'r')
+            kprint(lang['boot_need_img'] + '\n', 'r')
             input(lang['enter_continue'])
         else:
-            appendf('ERROR: No img to unpack', logs+'/boot.log')
+            appendf('ERROR: No img to unpack', logs + '/boot.log')
 
     return
 
@@ -251,51 +250,51 @@ def new_project():
     while os.path.exists(ospath):
         romname = ''
         banner()
-        kprint(lang['new_q']+'\n')
+        kprint(lang['new_q'] + '\n')
         romname = input().replace(' ', '_')
-        ospath = './superr_'+romname
+        ospath = './superr_' + romname
         if os.path.exists(ospath):
-            kprint('\n'+lang['new_already']+'\n')
+            kprint('\n' + lang['new_already'] + '\n')
             input(lang['enter_try_again'])
 
     return romname
 
 
 def check_ci(whatimg, old=None, new=None):
-    ci_files = getconf('case_files_'+whatimg, uconf, l=1)
+    ci_files = getconf('case_files_' + whatimg, uconf, l=1)
 
     if old and ci_files and getconf('case_fix', mconf) == 'Yes':
         for i in ci_files:
-            x = greps(i+' ', readfl(prfiles+'/fs_config-'+whatimg))
-            y = greps('/'+i+' ', readfl(prfiles+'/file_contexts3-'+whatimg))
+            x = greps(i + ' ', readfl(prfiles + '/fs_config-' + whatimg))
+            y = greps('/' + i + ' ', readfl(prfiles + '/file_contexts3-' + whatimg))
 
             if x or y:
-                cnt = len(findfiles(basename(i)+'.*', dirname(i),
-                          prfiles+'/fs_config-'+whatimg))
+                cnt = len(findfiles(basename(i) + '.*', dirname(i),
+                                    prfiles + '/fs_config-' + whatimg))
 
                 if x:
                     a = x[0].split()[0] + '.ex' + str(cnt) + '.srk '
-                    sedf(x[0].split()[0]+' ', a, prfiles+'/fs_config-'+whatimg)
+                    sedf(x[0].split()[0] + ' ', a, prfiles + '/fs_config-' + whatimg)
 
                 if y:
                     a = y[0].split()[0] + '.ex' + str(cnt) + '.srk '
-                    sedf(y[0].split()[0]+' ', a, prfiles
-                         + '/file_contexts3-'+whatimg)
+                    sedf(y[0].split()[0] + ' ', a, prfiles
+                         + '/file_contexts3-' + whatimg)
 
     if new and ci_files:
         for i in ci_files:
-            x = greps(i+'.ex.*.srk ', readfl(prfiles+'/fs_config-'+whatimg))
-            y = greps('/'+i+'.ex.*.srk ',
-                      readfl(prfiles+'/file_contexts3-'+whatimg))
+            x = greps(i + '.ex.*.srk ', readfl(prfiles + '/fs_config-' + whatimg))
+            y = greps('/' + i + '.ex.*.srk ',
+                      readfl(prfiles + '/file_contexts3-' + whatimg))
 
             if x:
-                a = x[0].split()[0][:-8]+' '
-                sedf(x[0].split()[0]+' ', a, prfiles+'/fs_config-'+whatimg)
+                a = x[0].split()[0][:-8] + ' '
+                sedf(x[0].split()[0] + ' ', a, prfiles + '/fs_config-' + whatimg)
 
             if y:
-                a = y[0].split()[0][:-8]+' '
-                sedf(y[0].split()[0]+' ', a, prfiles
-                     + '/file_contexts3-'+whatimg)
+                a = y[0].split()[0][:-8] + ' '
+                sedf(y[0].split()[0] + ' ', a, prfiles
+                     + '/file_contexts3-' + whatimg)
 
 
 def chlist(chtitle, namelist, countdir, plug=None):
@@ -310,10 +309,10 @@ def chlist(chtitle, namelist, countdir, plug=None):
     choice = ''
     while not choice:
         banner()
-        kprint(chtitle+'\n')
+        kprint(chtitle + '\n')
         fulllist = []
         for a, itemdir in enumerate(namelist):
-            fulllist.append(str(a+1)+') '+itemdir)
+            fulllist.append(str(a + 1) + ') ' + itemdir)
 
         if countdir < 11 or countdir > 30 or len(max(fulllist, key=len)) > 22:
             kprint('\n'.join(fulllist))
@@ -321,24 +320,24 @@ def chlist(chtitle, namelist, countdir, plug=None):
             table(fulllist, 10)
 
         if plug and plug == 'Plugin2':
-            kprint('b = '+lang['menu_back'], 'y')
-            kprint('q = '+lang['menu_quit']+'\n', 'm')
+            kprint('b = ' + lang['menu_back'], 'y')
+            kprint('q = ' + lang['menu_quit'] + '\n', 'm')
             chopt = ['b', 'q']
         elif plug or 'Plugin' in chtitle:
-            kprint('p = '+lang['menu_plugin_menu'], 'y')
-            kprint('q = '+lang['menu_quit']+'\n', 'm')
+            kprint('p = ' + lang['menu_plugin_menu'], 'y')
+            kprint('q = ' + lang['menu_quit'] + '\n', 'm')
             chopt = ['p', 'q']
         elif romname:
-            kprint('m = '+lang['title_main'], 'y')
-            kprint('q = '+lang['menu_quit']+'\n', 'm')
+            kprint('m = ' + lang['title_main'], 'y')
+            kprint('q = ' + lang['menu_quit'] + '\n', 'm')
             chopt = ['m', 'q']
         elif not getconf('language', mconf):
             kprint('d = Download language', 'y')
             kprint('q = Quit\n', 'm')
             chopt = ['d', 'q']
         else:
-            kprint('n = '+lang['menu_new'], 'y')
-            kprint('q = '+lang['menu_quit']+'\n', 'm')
+            kprint('n = ' + lang['menu_new'], 'y')
+            kprint('q = ' + lang['menu_quit'] + '\n', 'm')
             chopt = ['n', 'q']
 
         kprint(select)
@@ -372,7 +371,7 @@ def chlist(chtitle, namelist, countdir, plug=None):
                 return 3
             sys.exit()
         else:
-            chosen = namelist[int(choice)-1]
+            chosen = namelist[int(choice) - 1]
 
         return chosen
 
@@ -415,9 +414,9 @@ def cmd(command):
 
 
 def configure(abi='arm'):
-    delpath(rd+'/config', rd+'/install')
-    cpdir(tools+'/updater/install', rd+'/install')
-    cp(tools+'/updater/binary/busybox-'+abi, rd+'/install/bin/busybox')
+    delpath(rd + '/config', rd + '/install')
+    cpdir(tools + '/updater/install', rd + '/install')
+    cp(tools + '/updater/binary/busybox-' + abi, rd + '/install/bin/busybox')
 
 
 def cp(filename, outfile):
@@ -435,12 +434,12 @@ def delpath(*longpath):
     for i in longpath:
         if os.path.isdir(i):
             while existd(i):
-                cmd('rm -rf "'+i+'"')
+                cmd('rm -rf "' + i + '"')
         else:
             try:
                 os.remove(i)
             except:
-                cmd('rm -rf "'+i+'"')
+                cmd('rm -rf "' + i + '"')
 
 
 def deodex_start(quiet=None):
@@ -457,7 +456,7 @@ def deodex_start(quiet=None):
         kprint(lang['notice'], 'ryb')
         kprint(lang['deodex_del_meta_inf_q'], 'b')
         kprint(lang['deodex_del_meta_inf_q2'], 'b')
-        kprint(lang['deodex_del_meta_inf_q3']+'\n', 'b')
+        kprint(lang['deodex_del_meta_inf_q3'] + '\n', 'b')
         kprint(lang['deodex_del_meta_inf_q4'])
         kprint(lang['deodex_del_meta_inf_q5'])
         reply = getChar()
@@ -470,19 +469,20 @@ def deodex_start(quiet=None):
             apktmp = greps(fl('', 'system/framework/'),
                            findr('system/**/*.apk'))
             for i in apktmp:
-                cmd(aapt+' remove '+i+' '+' '.join(greps('META-INF', zipl(i))))
+                cmd(aapt + ' remove ' + i + ' ' + ' '.join(greps('META-INF', zipl(i))))
 
     def choose_jartitle(jarname, jartitle):
-        with cd(tools+'/smali/current'):
+        with cd(tools + '/smali/current'):
             if jarname == 'smali':
-                findbak = greps(fl('', 'baksmali'), findf('*'+jarname+'*.jar'))
+                findbak = greps(fl('', 'baksmali'), findf('*' + jarname + '*.jar'))
             else:
-                findbak = findf('*'+jarname+'*.jar')
+                findbak = findf('*' + jarname + '*.jar')
 
         if len(findbak) == 1:
-            return tools+os.sep+'smali'+os.sep+'current'+os.sep+findbak[0]
+            return tools + os.sep + 'smali' + os.sep + 'current' + os.sep + findbak[0]
         elif len(findbak) > 1:
-            return tools+os.sep+'smali'+os.sep+'current'+os.sep+chlist(color['gb']+jartitle+color['n'], findbak, len(findbak))
+            return tools + os.sep + 'smali' + os.sep + 'current' + os.sep + chlist(color['gb'] + jartitle + color['n'],
+                                                                                   findbak, len(findbak))
 
         return None
 
@@ -493,9 +493,9 @@ def deodex_start(quiet=None):
                 choice = getar('oat2dex_ver')
             else:
                 banner()
-                kprint(lang['deodex_oat2dex_ver']+'\n')
-                kprint('1) '+lang['deodex_oat2dex_official'])
-                kprint('2) '+lang['deodex_oat2dex_latest']+'\n')
+                kprint(lang['deodex_oat2dex_ver'] + '\n')
+                kprint('1) ' + lang['deodex_oat2dex_official'])
+                kprint('2) ' + lang['deodex_oat2dex_latest'] + '\n')
                 kprint(lang['select'])
                 choice = getChar()
 
@@ -506,7 +506,7 @@ def deodex_start(quiet=None):
                 continue
 
             if choice == '1':
-                oattmp = findf(tools+'/smali/old/*oat2dex*.jar')
+                oattmp = findf(tools + '/smali/old/*oat2dex*.jar')
                 return oattmp[0]
             elif choice == '2':
                 return choose_jartitle('oat2dex', lang['title_cho_oat2dex'])
@@ -516,10 +516,10 @@ def deodex_start(quiet=None):
         sqshdir = dirname(sqshfile)
         sqshtype = sqshname.split('.')[1]
         banner(quiet)
-        kprint(lang['general_extracting']+sqshfile+' ...', 'b')
+        kprint(lang['general_extracting'] + sqshfile + ' ...', 'b')
         if 'orig.applications' in sqshname:
             with cd(sqshdir):
-                cmd(unsquashfs+' '+sqshname)
+                cmd(unsquashfs + ' ' + sqshname)
 
                 banner(quiet)
                 kprint(lang['deodex_move_odex'], 'b')
@@ -533,17 +533,17 @@ def deodex_start(quiet=None):
                     with cd(odexarch):
                         for i in findf('*'):
                             odexapp = i.replace('.odex', '')
-                            os.replace(i, sqshdir+'/applications/'
-                                       + odexapp+'/oat/'+odexarch+'/'+i)
-                            os.replace(sqshdir+'/squashfs-root/'+odexapp+'/'+odexapp
-                                       + '.apk', sqshdir+'/applications/'+odexapp+'/'+odexapp+'.apk')
+                            os.replace(i, sqshdir + '/applications/'
+                                       + odexapp + '/oat/' + odexarch + '/' + i)
+                            os.replace(sqshdir + '/squashfs-root/' + odexapp + '/' + odexapp
+                                       + '.apk', sqshdir + '/applications/' + odexapp + '/' + odexapp + '.apk')
 
-            delpath(sqshdir+'/squashfs-root', sqshdir
+            delpath(sqshdir + '/squashfs-root', sqshdir
                     + '/orig.applications', sqshfile)
             return
 
         with cd(sqshdir):
-            cmd(unsquashfs+' '+sqshname)
+            cmd(unsquashfs + ' ' + sqshname)
             delpath(sqshfile)
 
             if existd('squashfs-root/arm') or existd('squashfs-root/arm64'):
@@ -560,21 +560,21 @@ def deodex_start(quiet=None):
                         if sqshtype != 'framework':
                             for i in findf('*.odex'):
                                 tmpapp = i.replace('.odex', '')
-                                mkdir(sysdir+'/'+sqshtype+'/'
-                                      + tmpapp+'/oat/'+odexarch)
-                                os.replace(i, sysdir+'/'+sqshtype
-                                           + '/'+tmpapp+'/oat/'+odexarch+'/'+i)
+                                mkdir(sysdir + '/' + sqshtype + '/'
+                                      + tmpapp + '/oat/' + odexarch)
+                                os.replace(i, sysdir + '/' + sqshtype
+                                           + '/' + tmpapp + '/oat/' + odexarch + '/' + i)
                         else:
-                            mkdir(sysdir+'/'+sqshtype+'/oat/'+odexarch)
+                            mkdir(sysdir + '/' + sqshtype + '/oat/' + odexarch)
                             for i in findf('*.odex'):
                                 tmpapp = i.replace('.odex', '')
-                                if existd(framedir+'/'+tmpapp):
-                                    mkdir(framedir+'/'+tmpapp+'/oat/'+odexarch)
-                                    os.replace(i, framedir+'/'
-                                               + tmpapp+'/oat/'+odexarch+'/'+i)
+                                if existd(framedir + '/' + tmpapp):
+                                    mkdir(framedir + '/' + tmpapp + '/oat/' + odexarch)
+                                    os.replace(i, framedir + '/'
+                                               + tmpapp + '/oat/' + odexarch + '/' + i)
                                 else:
-                                    os.replace(i, sysdir+'/'
-                                               + sqshtype+'/oat/'+odexarch+'/'+i)
+                                    os.replace(i, sysdir + '/'
+                                               + sqshtype + '/oat/' + odexarch + '/' + i)
             else:
                 with cd('squashfs-root'):
                     for i in findr('**'):
@@ -582,11 +582,11 @@ def deodex_start(quiet=None):
                             continue
                         tmpdir = dirname(i)
                         tmpfile = basename(i)
-                        mkdir(sysdir+'/'+tmpdir)
-                        os.rename(i, sysdir+'/'+tmpdir+'/'+tmpfile)
+                        mkdir(sysdir + '/' + tmpdir)
+                        os.rename(i, sysdir + '/' + tmpdir + '/' + tmpfile)
 
         rmleft = sqshfile.replace('.sqsh', '')
-        delpath(sqshdir+'/squashfs-root', rmleft)
+        delpath(sqshdir + '/squashfs-root', rmleft)
 
     def deodex(dtype):
         arch = ''
@@ -594,7 +594,7 @@ def deodex_start(quiet=None):
         archtmp = ['arm64', 'x86_64', 'arm', 'x86']
         archtest = ''
         for i in archtmp:
-            archtest = findr(framedir+'/**/'+i)
+            archtest = findr(framedir + '/**/' + i)
             if archtest:
                 break
         archtest = basename(archtest[0])
@@ -604,46 +604,46 @@ def deodex_start(quiet=None):
             arch2test = archtest.replace('_64', '').replace('64', '')
 
         if (archtest and
-            (existf(framedir+'/'+archtest+'/boot.oat')
-             or existf(framedir+'/'+archtest+'/boot-ext.oat'))):
+                (existf(framedir + '/' + archtest + '/boot.oat')
+                 or existf(framedir + '/' + archtest + '/boot-ext.oat'))):
             arch = archtest
             if (arch2test and
-                (existf(framedir+'/'+arch2test+'/boot.oat')
-                 or existf(framedir+'/'+arch2test+'/boot-ext.oat'))):
+                    (existf(framedir + '/' + arch2test + '/boot.oat')
+                     or existf(framedir + '/' + arch2test + '/boot-ext.oat'))):
                 arch2 = arch2test
         else:
-            while (not existf(framedir+'/'+arch+'/boot.oat')
-                   and not existf(framedir+'/'+arch+'/boot-ext.oat')):
+            while (not existf(framedir + '/' + arch + '/boot.oat')
+                   and not existf(framedir + '/' + arch + '/boot-ext.oat')):
                 banner(quiet)
-                print(lang['deodex_config_arch']+'\n')
+                print(lang['deodex_config_arch'] + '\n')
                 print(lang['deodex_config_arch2'])
                 print(lang['deodex_config_arch3'])
                 print(lang['deodex_config_arch4'])
-                print(lang['deodex_config_arch5']+'\n')
-                print(lang['deodex_config_arch6']+'\n')
+                print(lang['deodex_config_arch5'] + '\n')
+                print(lang['deodex_config_arch6'] + '\n')
                 print(lang['deodex_config_arch7'])
-                print(lang['deodex_config_arch8']+'\n')
-                print(lang['deodex_config_arch9']+'\n')
+                print(lang['deodex_config_arch8'] + '\n')
+                print(lang['deodex_config_arch9'] + '\n')
                 arch = input()
 
-        if (existf(framedir+'/'+arch+'/boot.oat')
-                or existf(framedir+'/'+arch+'/boot-ext.oat')):
+        if (existf(framedir + '/' + arch + '/boot.oat')
+                or existf(framedir + '/' + arch + '/boot-ext.oat')):
             if not autorom() and not quiet:
                 banner()
-                kprint(lang['startup_project']+color['g']+romname, 'b')
-                kprint(lang['startup_version']+color['g']+androidversion, 'b')
-                kprint(lang['deodex_api']+color['g']+api, 'b')
-                kprint(lang['deodex_arch']+color['g']+arch, 'b')
+                kprint(lang['startup_project'] + color['g'] + romname, 'b')
+                kprint(lang['startup_version'] + color['g'] + androidversion, 'b')
+                kprint(lang['deodex_api'] + color['g'] + api, 'b')
+                kprint(lang['deodex_arch'] + color['g'] + arch, 'b')
                 if arch2:
-                    kprint(lang['deodex_arch2']+color['g']+arch2, 'b')
+                    kprint(lang['deodex_arch2'] + color['g'] + arch2, 'b')
 
                 if dtype in ['m2', 'n2']:
-                    kprint(lang['deodex_method']+color['g']
-                           + '\t'+basename(smali), 'b')
-                    print('\t'+basename(baksmali))
+                    kprint(lang['deodex_method'] + color['g']
+                           + '\t' + basename(smali), 'b')
+                    print('\t' + basename(baksmali))
                 elif dtype in ['l', 'm']:
-                    kprint(lang['deodex_method']+color['g']
-                           + '\t'+basename(oat2dex), 'b')
+                    kprint(lang['deodex_method'] + color['g']
+                           + '\t' + basename(oat2dex), 'b')
 
                 print()
                 print(lang['deodex_continue_q'])
@@ -660,49 +660,49 @@ def deodex_start(quiet=None):
 
         def dodeodex(deoarch, deoarch2, deoappdir):
             for app in applist:
-                if not existd(deoappdir+'/'+app+'/'+deoarch):
+                if not existd(deoappdir + '/' + app + '/' + deoarch):
                     continue
 
                 try:
                     app2 = basename(
-                        findf(deoappdir+'/'+app+'/*.apk')[0]).replace('.apk', '')
+                        findf(deoappdir + '/' + app + '/*.apk')[0]).replace('.apk', '')
                 except:
-                    if not findf(deoappdir+'/'+app+'/*.apk'):
+                    if not findf(deoappdir + '/' + app + '/*.apk'):
                         app2 = app
-                        cmd(aapt+' a -fk '+deoappdir+'/'
-                            + app+'/'+app+'.apk fakesrkfile')
+                        cmd(aapt + ' a -fk ' + deoappdir + '/'
+                            + app + '/' + app + '.apk fakesrkfile')
                     else:
                         continue
 
-                if greps('.*classes\.dex', zipl(deoappdir+'/'+app+'/'+app2+'.apk')):
+                if greps('.*classes\.dex', zipl(deoappdir + '/' + app + '/' + app2 + '.apk')):
                     print()
-                    kprint(app+lang['deodex_app_already']+'\n', 'g')
+                    kprint(app + lang['deodex_app_already'] + '\n', 'g')
                     if dtype != 'l':
-                        delpath(deoappdir+'/'+app+'/oat')
+                        delpath(deoappdir + '/' + app + '/oat')
                     else:
-                        delpath(deoappdir+'/'+app+'/'+deoarch)
+                        delpath(deoappdir + '/' + app + '/' + deoarch)
 
                     continue
 
                 print()
-                print(lang['deodex_deodexing']+app+'\n')
-                with cd(deoappdir+'/'+app+'/'+deoarch):
+                print(lang['deodex_deodexing'] + app + '\n')
+                with cd(deoappdir + '/' + app + '/' + deoarch):
                     mvfiles = findf('*')
                     dodex = []
                     for i in mvfiles:
-                        os.replace(i, framedir+'/'+deoarch2+'/'+i)
+                        os.replace(i, framedir + '/' + deoarch2 + '/' + i)
                         dodex.append(i)
 
                 if dtype == 'l':
-                    delpath(deoappdir+'/'+app+'/'+deoarch2)
+                    delpath(deoappdir + '/' + app + '/' + deoarch2)
                 else:
-                    delpath(deoappdir+'/'+app+'/oat')
+                    delpath(deoappdir + '/' + app + '/oat')
 
-                with cd(framedir+'/'+deoarch2):
+                with cd(framedir + '/' + deoarch2):
                     if dtype in ['m2', 'n2']:
-                        classes = cmd('java -Xmx'+heapsize+'m -jar '
-                                      + baksmali+' list dex '+app2+'.odex').splitlines()
-                        appendf(str(classes), logs+'/deodex.log')
+                        classes = cmd('java -Xmx' + heapsize + 'm -jar '
+                                      + baksmali + ' list dex ' + app2 + '.odex').splitlines()
+                        appendf(str(classes), logs + '/deodex.log')
                         for line in classes:
                             apkdex = basename(line)
                             if 'classes' not in apkdex:
@@ -711,51 +711,51 @@ def deodex_start(quiet=None):
                                 dexclass = apkdex.split(':')[1]
 
                             appendf(cmd(
-                                    'java -Xmx'+heapsize+'m -jar '+baksmali
-                                    + ' deodex -b boot.oat '+app2+'.odex/'+apkdex
-                                    + ' -o smali'), logs+'/deodex.log')
+                                'java -Xmx' + heapsize + 'm -jar ' + baksmali
+                                + ' deodex -b boot.oat ' + app2 + '.odex/' + apkdex
+                                + ' -o smali'), logs + '/deodex.log')
                             if findf('smali/*'):
                                 appendf(cmd(
-                                    'java -Xmx'+heapsize+'m -jar '+smali
-                                    + ' assemble -a '+api+' smali -o '+dexclass),
-                                    logs+'/deodex.log')
+                                    'java -Xmx' + heapsize + 'm -jar ' + smali
+                                    + ' assemble -a ' + api + ' smali -o ' + dexclass),
+                                    logs + '/deodex.log')
                             delpath('smali')
                             if not existf(dexclass):
-                                appendf(deoappdir+'/'+app+'/'+deoarch
-                                        + '/'+dexclass, logs+'/deodex_fail_list')
+                                appendf(deoappdir + '/' + app + '/' + deoarch
+                                        + '/' + dexclass, logs + '/deodex_fail_list')
                                 continue
 
                         for i in findf('classes*.dex'):
-                            os.replace(i, deoappdir+'/'+app+'/'+i)
+                            os.replace(i, deoappdir + '/' + app + '/' + i)
                         delpath(*dodex)
 
                     elif dtype in ['m', 'l']:
-                        appendf(cmd('java -Xmx'+heapsize+'m -jar '+oat2dex
-                                + ' '+app2+'.odex odex'), logs+'/deodex.log')
-                        if not existf(app2+'.dex'):
-                            delpath(*findf(app2+'-classes*.dex'))
+                        appendf(cmd('java -Xmx' + heapsize + 'm -jar ' + oat2dex
+                                    + ' ' + app2 + '.odex odex'), logs + '/deodex.log')
+                        if not existf(app2 + '.dex'):
+                            delpath(*findf(app2 + '-classes*.dex'))
                             continue
 
-                        os.replace(app2+'.dex', deoappdir
-                                   + '/'+app+'/classes.dex')
+                        os.replace(app2 + '.dex', deoappdir
+                                   + '/' + app + '/classes.dex')
                         for i in findf('*-classes*.dex'):
-                            os.replace(i, deoappdir+'/'+app
-                                       + '/'+i.split('-')[-1])
+                            os.replace(i, deoappdir + '/' + app
+                                       + '/' + i.split('-')[-1])
 
                         delpath(*dodex)
 
                         broken = None
                         for i in findf('*_classes*.cdex'):
                             appendf(
-                                '\n'.join(grepv('^==', cmd(vdexcon+' '+i).splitlines())), logs+'/deodex.log')
-                            if existf(i+'.new'):
-                                os.replace(i+'.new', i[:-5]+'.dex')
+                                '\n'.join(grepv('^==', cmd(vdexcon + ' ' + i).splitlines())), logs + '/deodex.log')
+                            if existf(i + '.new'):
+                                os.replace(i + '.new', i[:-5] + '.dex')
                                 delpath(i)
                             else:
-                                appendf(deoappdir+'/'+app+'/'+app2
-                                        + '.apk', logs+'/deodex_fail_list')
-                                appendf(deoappdir+'/'+app+'/'+app2
-                                        + '.apk', logs+'/deodex_cdex_fail')
+                                appendf(deoappdir + '/' + app + '/' + app2
+                                        + '.apk', logs + '/deodex_fail_list')
+                                appendf(deoappdir + '/' + app + '/' + app2
+                                        + '.apk', logs + '/deodex_cdex_fail')
                                 for x in findf('*_classes*'):
                                     delpath(x)
 
@@ -764,24 +764,24 @@ def deodex_start(quiet=None):
 
                         if not broken:
                             for i in findf('*_classes*'):
-                                os.replace(i, deoappdir+'/'+app
-                                           + '/'+i.split('_')[-1])
+                                os.replace(i, deoappdir + '/' + app
+                                           + '/' + i.split('_')[-1])
                             delpath(*dodex)
                         else:
                             delpath(*dodex)
                             continue
 
-                with cd(deoappdir+'/'+app):
-                    appendf(cmd(aapt+' add -fk '+app2
-                            + '.apk classes*.dex'), logs+'/deodex.log')
+                with cd(deoappdir + '/' + app):
+                    appendf(cmd(aapt + ' add -fk ' + app2
+                                + '.apk classes*.dex'), logs + '/deodex.log')
                     delpath(*findf('classes*.dex'))
 
         getconf('deodex', uconf, add=dtype)
-        delpath(*findf(logs+'/*.log'))
-        delpath(logs+'/deodex_fail_list')
+        delpath(*findf(logs + '/*.log'))
+        delpath(logs + '/deodex_fail_list')
 
-        comptmp = findr(appdir+'/**') + findr(privdir
-                                              + '/**') + findr(framedir+'/**')
+        comptmp = findr(appdir + '/**') + findr(privdir
+                                                + '/**') + findr(framedir + '/**')
         comptmp = greps('.*\.gz$|.*\.xz$', comptmp)
 
         if comptmp:
@@ -795,13 +795,13 @@ def deodex_start(quiet=None):
             for i in greps('.*\.gz$', comptmp):
                 gzdir = dirname(i)
                 gzfile = basename(i)
-                print('\n'+lang['deodex_extract']+gzfile+'\n')
-                appendf(zipu(i, gzdir), logs+'/zip.log')
+                print('\n' + lang['deodex_extract'] + gzfile + '\n')
+                appendf(zipu(i, gzdir), logs + '/zip.log')
 
             for i in greps('.*\.xz$', comptmp):
                 xzdir = dirname(i)
                 xzfile = basename(i)
-                print('\n'+lang['deodex_extract']+xzfile+'\n')
+                print('\n' + lang['deodex_extract'] + xzfile + '\n')
                 with cd(xzdir):
                     xzu(i)
 
@@ -810,19 +810,20 @@ def deodex_start(quiet=None):
                 'oem/**/*.odex') + findr('product/**/*.odex') + findr('system_ext/**/*.odex')
         if dtype != 'l':
             if sar():
-                odextmp = greps(fl('', 'system/system/framework/oat/|system/system/framework/'+arch+'/|system/system/framework/'
-                                + arch2+'/|system/system/app|system/system/priv-app|system/system/vendor/framework'), odextmp)
+                odextmp = greps(
+                    fl('', 'system/system/framework/oat/|system/system/framework/' + arch + '/|system/system/framework/'
+                       + arch2 + '/|system/system/app|system/system/priv-app|system/system/vendor/framework'), odextmp)
             else:
                 odextmp = greps(fl('',
-                                'system/framework/oat/|system/framework/'+arch+'/|system/framework/'
-                                   + arch2+'/|system/app|system/priv-app|system/vendor/framework'
+                                   'system/framework/oat/|system/framework/' + arch + '/|system/framework/'
+                                   + arch2 + '/|system/app|system/priv-app|system/vendor/framework'
                                    ), odextmp)
         else:
-            odextmp = greps(fl('', 'system/framework/'+arch+'/|system/framework/'
-                               + arch2+'/|system/app/|system/priv-app/'), odextmp)
+            odextmp = greps(fl('', 'system/framework/' + arch + '/|system/framework/'
+                               + arch2 + '/|system/app/|system/priv-app/'), odextmp)
 
         extramv = {}
-        if existd(sysdir+'/app') and odextmp:
+        if existd(sysdir + '/app') and odextmp:
             if not quiet:
                 clears()
             print()
@@ -839,20 +840,20 @@ def deodex_start(quiet=None):
                 if basename(adir).startswith('.'):
                     with cd(adir):
                         newapp = findf('*.apk').split('.')[0]
-                    newappdir = dirname(adir)+os.sep+newapp
+                    newappdir = dirname(adir) + os.sep + newapp
                     mvdir(adir, newappdir)
-                    extramv[rd+os.sep+newappdir] = rd+os.sep+adir
+                    extramv[rd + os.sep + newappdir] = rd + os.sep + adir
                     adir = newappdir
                     extraapp = basename(adir)
                 else:
                     extraapp = basename(adir)
-                    extramv[sysdir+os.sep+'app'
-                            + os.sep+extraapp] = rd+os.sep+adir
+                    extramv[sysdir + os.sep + 'app'
+                            + os.sep + extraapp] = rd + os.sep + adir
 
-                mvdir(rd+os.sep+adir, sysdir+os.sep+'app'+os.sep+extraapp)
+                mvdir(rd + os.sep + adir, sysdir + os.sep + 'app' + os.sep + extraapp)
 
         chimerao = findr(
-            sysdir+'/priv-app/PrebuiltGmsCore*/app_chimera/**/*.odex')
+            sysdir + '/priv-app/PrebuiltGmsCore*/app_chimera/**/*.odex')
         if chimerao:
             dname = ''
             for i in chimerao:
@@ -863,34 +864,34 @@ def deodex_start(quiet=None):
 
                 mkdir('/'.join([sysdir, 'app', aname, 'oat', darch]))
                 os.replace(
-                    i, '/'.join([sysdir, 'app', aname, 'oat', darch, aname+'.odex']))
+                    i, '/'.join([sysdir, 'app', aname, 'oat', darch, aname + '.odex']))
 
-                if existf('/'.join([dname, 'oat', darch, aname+'.vdex'])):
+                if existf('/'.join([dname, 'oat', darch, aname + '.vdex'])):
                     os.replace(i.replace(
-                        '.odex', '.vdex'), '/'.join([sysdir, 'app', aname, 'oat', darch, aname+'.vdex']))
+                        '.odex', '.vdex'), '/'.join([sysdir, 'app', aname, 'oat', darch, aname + '.vdex']))
 
-                if existf('/'.join([dname, aname+'.apk'])):
-                    os.replace('/'.join([dname, aname+'.apk']),
-                               '/'.join([sysdir, 'app', aname, aname+'.apk']))
+                if existf('/'.join([dname, aname + '.apk'])):
+                    os.replace('/'.join([dname, aname + '.apk']),
+                               '/'.join([sysdir, 'app', aname, aname + '.apk']))
 
-                extramv[os.sep.join([sysdir, 'app', aname, aname+'.apk'])
-                        ] = os.sep.join([dname, aname+'.apk'])
+                extramv[os.sep.join([sysdir, 'app', aname, aname + '.apk'])
+                ] = os.sep.join([dname, aname + '.apk'])
 
             delpath('/'.join([dname, 'oat']))
 
-        if existd(sysdir+'/vendor/framework'):
-            for i in findf(sysdir+'/vendor/framework/*.jar'):
+        if existd(sysdir + '/vendor/framework'):
+            for i in findf(sysdir + '/vendor/framework/*.jar'):
                 if not greps('.*classes\.dex', zipl(i)):
-                    os.replace(i, framedir+'/'+basename(i))
-                    extramv[framedir+os.sep+basename(i)] = i
+                    os.replace(i, framedir + '/' + basename(i))
+                    extramv[framedir + os.sep + basename(i)] = i
 
             for i in [arch, arch2]:
                 if not i:
                     continue
-                for a in findf(sysdir+'/vendor/framework/oat/'+i+'/*'):
-                    os.replace(a, framedir+'/oat/'+i+'/'+basename(a))
+                for a in findf(sysdir + '/vendor/framework/oat/' + i + '/*'):
+                    os.replace(a, framedir + '/oat/' + i + '/' + basename(a))
 
-            delpath(sysdir+'/vendor/framework/oat')
+            delpath(sysdir + '/vendor/framework/oat')
 
         if dtype in ['l', 'm']:
             if not quiet:
@@ -900,14 +901,14 @@ def deodex_start(quiet=None):
             print(lang['deodex_deop'])  # Start Deoptomizing boot.oat
             print('-'.center(tsize, '-'))
             print()
-            with cd(framedir+'/'+arch):
+            with cd(framedir + '/' + arch):
                 if not existd('odex'):
-                    appendf(cmd('java -Xmx'+heapsize+'m -jar '
-                                + oat2dex+' boot boot.oat'), logs+'/deodex.log')
+                    appendf(cmd('java -Xmx' + heapsize + 'm -jar '
+                                + oat2dex + ' boot boot.oat'), logs + '/deodex.log')
 
                 if arch2 and not existd('odex'):
-                    appendf(cmd('java -Xmx'+heapsize+'m -jar '
-                                + oat2dex+' boot boot.oat'), logs+'/deodex.log')
+                    appendf(cmd('java -Xmx' + heapsize + 'm -jar '
+                                + oat2dex + ' boot boot.oat'), logs + '/deodex.log')
 
         if existd(appdir):
             if not quiet:
@@ -921,16 +922,16 @@ def deodex_start(quiet=None):
                 applist = sorted(findf('*'), key=str.lower)
                 for app in applist:
                     if dtype == 'l':
-                        if arch2 and existd(app+'/'+arch) and existd(app+'/'+arch2):
-                            delpath(app+'/'+arch2)
+                        if arch2 and existd(app + '/' + arch) and existd(app + '/' + arch2):
+                            delpath(app + '/' + arch2)
                     else:
-                        if arch2 and existd(app+'/oat/'+arch) and existd(app+'/oat/'+arch2):
-                            delpath(app+'/oat/'+arch2)
+                        if arch2 and existd(app + '/oat/' + arch) and existd(app + '/oat/' + arch2):
+                            delpath(app + '/oat/' + arch2)
 
             if dtype != 'l':
-                dodeodex('oat/'+arch, arch, appdir)
+                dodeodex('oat/' + arch, arch, appdir)
                 if arch2:
-                    dodeodex('oat/'+arch2, arch2, appdir)
+                    dodeodex('oat/' + arch2, arch2, appdir)
             else:
                 dodeodex(arch, arch, appdir)
                 if arch2:
@@ -948,16 +949,16 @@ def deodex_start(quiet=None):
                 applist = sorted(findf('*'), key=str.lower)
                 for app in applist:
                     if dtype == 'l':
-                        if arch2 and existd(app+'/'+arch) and existd(app+'/'+arch2):
-                            delpath(app+'/'+arch2)
+                        if arch2 and existd(app + '/' + arch) and existd(app + '/' + arch2):
+                            delpath(app + '/' + arch2)
                     else:
-                        if arch2 and existd(app+'/oat/'+arch) and existd(app+'/oat/'+arch2):
-                            delpath(app+'/oat/'+arch2)
+                        if arch2 and existd(app + '/oat/' + arch) and existd(app + '/oat/' + arch2):
+                            delpath(app + '/oat/' + arch2)
 
             if dtype != 'l':
-                dodeodex('oat/'+arch, arch, privdir)
+                dodeodex('oat/' + arch, arch, privdir)
                 if arch2:
-                    dodeodex('oat/'+arch2, arch2, privdir)
+                    dodeodex('oat/' + arch2, arch2, privdir)
             else:
                 dodeodex(arch, arch, privdir)
                 if arch2:
@@ -970,26 +971,27 @@ def deodex_start(quiet=None):
         print(lang['deodex_start_frame'])  # Start Deodexing framework
         print('-'.center(tsize, '-'))
         print()
-        deoarch = 'oat/'+arch
+        deoarch = 'oat/' + arch
         deoarch2 = arch
 
         if dtype in ['n2', 'm2']:
-            with cd(framedir+'/'+deoarch2):
+            with cd(framedir + '/' + deoarch2):
                 oattmp = sorted(findf('*.oat'), key=str.lower)
                 for line in oattmp:
                     if line != 'boot.oat':
                         framejar = line.replace(
-                            'boot-', '').replace('.oat', '')+'.jar'
-                        if existf(framedir+'/'+framejar) and greps('.*classes.dex', zipl(framedir+'/'+framejar)):
+                            'boot-', '').replace('.oat', '') + '.jar'
+                        if existf(framedir + '/' + framejar) and greps('.*classes.dex',
+                                                                       zipl(framedir + '/' + framejar)):
                             kprint(
-                                '\n'+line+lang['deodex_app_already']+'\n', 'g')
+                                '\n' + line + lang['deodex_app_already'] + '\n', 'g')
                             continue
 
-                    print('\n'+lang['deodex_deodexing']+line+'\n')
+                    print('\n' + lang['deodex_deodexing'] + line + '\n')
 
-                    classes = cmd('java -Xmx'+heapsize+'m -jar '
-                                  + baksmali+' list dex '+line).splitlines()
-                    appendf(classes, logs+'/deodex.log')
+                    classes = cmd('java -Xmx' + heapsize + 'm -jar '
+                                  + baksmali + ' list dex ' + line).splitlines()
+                    appendf(classes, logs + '/deodex.log')
                     for line2 in classes:
                         line2 = basename(line2)
                         if 'classes' not in line2:
@@ -999,89 +1001,90 @@ def deodex_start(quiet=None):
                             line3 = line2.split(':')[0]
                             dexclass = line2.split(':')[1]
 
-                        sdcmd = 'java -Xmx'+heapsize+'m -jar '+baksmali + \
-                            ' deodex -b boot.oat '+line+os.sep+line2+' -o smali'
-                        appendf(sdcmd, logs+'/deodex.log')
-                        appendf(cmd(sdcmd), logs+'/deodex.log')
+                        sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + baksmali + \
+                                ' deodex -b boot.oat ' + line + os.sep + line2 + ' -o smali'
+                        appendf(sdcmd, logs + '/deodex.log')
+                        appendf(cmd(sdcmd), logs + '/deodex.log')
 
                         if findf('smali/*'):
-                            sdcmd = 'java -Xmx'+heapsize+'m -jar '+smali+' assemble -a ' + \
-                                api+' smali -o '+framedir+os.sep+line3+'__'+dexclass
-                            appendf(sdcmd, logs+'/deodex.log')
-                            appendf(cmd(sdcmd), logs+'/deodex.log')
+                            sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + smali + ' assemble -a ' + \
+                                    api + ' smali -o ' + framedir + os.sep + line3 + '__' + dexclass
+                            appendf(sdcmd, logs + '/deodex.log')
+                            appendf(cmd(sdcmd), logs + '/deodex.log')
 
                         delpath('smali')
 
-            if existd(framedir+'/'+deoarch):
-                with cd(framedir+'/'+deoarch):
+            if existd(framedir + '/' + deoarch):
+                with cd(framedir + '/' + deoarch):
                     frametmp = sorted(findf('*.odex'), key=str.lower)
                     for frame in frametmp:
                         frname = frame.replace('.odex', '')
-                        for ftype in findf(frname+'.*'):
-                            os.replace(ftype, framedir+'/'
-                                       + deoarch2+'/'+basename(ftype))
+                        for ftype in findf(frname + '.*'):
+                            os.replace(ftype, framedir + '/'
+                                       + deoarch2 + '/' + basename(ftype))
 
-                        framejar = frname+'.jar'
-                        if existf(framedir+'/'+framejar) and greps('.*classes.dex', zipl(framedir+'/'+framejar)):
+                        framejar = frname + '.jar'
+                        if existf(framedir + '/' + framejar) and greps('.*classes.dex',
+                                                                       zipl(framedir + '/' + framejar)):
                             kprint(
-                                '\n'+frame+lang['deodex_app_already']+'\n', 'g')
+                                '\n' + frame + lang['deodex_app_already'] + '\n', 'g')
                             continue
 
-                        print('\n'+lang['deodex_deodexing']+frame+'\n')
+                        print('\n' + lang['deodex_deodexing'] + frame + '\n')
 
-                        with cd(framedir+'/'+deoarch2):
+                        with cd(framedir + '/' + deoarch2):
                             classes = cmd(
-                                'java -Xmx'+heapsize+'m -jar '+baksmali+' list dex '+frame).splitlines()
-                            appendf(classes, logs+os.sep+'deodex.log')
+                                'java -Xmx' + heapsize + 'm -jar ' + baksmali + ' list dex ' + frame).splitlines()
+                            appendf(classes, logs + os.sep + 'deodex.log')
                             for line in classes:
                                 apkdex = basename(line)
                                 if 'classes' not in apkdex:
-                                    dexclass = apkdex+'__classes.dex'
+                                    dexclass = apkdex + '__classes.dex'
                                 else:
                                     dexclass = apkdex.replace(':', '__')
 
-                                sdcmd = 'java -Xmx'+heapsize+'m -jar '+baksmali + \
-                                    ' deodex -b boot.oat '+frame+'/'+apkdex+' -o smali'
-                                appendf(sdcmd, logs+'/deodex.log')
-                                appendf(cmd(sdcmd), logs+'/deodex.log')
+                                sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + baksmali + \
+                                        ' deodex -b boot.oat ' + frame + '/' + apkdex + ' -o smali'
+                                appendf(sdcmd, logs + '/deodex.log')
+                                appendf(cmd(sdcmd), logs + '/deodex.log')
 
                                 if findf('smali/*'):
-                                    sdcmd = 'java -Xmx'+heapsize+'m -jar '+smali + \
-                                        ' assemble -a '+api+' smali -o '+dexclass
-                                    appendf(sdcmd, logs+'/deodex.log')
-                                    appendf(cmd(sdcmd), logs+'/deodex.log')
+                                    sdcmd = 'java -Xmx' + heapsize + 'm -jar ' + smali + \
+                                            ' assemble -a ' + api + ' smali -o ' + dexclass
+                                    appendf(sdcmd, logs + '/deodex.log')
+                                    appendf(cmd(sdcmd), logs + '/deodex.log')
                                     try:
                                         os.replace(
-                                            dexclass, framedir+'/'+dexclass)
+                                            dexclass, framedir + '/' + dexclass)
                                     except:
                                         pass
 
                                 delpath('smali')
 
-                            delpath(*findf(frname+'.*'))
+                            delpath(*findf(frname + '.*'))
         elif dtype in ['l', 'm']:
             if dtype == 'l':
                 deoarch = arch
                 deoarch2 = arch
-            if existd(framedir+'/'+deoarch):
-                with cd(framedir+'/'+deoarch):
+            if existd(framedir + '/' + deoarch):
+                with cd(framedir + '/' + deoarch):
                     frametmp = sorted(findf('*.odex'), key=str.lower)
                     for frame in frametmp:
-                        os.replace(frame, framedir+'/'+deoarch2+'/'+frame)
-                        print('\n'+lang['deodex_deodexing']+frame+'\n')
+                        os.replace(frame, framedir + '/' + deoarch2 + '/' + frame)
+                        print('\n' + lang['deodex_deodexing'] + frame + '\n')
 
-                        with cd(framedir+'/'+deoarch2):
-                            appendf(cmd('java -Xmx'+heapsize+'m -jar '
-                                    + oat2dex+' '+frame+' odex'), logs+'/deodex.log')
+                        with cd(framedir + '/' + deoarch2):
+                            appendf(cmd('java -Xmx' + heapsize + 'm -jar '
+                                        + oat2dex + ' ' + frame + ' odex'), logs + '/deodex.log')
                             delpath(frame)
                             for i in findf('*.dex'):
-                                os.replace(i, framedir+'/'+deoarch+'/'+i)
+                                os.replace(i, framedir + '/' + deoarch + '/' + i)
 
-            with cd(framedir+'/'+deoarch2+'/dex'):
+            with cd(framedir + '/' + deoarch2 + '/dex'):
                 dextmp = findf('*')
                 for i in dextmp:
-                    os.replace(i, framedir+'/'+deoarch+'/'+i)
-            with cd(framedir+'/'+deoarch):
+                    os.replace(i, framedir + '/' + deoarch + '/' + i)
+            with cd(framedir + '/' + deoarch):
                 dextmp = findf('*.dex')
                 for line in dextmp:
                     if 'classes' not in line:
@@ -1089,9 +1092,9 @@ def deodex_start(quiet=None):
                     else:
                         dexclass = '-'.join(line.split('-')[-1:])
                         frame = line.replace(
-                            '-'+dexclass, '')+'.jar__'+dexclass
+                            '-' + dexclass, '') + '.jar__' + dexclass
 
-                    os.replace(line, framedir+'/'+frame)
+                    os.replace(line, framedir + '/' + frame)
 
         banner(quiet)
         kprint(lang['deodex_pack_jar'], 'b')
@@ -1099,11 +1102,11 @@ def deodex_start(quiet=None):
             frametmp = sorted(findf('*jar__classes*.dex'), key=str.lower)
             lskip = ''
             for line in frametmp:
-                if lskip and lskip+'__' in line:
+                if lskip and lskip + '__' in line:
                     continue
                 line2 = line.split('__')[0]
                 frametmp2 = sorted(
-                    greps('^'+line2+'__.*', frametmp), key=str.lower)
+                    greps('^' + line2 + '__.*', frametmp), key=str.lower)
                 for line3 in frametmp2:
                     line4 = line3.split('__')[1]
                     os.replace(line3, line4)
@@ -1113,20 +1116,20 @@ def deodex_start(quiet=None):
                         lskip = ''
 
                 if existf('classes.dex'):
-                    appendf(cmd(aapt+' add -fk '+line2
-                                + ' classes*.dex'), logs+'/deodex.log')
+                    appendf(cmd(aapt + ' add -fk ' + line2
+                                + ' classes*.dex'), logs + '/deodex.log')
                 else:
-                    appendf('ERROR: '+line2+' has no classes.dex',
-                            logs+'/deodex.log')
+                    appendf('ERROR: ' + line2 + ' has no classes.dex',
+                            logs + '/deodex.log')
 
                 delpath(*findf('classes*.dex'))
 
             if dtype in ['l', 'm']:
-                delpath(arch+'/odex')
-                delpath(arch+'/dex')
+                delpath(arch + '/odex')
+                delpath(arch + '/dex')
                 if arch2:
-                    delpath(arch2+'/odex')
-                    delpath(arch2+'/dex')
+                    delpath(arch2 + '/odex')
+                    delpath(arch2 + '/dex')
 
         if not quiet:
             clears()
@@ -1146,16 +1149,16 @@ def deodex_start(quiet=None):
                 if 'app_chimera' in extramv[i]:
                     delpath(dirname(i))
 
-        delpath(framedir+'/oat')
+        delpath(framedir + '/oat')
         delarch = 1
 
         if getprop('ro.product.manufacturer').lower() == 'xiaomi':
-            delpath(framedir+'/miui.apk__classes.dex', framedir+'/miuisystem.apk__classes.dex',
-                    framedir+'/miui.jar', framedir+'/miuisystem.jar')
+            delpath(framedir + '/miui.apk__classes.dex', framedir + '/miuisystem.apk__classes.dex',
+                    framedir + '/miui.jar', framedir + '/miuisystem.jar')
 
         if not autorom():
             if dtype in ['l', 'm']:
-                a = grepf('convertToDex: skip', logs+'/deodex.log')
+                a = grepf('convertToDex: skip', logs + '/deodex.log')
                 deodex_fail_list = []
                 for i in a:
                     deodex_fail_list.append('/'.join(i.split('/')[1:]))
@@ -1163,13 +1166,13 @@ def deodex_start(quiet=None):
                 deodex_fail_list = '\n'.join(deodex_fail_list)
             else:
                 deodex_fail_list = ''
-                if existf(logs+'/deodex_fail_list'):
+                if existf(logs + '/deodex_fail_list'):
                     try:
-                        sedf(rd+'/', '', logs+'/deodex_fail_list')
+                        sedf(rd + '/', '', logs + '/deodex_fail_list')
                     except:
                         pass
 
-                    deodex_fail_list = readf(logs+'/deodex_fail_list')
+                    deodex_fail_list = readf(logs + '/deodex_fail_list')
 
             if deodex_fail_list:
                 banner(quiet)
@@ -1178,7 +1181,7 @@ def deodex_start(quiet=None):
                 kprint(lang['deodex_problems3', 'r'])
                 kprint(deodex_fail_list, 'y')
                 if dtype == 'm':
-                    kprint('\n'+lang['deodex_try_smali'], 'g')
+                    kprint('\n' + lang['deodex_try_smali'], 'g')
 
                 if not quiet:
                     print()
@@ -1188,9 +1191,9 @@ def deodex_start(quiet=None):
                 delarch = None
 
         if delarch:
-            delpath(framedir+'/'+arch)
+            delpath(framedir + '/' + arch)
             if arch2:
-                delpath(framedir+'/'+arch2)
+                delpath(framedir + '/' + arch2)
 
         with cd(rd):
             stillodexed = '\n'.join(findr('system/**/*.odex') + findr('vendor/**/*.odex') + findr(
@@ -1205,7 +1208,7 @@ def deodex_start(quiet=None):
         else:
             if not quiet:
                 banner()
-                kprint(lang['deodex_remain']+'\n', 'r')
+                kprint(lang['deodex_remain'] + '\n', 'r')
                 kprint(stillodexed, 'y')
                 exit_deo()
         return
@@ -1213,12 +1216,12 @@ def deodex_start(quiet=None):
     def deodex_vdex(dtype):
         arch, arch2 = '', ''
         for i in ['arm64', 'x86_64', 'arm', 'x86']:
-            arch = findr(framedir+'/**/'+i)
+            arch = findr(framedir + '/**/' + i)
             if arch:
                 arch = basename(arch[0])
                 if '64' in arch:
                     arch2 = arch.replace('_64', '').replace('64', '')
-                    if not findr(rd+'/**/'+arch2):
+                    if not findr(rd + '/**/' + arch2):
                         arch2 = ''
 
                 break
@@ -1227,35 +1230,35 @@ def deodex_start(quiet=None):
         rd2 = rd
 
         if not quiet:
-            if (not existf(framedir+'/'+arch+'/boot.oat')
-                    and not existf(framedir+'/'+arch+'/boot-ext.oat')):
-                while (not existf(framedir+'/'+arch+'/boot.oat')
-                       and not existf(framedir+'/'+arch+'/boot-ext.oat')):
+            if (not existf(framedir + '/' + arch + '/boot.oat')
+                    and not existf(framedir + '/' + arch + '/boot-ext.oat')):
+                while (not existf(framedir + '/' + arch + '/boot.oat')
+                       and not existf(framedir + '/' + arch + '/boot-ext.oat')):
                     banner()
-                    print(lang['deodex_config_arch']+'\n')
+                    print(lang['deodex_config_arch'] + '\n')
                     print(lang['deodex_config_arch2'])
                     print(lang['deodex_config_arch3'])
                     print(lang['deodex_config_arch4'])
-                    print(lang['deodex_config_arch5']+'\n')
-                    print(lang['deodex_config_arch6']+'\n')
+                    print(lang['deodex_config_arch5'] + '\n')
+                    print(lang['deodex_config_arch6'] + '\n')
                     print(lang['deodex_config_arch7'])
-                    print(lang['deodex_config_arch8']+'\n')
-                    print(lang['deodex_config_arch9']+'\n')
+                    print(lang['deodex_config_arch8'] + '\n')
+                    print(lang['deodex_config_arch9'] + '\n')
                     arch = input()
 
-        if (existf(framedir+'/'+arch+'/boot.oat')
-                or existf(framedir+'/'+arch+'/boot-ext.oat')):
+        if (existf(framedir + '/' + arch + '/boot.oat')
+                or existf(framedir + '/' + arch + '/boot-ext.oat')):
             if not autorom() and not quiet:
                 banner()
-                kprint(lang['startup_project']+color['g']+romname, 'b')
-                kprint(lang['startup_version']+color['g']+androidversion, 'b')
-                kprint(lang['deodex_api']+color['g']+api, 'b')
-                kprint(lang['deodex_arch']+color['g']+arch, 'b')
+                kprint(lang['startup_project'] + color['g'] + romname, 'b')
+                kprint(lang['startup_version'] + color['g'] + androidversion, 'b')
+                kprint(lang['deodex_api'] + color['g'] + api, 'b')
+                kprint(lang['deodex_arch'] + color['g'] + arch, 'b')
                 if arch2:
-                    kprint(lang['deodex_arch2']+color['g']+arch2, 'b')
+                    kprint(lang['deodex_arch2'] + color['g'] + arch2, 'b')
 
-                kprint(lang['deodex_method']+color['g']
-                       + '\t'+basename(vdexext)+'\n', 'b')
+                kprint(lang['deodex_method'] + color['g']
+                       + '\t' + basename(vdexext) + '\n', 'b')
                 print(lang['deodex_continue_q'])
                 reply = getChar()
                 if reply != 'y':
@@ -1269,11 +1272,11 @@ def deodex_start(quiet=None):
                 return
 
         getconf('deodex', uconf, add=dtype)
-        delpath(*findf(logs+'/*.log'))
-        delpath(logs+'/deodex_fail_list')
+        delpath(*findf(logs + '/*.log'))
+        delpath(logs + '/deodex_fail_list')
 
-        comptmp = findr(appdir+'/**') + findr(privdir
-                                              + '/**') + findr(framedir+'/**')
+        comptmp = findr(appdir + '/**') + findr(privdir
+                                                + '/**') + findr(framedir + '/**')
         comptmp = greps('.*\.gz$|.*\.xz$', comptmp)
 
         if comptmp:
@@ -1286,13 +1289,13 @@ def deodex_start(quiet=None):
             for i in greps('.*\.gz$', comptmp):
                 gzdir = dirname(i)
                 gzfile = basename(i)
-                print('\n'+lang['deodex_extract']+gzfile+'\n')
-                appendf(zipu(i, gzdir), logs+'/zip.log')
+                print('\n' + lang['deodex_extract'] + gzfile + '\n')
+                appendf(zipu(i, gzdir), logs + '/zip.log')
 
             for i in greps('.*\.xz$', comptmp):
                 xzdir = dirname(i)
                 xzfile = basename(i)
-                print('\n'+lang['deodex_extract']+xzfile+'\n')
+                print('\n' + lang['deodex_extract'] + xzfile + '\n')
                 with cd(xzdir):
                     xzu(i)
 
@@ -1301,15 +1304,15 @@ def deodex_start(quiet=None):
 
         with cd(framedir):
             for i in findf('*.vdex'):
-                os.replace(i, framedir+'/'+arch+'/'+i)
+                os.replace(i, framedir + '/' + arch + '/' + i)
 
         with cd(rd):
             if arch and arch2:
-                for i in grepv('00_project_files', findr(rd2+'/**/'+arch+'/*.vdex')):
-                    delpath(i.replace('/'+arch+'/', '/'+arch2+'/'))
+                for i in grepv('00_project_files', findr(rd2 + '/**/' + arch + '/*.vdex')):
+                    delpath(i.replace('/' + arch + '/', '/' + arch2 + '/'))
 
-            if existd(framedir+'/'+arch):
-                with cd(framedir+'/'+arch):
+            if existd(framedir + '/' + arch):
+                with cd(framedir + '/' + arch):
                     bootclass = None
                     boat = None
                     if existf('boot.oat') and existf('boot.vdex'):
@@ -1326,12 +1329,12 @@ def deodex_start(quiet=None):
                             result.append(i.start())
 
                         if result:
-                            begin = result[0]+15
+                            begin = result[0] + 15
                             bnum = 1
                             dex = b''
                             while True:
                                 if data[begin + bnum] == 32:
-                                    dex = data[begin:bnum+begin]
+                                    dex = data[begin:bnum + begin]
                                     break
                                 else:
                                     bnum += 1
@@ -1339,110 +1342,110 @@ def deodex_start(quiet=None):
                             bootclass = basename(dex.decode())
 
                         if bootclass:
-                            os.replace(boat[:-4]+'.vdex', 'boot-'
+                            os.replace(boat[:-4] + '.vdex', 'boot-'
                                        + bootclass.replace('.jar', '.vdex'))
                         else:
-                            if existf(boat[:-4]+'.vdex'):
-                                os.rename(boat[:-4]+'.vdex',
-                                          boat[:-4]+'.vdex2')
+                            if existf(boat[:-4] + '.vdex'):
+                                os.rename(boat[:-4] + '.vdex',
+                                          boat[:-4] + '.vdex2')
 
             banner(quiet)
 
-            for i in grepv('00_project_files', findr(rd2+'/**/*.vdex')):
+            for i in grepv('00_project_files', findr(rd2 + '/**/*.vdex')):
                 thedir = dirname(i)
                 thefile = basename(i)
                 if thefile.startswith('boot-'):
                     thefile = thefile[5:]
 
                 if i.startswith(sysdir2):
-                    sdir = i.replace(sysdir2+'/', '').split('/')[0]
+                    sdir = i.replace(sysdir2 + '/', '').split('/')[0]
 
-                    mainfile = findr(sysdir2+'/'+sdir+'/**/'+thefile.replace('.vdex', '.apk')) + findr(
-                        sysdir2+'/'+sdir+'/**/'+thefile.replace('.vdex', '.jar'))
+                    mainfile = findr(sysdir2 + '/' + sdir + '/**/' + thefile.replace('.vdex', '.apk')) + findr(
+                        sysdir2 + '/' + sdir + '/**/' + thefile.replace('.vdex', '.jar'))
                 else:
-                    sdir = i.replace(rd2+'/', '').split('/')[0]
+                    sdir = i.replace(rd2 + '/', '').split('/')[0]
 
-                    mainfile = findr(rd2+'/'+sdir+'/**/'+thefile.replace('.vdex', '.apk')) + findr(
-                        rd2+'/'+sdir+'/**/'+thefile.replace('.vdex', '.jar'))
+                    mainfile = findr(rd2 + '/' + sdir + '/**/' + thefile.replace('.vdex', '.apk')) + findr(
+                        rd2 + '/' + sdir + '/**/' + thefile.replace('.vdex', '.jar'))
 
                 if not mainfile:
                     if '/oat/' in i:
                         if '/framework/' in i:
                             mainfile = [
-                                '/'.join(i.split('/')[:-3])+'/'+thefile[:-5]+'.jar']
+                                '/'.join(i.split('/')[:-3]) + '/' + thefile[:-5] + '.jar']
                         else:
                             mainfile = [
-                                '/'.join(i.split('/')[:-3])+'/'+thefile[:-5]+'.apk']
+                                '/'.join(i.split('/')[:-3]) + '/' + thefile[:-5] + '.apk']
                     else:
                         if '/framework/' in i:
                             mainfile = [
-                                '/'.join(i.split('/')[:-2])+'/'+thefile[:-5]+'.jar']
+                                '/'.join(i.split('/')[:-2]) + '/' + thefile[:-5] + '.jar']
                         else:
                             mainfile = [
-                                '/'.join(i.split('/')[:-2])+'/'+thefile[:-5]+'.apk']
+                                '/'.join(i.split('/')[:-2]) + '/' + thefile[:-5] + '.apk']
 
                 if mainfile:
                     mainfile = mainfile[0]
                 else:
-                    appendf('FAILED: '+i, logs+'/deodex.log')
+                    appendf('FAILED: ' + i, logs + '/deodex.log')
                     continue
 
-                if existf(mainfile) and greps('.*classes\.dex', zipl(mainfile)):
+                if existf(mainfile) and greps('.*classes.dex', zipl(mainfile)):
                     if not mainfile.endswith('.jar'):
-                        delpath(dirname(mainfile)+'/oat')
+                        delpath(dirname(mainfile) + '/oat')
 
-                    kprint('\n'+basename(mainfile)
-                           + lang['deodex_app_already']+'\n', 'g')
+                    kprint('\n' + basename(mainfile)
+                           + lang['deodex_app_already'] + '\n', 'g')
                     continue
 
-                print('\n'+lang['deodex_deodexing']+basename(mainfile)+'\n')
+                print('\n' + lang['deodex_deodexing'] + basename(mainfile) + '\n')
 
                 with cd(dirname(mainfile)):
                     os.replace(i, thefile)
-                    retv = cmd(vdexext+' -i '+thefile)
-                    if greps('\[ERROR\]|\[WARNING\]', retv.split()):
-                        retv = cmd(vdexext+' -i '+thefile
+                    retv = cmd(vdexext + ' -i ' + thefile)
+                    if greps(r'\[ERROR\]|\[WARNING\]', retv.split()):
+                        retv = cmd(vdexext + ' -i ' + thefile
                                    + ' --ignore-crc-error')
 
-                        if greps('\[ERROR\]|\[WARNING\]', retv.split()):
-                            appendf(retv, logs+'/deodex.log')
+                        if greps(r'\[ERROR\]|\[WARNING\]', retv.split()):
+                            appendf(retv, logs + '/deodex.log')
                             appendf(mainfile.replace(rd2, ''),
-                                    logs+'/deodex_fail_list')
+                                    logs + '/deodex_fail_list')
                             os.replace(thefile, i)
-                            delpath(*findf(thefile[:-5]+'_classes*'))
+                            delpath(*findf(thefile[:-5] + '_classes*'))
                             continue
                         else:
                             appendf(mainfile.replace(rd2, ''),
-                                    logs+'/deodex_crc_ignored')
+                                    logs + '/deodex_crc_ignored')
                     else:
-                        appendf(retv, logs+'/deodex.log')
+                        appendf(retv, logs + '/deodex.log')
 
-                    if not findf(thefile[:-5]+'_classes*dex'):
-                        print('\n'+basename(mainfile)+': '
-                              + lang['deodex_no_dex']+'\n')
+                    if not findf(thefile[:-5] + '_classes*dex'):
+                        print('\n' + basename(mainfile) + ': '
+                              + lang['deodex_no_dex'] + '\n')
 
                         if existf(thefile):
                             os.replace(thefile, i)
 
                         appendf(basename(mainfile)
-                                + ': No dex in vdex. Skipping', logs+'/deodex.log')
+                                + ': No dex in vdex. Skipping', logs + '/deodex.log')
 
                         continue
 
                     broken = None
                     for cdex in findf('*_classes*.cdex'):
                         appendf('\n'.join(
-                            grepv('^==', cmd(vdexcon+' '+cdex).splitlines())), logs+'/deodex.log')
+                            grepv('^==', cmd(vdexcon + ' ' + cdex).splitlines())), logs + '/deodex.log')
 
                         delpath(cdex)
 
-                        if existf(cdex+'.new'):
-                            os.replace(cdex+'.new', cdex[:-5]+'.dex')
+                        if existf(cdex + '.new'):
+                            os.replace(cdex + '.new', cdex[:-5] + '.dex')
                         else:
                             appendf(mainfile.replace(rd, ''),
-                                    logs+'/deodex_fail_list')
+                                    logs + '/deodex_fail_list')
                             appendf(mainfile.replace(rd, ''),
-                                    logs+'/deodex_cdex_fail')
+                                    logs + '/deodex_cdex_fail')
                             for x in findf('*_classes*'):
                                 delpath(x)
 
@@ -1455,8 +1458,8 @@ def deodex_start(quiet=None):
                         for classes in findf('*_classes*'):
                             os.replace(classes, classes.split('_')[-1])
 
-                        appendf(cmd(aapt+' add -fk '+basename(mainfile)
-                                    + ' classes*.dex'), logs+'/deodex.log')
+                        appendf(cmd(aapt + ' add -fk ' + basename(mainfile)
+                                    + ' classes*.dex'), logs + '/deodex.log')
                         delpath(*findf('classes*.dex'), thefile)
 
                         if not mainfile.endswith('.jar'):
@@ -1468,13 +1471,13 @@ def deodex_start(quiet=None):
         banner(quiet)
         kprint(lang['deodex_clean'], 'b')
 
-        if existf(framedir+'/'+arch+'/boot.vdex2'):
-            os.rename(framedir+'/'+arch+'/boot.vdex2',
-                      framedir+'/'+arch+'/boot.vdex')
+        if existf(framedir + '/' + arch + '/boot.vdex2'):
+            os.rename(framedir + '/' + arch + '/boot.vdex2',
+                      framedir + '/' + arch + '/boot.vdex')
 
-        if existf(framedir+'/'+arch+'/boot-ext.vdex2'):
-            os.rename(framedir+'/'+arch+'/boot-ext.vdex2',
-                      framedir+'/'+arch+'/boot-ext.vdex')
+        if existf(framedir + '/' + arch + '/boot-ext.vdex2'):
+            os.rename(framedir + '/' + arch + '/boot-ext.vdex2',
+                      framedir + '/' + arch + '/boot-ext.vdex')
 
         with cd(rd):
             for i in grepv('00_project_files', findr('**/framework/oat')):
@@ -1483,20 +1486,20 @@ def deodex_start(quiet=None):
         delarch = 1
 
         if getprop('ro.product.manufacturer').lower() == 'xiaomi':
-            delpath(framedir+'/miui.apk__classes.dex', framedir+'/miuisystem.apk__classes.dex',
-                    framedir+'/miui.jar', framedir+'/miuisystem.jar')
+            delpath(framedir + '/miui.apk__classes.dex', framedir + '/miuisystem.apk__classes.dex',
+                    framedir + '/miui.jar', framedir + '/miuisystem.jar')
 
         if not autorom() and not quiet:
             banner()
             print(lang['deodex_del_arch'])
-            kprint('/'.join([arch]+([arch2] if arch2 else []))+'\n', 'y')
+            kprint('/'.join([arch] + ([arch2] if arch2 else [])) + '\n', 'y')
             reply = getChar()
             if reply == 'n':
                 delarch = None
 
             deodex_fail_list = ''
-            if existf(logs+'/deodex_fail_list'):
-                deodex_fail_list = readf(logs+'/deodex_fail_list')
+            if existf(logs + '/deodex_fail_list'):
+                deodex_fail_list = readf(logs + '/deodex_fail_list')
 
             if deodex_fail_list:
                 banner()
@@ -1505,7 +1508,7 @@ def deodex_start(quiet=None):
                 kprint(lang['deodex_problems3'], 'r')
                 kprint(deodex_fail_list, 'y')
                 if dtype == 'm':
-                    kprint('\n'+lang['deodex_try_smali'], 'g')
+                    kprint('\n' + lang['deodex_try_smali'], 'g')
 
                 print()
                 input(lang['enter_continue'])
@@ -1515,11 +1518,11 @@ def deodex_start(quiet=None):
 
         with cd(rd):
             if delarch:
-                for i in grepv('00_project_files', findr('**/framework/'+arch)):
+                for i in grepv('00_project_files', findr('**/framework/' + arch)):
                     delpath(i)
 
                 if arch2:
-                    for i in grepv('00_project_files', findr('**/framework/'+arch2)):
+                    for i in grepv('00_project_files', findr('**/framework/' + arch2)):
                         delpath(i)
 
             stillodexed = '\n'.join(
@@ -1532,7 +1535,7 @@ def deodex_start(quiet=None):
                 exit_deo()
         else:
             banner(quiet)
-            kprint(lang['deodex_remain']+'\n', 'r')
+            kprint(lang['deodex_remain'] + '\n', 'r')
             kprint(stillodexed, 'y')
             if not quiet:
                 exit_deo()
@@ -1542,11 +1545,11 @@ def deodex_start(quiet=None):
     def deodex_old():
         if not autorom() and not quiet:
             banner()
-            kprint(lang['startup_project']+color['g']+romname, 'b')
-            kprint(lang['startup_version']+color['g']+androidversion, 'b')
-            kprint(lang['deodex_api']+color['g']+api, 'b')
-            kprint(lang['deodex_method']+color['g']+'\t'+basename(smali), 'b')
-            print('\t'+basename(baksmali)+'\n')
+            kprint(lang['startup_project'] + color['g'] + romname, 'b')
+            kprint(lang['startup_version'] + color['g'] + androidversion, 'b')
+            kprint(lang['deodex_api'] + color['g'] + api, 'b')
+            kprint(lang['deodex_method'] + color['g'] + '\t' + basename(smali), 'b')
+            print('\t' + basename(baksmali) + '\n')
             print(lang['deodex_continue_q'])
             reply = getChar()
             if reply != 'y':
@@ -1555,38 +1558,39 @@ def deodex_start(quiet=None):
         def dodeodexold():
             for app in applist:
                 app = '.'.join(app.split('.')[:-1])
-                if not existf(deoappdir+'/'+app+'.odex'):
+                if not existf(deoappdir + '/' + app + '.odex'):
                     continue
 
-                if 'classes.dex' in zipl(deoappdir+'/'+app+'.'+deoext):
-                    kprint('\n'+app+lang['deodex_app_already']+'\n', 'g')
-                    delpath(deoappdir+'/'+app+'.odex')
+                if 'classes.dex' in zipl(deoappdir + '/' + app + '.' + deoext):
+                    kprint('\n' + app + lang['deodex_app_already'] + '\n', 'g')
+                    delpath(deoappdir + '/' + app + '.odex')
                     continue
 
-                print('\n'+lang['deodex_deodexing']+app+'\n')
+                print('\n' + lang['deodex_deodexing'] + app + '\n')
 
-                appendf(cmd('java -Xmx'+heapsize+'m -jar '+baksmali+' -a '+api+' -d '+framedir+' -x '
-                        + deoappdir+os.sep+app+'.odex -o '+deoappdir+os.sep+'smali'), logs+'/deodex.log')
-                if findf(deoappdir+os.sep+'smali/*'):
-                    appendf(cmd('java -Xmx'+heapsize+'m -jar '+smali+' -a '+api+' '+deoappdir
-                            + os.sep+'smali -o '+deoappdir+os.sep+'classes.dex'), logs+'/deodex.log')
-                    appendf(cmd(aapt+' add -fk '+deoappdir+os.sep+app+'.'+deoext
-                            + ' '+deoappdir+os.sep+'classes.dex'), logs+'/deodex.log')
-                    delpath(deoappdir+'/'+app+'.odex',
-                            deoappdir+'/classes.dex')
-                delpath(deoappdir+'/smali')
+                appendf(cmd('java -Xmx' + heapsize + 'm -jar ' + baksmali + ' -a ' + api + ' -d ' + framedir + ' -x '
+                            + deoappdir + os.sep + app + '.odex -o ' + deoappdir + os.sep + 'smali'),
+                        logs + '/deodex.log')
+                if findf(deoappdir + os.sep + 'smali/*'):
+                    appendf(cmd('java -Xmx' + heapsize + 'm -jar ' + smali + ' -a ' + api + ' ' + deoappdir
+                                + os.sep + 'smali -o ' + deoappdir + os.sep + 'classes.dex'), logs + '/deodex.log')
+                    appendf(cmd(aapt + ' add -fk ' + deoappdir + os.sep + app + '.' + deoext
+                                + ' ' + deoappdir + os.sep + 'classes.dex'), logs + '/deodex.log')
+                    delpath(deoappdir + '/' + app + '.odex',
+                            deoappdir + '/classes.dex')
+                delpath(deoappdir + '/smali')
 
         with cd(prfiles):
             delpath(*findf('deoxex_*'))
             getconf('deodex', uconf, add='old')
-        with cd(prfiles+'/logs'):
+        with cd(prfiles + '/logs'):
             delpath(*findf('*.log'))
 
         with cd(rd):
             odextmp = greps(fl('', '.*system/framework|.*system/app/|.*system/priv-app/'),
                             findr('system/**/*.odex') + findr('vendor/**/*.odex'))
 
-        if existd(sysdir+'/app') and odextmp:
+        if existd(sysdir + '/app') and odextmp:
             if not quiet:
                 clears()
             print()
@@ -1598,8 +1602,8 @@ def deodex_start(quiet=None):
                 odir = dirname(i)
                 odex = basename(i)
                 apk = basename(i).replace('.odex', '.apk')
-                os.replace(sysdir+'/'+i, appdir+'/'+odex)
-                os.replace(sysdir+'/'+odir+'/'+apk, appdir+'/'+apk)
+                os.replace(sysdir + '/' + i, appdir + '/' + odex)
+                os.replace(sysdir + '/' + odir + '/' + apk, appdir + '/' + apk)
 
         if not quiet:
             clears()
@@ -1616,7 +1620,7 @@ def deodex_start(quiet=None):
         if odextmp:
             for i in odextmp:
                 apk = basename(i).replace('.odex', '.apk')
-                os.replace(sysdir+'/app/'+apk, rd+'/'+i)
+                os.replace(sysdir + '/app/' + apk, rd + '/' + i)
 
         if not quiet:
             clears()
@@ -1667,21 +1671,21 @@ def deodex_start(quiet=None):
                 exit_deo()
         else:
             banner(quiet)
-            kprint(lang['deodex_remain']+'\n', 'r')
+            kprint(lang['deodex_remain'] + '\n', 'r')
             kprint(stillodexed, 'y')
             if not quiet:
                 exit_deo()
         return
 
-    framedir = sysdir+os.sep+'framework'
-    appdir = sysdir+os.sep+'app'
-    privdir = sysdir+os.sep+'priv-app'
+    framedir = sysdir + os.sep + 'framework'
+    appdir = sysdir + os.sep + 'app'
+    privdir = sysdir + os.sep + 'priv-app'
 
-    if not existd(framedir) or not existf(sysdir+'/build.prop'):
+    if not existd(framedir) or not existf(sysdir + '/build.prop'):
         banner(quiet)
         kprint(lang['missing'], 'yrbbo')
         kprint(lang['deodex_copy_frame_prop'], 'r')
-        kprint(lang['deodex_copy_frame_prop2']+color['y']+romname+'/system')
+        kprint(lang['deodex_copy_frame_prop2'] + color['y'] + romname + '/system')
         if not quiet:
             exit_deo()
         return
@@ -1695,7 +1699,7 @@ def deodex_start(quiet=None):
 
     global api
     api = getprop('ro.build.version.sdk')
-    if api >= '21' and not findr(framedir+'/**/boot.oat')+findr(framedir+'/**/boot-ext.oat'):
+    if api >= '21' and not findr(framedir + '/**/boot.oat') + findr(framedir + '/**/boot-ext.oat'):
         banner(quiet)
         kprint(lang['error'], 'yrbbo')
         kprint(lang['deodex_no_boot_oat'], 'r')
@@ -1709,19 +1713,19 @@ def deodex_start(quiet=None):
         kprint(lang['deodex_disclaimer'], 'b')
         kprint(lang['deodex_disclaimer2'], 'b')
         kprint(lang['deodex_disclaimer3'], 'b')
-        kprint(lang['deodex_disclaimer4']+'\n', 'b')
+        kprint(lang['deodex_disclaimer4'] + '\n', 'b')
         print(lang['deodex_try_anyway'])
         reply = getChar()
         if reply != 'y':
             return
 
     heapsize = get_heapsize()
-    sqshtmp = findr(sysdir+'/**/*.sqsh')
+    sqshtmp = findr(sysdir + '/**/*.sqsh')
     if sqshtmp:
         for i in sqshtmp:
             deodex_sqsh(i)
 
-    for i in [usdir+'/updater-script'] + findf(prfiles+'/symlinks*'):
+    for i in [usdir + '/updater-script'] + findf(prfiles + '/symlinks*'):
         grepvf(
             '.*odex\.app|.*odex\.priv-app|.*odex\.framework|.*orig\.applications|.*\.vdex\"', i)
 
@@ -1739,7 +1743,7 @@ def deodex_start(quiet=None):
             if not quiet:
                 while not choice:
                     banner(quiet)
-                    print(lang['deodex_use_method']+'\n')
+                    print(lang['deodex_use_method'] + '\n')
                     print('1) oat2dex')
                     print('2) smali/baksmali\n')
                     print(lang['select'])
@@ -1767,15 +1771,15 @@ def deodex_start(quiet=None):
         else:
             banner(quiet)
             kprint(lang['error'], 'yrbbo')
-            kprint(lang['deodex_no_api']+'\n', 'r')
+            kprint(lang['deodex_no_api'] + '\n', 'r')
             if not quiet:
                 exit_deo()
             return
 
     if deodext == 'old':
         smali = greps(fl('', '.*baksmali'),
-                      findf(tools+'/smali/old/*smali*'))[0]
-        baksmali = findf(tools+'/smali/old/*baksmali*')[0]
+                      findf(tools + '/smali/old/*smali*'))[0]
+        baksmali = findf(tools + '/smali/old/*baksmali*')[0]
         deodex_old()
         return
     elif deodext in ['l', 'm']:
@@ -1815,9 +1819,9 @@ def dlfile(url, filename, bit=None):
                 continue
 
             if filesize < 1048576:
-                filesize = str(round(filesize / 1024))+' KB'
+                filesize = str(round(filesize / 1024)) + ' KB'
             else:
-                filesize = str(round(filesize / 1024 / 1024, 2))+' MB'
+                filesize = str(round(filesize / 1024 / 1024, 2)) + ' MB'
 
             try:
                 rfname = request.headers['content-disposition']
@@ -1826,7 +1830,7 @@ def dlfile(url, filename, bit=None):
             except:
                 rfname = filename
 
-            print('\033[0m\033[33m'+rfname+': '+filesize+' ...\033[0m')
+            print('\033[0m\033[33m' + rfname + ': ' + filesize + ' ...\033[0m')
             with open(filename, 'wb') as f:
                 f.write(request.content)
 
@@ -1839,28 +1843,28 @@ def dlfile(url, filename, bit=None):
 def dllang():
     banner()
     kprint('Getting language list ...', 'b')
-    with cd(tools+'/language'):
-        langurl = server1+'/next/langfiles'
+    with cd(tools + '/language'):
+        langurl = server1 + '/next/langfiles'
 
         try:
             langlist = {}
-            for i in internet(langurl+'/list', 1).splitlines():
+            for i in internet(langurl + '/list', 1).splitlines():
                 if srkuser:
-                    langlist[i] = langurl+'/'+srkuser+'/'+i+'_srk.zip'
+                    langlist[i] = langurl + '/' + srkuser + '/' + i + '_srk.zip'
                 else:
-                    langlist[i] = langurl+'/'+i+'_srk.zip'
+                    langlist[i] = langurl + '/' + i + '_srk.zip'
 
-            langdl = chlist(color['gb']+'Choose language to download:'
+            langdl = chlist(color['gb'] + 'Choose language to download:'
                             + color['n'], sorted(list(langlist)), len(list(langlist)))
 
             banner()
-            kprint('Downloading '+langdl+' ...', 'b')
+            kprint('Downloading ' + langdl + ' ...', 'b')
 
             dlfile(langlist[langdl], 'lang.zip')
             zipu2('lang.zip')
             delpath('lang.zip')
 
-            return langdl+'_srk.zip'
+            return langdl + '_srk.zip'
         except:
             pass
 
@@ -1872,7 +1876,7 @@ def dozipalign():
         alltmp = findr('**/*.apk')
         alltmp = grepv('.*00_project_files', alltmp)
 
-        if existf(prfiles+'/AR-config'):
+        if existf(prfiles + '/AR-config'):
             reply = 'y'
         else:
             banner()
@@ -1884,25 +1888,25 @@ def dozipalign():
 
         for i in alltmp:
             try:
-                zalignchk = cmd(zipalign+' -c -v 4 '
+                zalignchk = cmd(zipalign + ' -c -v 4 '
                                 + i).splitlines()[-1].split()[1]
             except Exception as e:
-                appendf(logtb(e), logs+'/main.log')
+                appendf(logtb(e), logs + '/main.log')
                 continue
 
             # app = basename(i)
 
             if zalignchk != 'FAILED':
-                kprint(lang['menu_skip']+': '+i, 'g')
+                kprint(lang['menu_skip'] + ': ' + i, 'g')
                 continue
 
-            kprint(lang['zipalign']+': '+i+' ...', 'b')
-            appendf(cmd(zipalign+' 4 '+i+' '+i+'-2'), logs+'/main.log')
+            kprint(lang['zipalign'] + ': ' + i + ' ...', 'b')
+            appendf(cmd(zipalign + ' 4 ' + i + ' ' + i + '-2'), logs + '/main.log')
 
-            if existf(i+'-2'):
-                os.replace(i+'-2', i)
+            if existf(i + '-2'):
+                os.replace(i + '-2', i)
             else:
-                delpath(i+'-2')
+                delpath(i + '-2')
 
 
 def dsize(folder='.'):
@@ -1959,7 +1963,7 @@ def e2fsdroid_run(argv, base_features, ext4_features):
                             help="The selinux file context.")
 
         parser.add_argument("--android_sparse", "-s", action="store_true",
-                                                help="Outputs an android sparse image (mke2fs).")
+                            help="Outputs an android sparse image (mke2fs).")
         parser.add_argument("--journal_size", "-j",
                             help="Journal size (mke2fs).")
         parser.add_argument("--timestamp", "-T",
@@ -1968,7 +1972,7 @@ def e2fsdroid_run(argv, base_features, ext4_features):
                             help="Path to the fs config file (e2fsdroid).")
         parser.add_argument("--product_out", "-D",
                             help="Path to the directory with device specific fs"
-                            " config files (e2fsdroid).")
+                                 " config files (e2fsdroid).")
         parser.add_argument("--block_list_file", "-B",
                             help="Path to the block list file (e2fsdroid).")
         parser.add_argument("--key", "-K",
@@ -2108,7 +2112,7 @@ def e2fsdroid_run(argv, base_features, ext4_features):
         return "Size of the filesystem is required"
 
     mainlog = ['\n[INFO] Building '
-               + ('sparse ' if args.android_sparse else '')+args.partition+'_new.img\n']
+               + ('sparse ' if args.android_sparse else '') + args.partition + '_new.img\n']
 
     mke2fs_cmd, e2fsdroid_cmd = ConstructE2fsCommands(args)
 
@@ -2118,7 +2122,7 @@ def e2fsdroid_run(argv, base_features, ext4_features):
 
     # run mke2fs
     with tempfile.NamedTemporaryFile() as conf_file:
-        conf_data = open(tools+'/source/mke2fs.conf', 'rb').read()
+        conf_data = open(tools + '/source/mke2fs.conf', 'rb').read()
         conf_data = sed('sparse_super,large_file,filetype,dir_index,ext_attr',
                         ','.join(base_features), conf_data.decode()).encode()
         conf_data = sed('has_journal,extent,huge_file,dir_nlink,extra_isize,uninit_bg',
@@ -2156,7 +2160,7 @@ def escape_char(thestring):
     charlist = ['(', ')', '[', ']', '{', '}']
 
     for i in charlist:
-        thestring = thestring.replace(i, '\\'+i)
+        thestring = thestring.replace(i, '\\' + i)
 
     return thestring
 
@@ -2177,7 +2181,7 @@ def ext4_header(filename, sparse=None, BLOCKSIZE=512):
     def lsb2hex(b_string):
         msb_string = hexlify(b_string).decode()
         lsb_string = ''.join([msb_string[x:x + 2]
-                             for x in range(0, len(msb_string), 2)][::-1])
+                              for x in range(0, len(msb_string), 2)][::-1])
         return lsb_string
 
     def lsb2ascii(b_string):
@@ -2192,6 +2196,7 @@ def ext4_header(filename, sparse=None, BLOCKSIZE=512):
 
     def uuid(h_string):
         def split(x): return [x[:8], x[8:12], x[12:16], x[16:20], x[20:]]
+
         return '-'.join(split(h_string))
 
     def timestamp(seconds):
@@ -2212,7 +2217,7 @@ def ext4_header(filename, sparse=None, BLOCKSIZE=512):
             superblock['Block size'] = lsb2int(f.read(4))
             superblock['Total Blocks'] = lsb2int(f.read(4))
             superblock['Raw Size'] = superblock['Block size'] * \
-                superblock['Total Blocks']
+                                     superblock['Total Blocks']
 
         return superblock
 
@@ -2454,24 +2459,24 @@ def ext4Xtract(whatimg, *vargs):
                             captmp = i[1][4:8] + i[1][12:16]
                             if captmp:
                                 cap = ' capabilities=' + \
-                                    str(int.from_bytes(captmp, "little"))
+                                      str(int.from_bytes(captmp, "little"))
                             else:
                                 appendf('Capabilities error: '
-                                        + entry_inode_path, logs+'/ext4_extract.log')
+                                        + entry_inode_path, logs + '/ext4_extract.log')
 
                 if entry_inode.is_dir:
                     if not vargs or 'e' in vargs:
                         try:
-                            mkdir(whatimg+entry_inode_path)
+                            mkdir(whatimg + entry_inode_path)
                         except:
                             if entry_inode_path.endswith('.'):
                                 appendf('Directory renamed without trailing . due to NTFS restrictions:\n'
-                                        + entry_inode_path, logs+'/ext4_extract.log')
+                                        + entry_inode_path, logs + '/ext4_extract.log')
                                 entry_inode_path = entry_inode_path[:-1]
-                                mkdir(whatimg+entry_inode_path)
+                                mkdir(whatimg + entry_inode_path)
                             else:
-                                appendf('Directory error: '+entry_inode_path,
-                                        logs+'/ext4_extract.log')
+                                appendf('Directory error: ' + entry_inode_path,
+                                        logs + '/ext4_extract.log')
                                 continue
 
                     scan_dir(entry_inode, entry_inode_path)
@@ -2480,39 +2485,40 @@ def ext4Xtract(whatimg, *vargs):
                         try:
                             raw = entry_inode.open_read().read()
                         except Exception as e:
-                            appendf(entry_inode_path, logs+'/ext4_extract.log')
-                            appendf(logtb(e), logs+'/ext4_extract.log')
+                            appendf(entry_inode_path, logs + '/ext4_extract.log')
+                            appendf(logtb(e), logs + '/ext4_extract.log')
                             continue
 
                         if not vargs or 'e' in vargs:
-                            mkdir(whatimg+os.sep+dirname(entry_inode_path))
+                            mkdir(whatimg + os.sep + dirname(entry_inode_path))
 
                             if entry_name.endswith('/'):
                                 entry_name = entry_name[:-1]
 
-                            if case_fix == 'Yes' and findfiles(entry_name, whatimg+os.sep+dirname(entry_inode_path)):
+                            if case_fix == 'Yes' and findfiles(entry_name,
+                                                               whatimg + os.sep + dirname(entry_inode_path)):
                                 cnt = len(
-                                    findfiles(entry_name+'.*', whatimg+os.sep+dirname(entry_inode_path)))
+                                    findfiles(entry_name + '.*', whatimg + os.sep + dirname(entry_inode_path)))
 
-                                with cd(whatimg+os.sep+dirname(entry_inode_path)):
-                                    with open(entry_name+'.ex'+str(cnt)+'.srk', 'wb') as o:
+                                with cd(whatimg + os.sep + dirname(entry_inode_path)):
+                                    with open(entry_name + '.ex' + str(cnt) + '.srk', 'wb') as o:
                                         o.write(raw)
 
                                 new_fp = dirname(entry_inode_path)
                                 new_fp = new_fp + \
-                                    (entry_name if new_fp.endswith(
-                                        '/') else '/'+entry_name)
+                                         (entry_name if new_fp.endswith(
+                                             '/') else '/' + entry_name)
 
                                 ci_files = getconf(
-                                    'case_files_'+whatimg, uconf, l=1)
+                                    'case_files_' + whatimg, uconf, l=1)
                                 if new_fp not in ci_files:
-                                    getconf('case_files_'+whatimg, uconf,
-                                            add=ci_files+[new_fp], l=1)
+                                    getconf('case_files_' + whatimg, uconf,
+                                            add=ci_files + [new_fp], l=1)
 
                                 wdone = 1
 
                             if not wdone:
-                                with cd(whatimg+os.sep+dirname(entry_inode_path)):
+                                with cd(whatimg + os.sep + dirname(entry_inode_path)):
                                     with open(entry_name, 'wb') as o:
                                         o.write(raw)
                     else:
@@ -2522,25 +2528,26 @@ def ext4Xtract(whatimg, *vargs):
                                 if not all(c in string.printable for c in link_target):
                                     raise ValueError
                                 symlinks.append(
-                                    link_target+' '+whatimg+entry_inode_path)
+                                    link_target + ' ' + whatimg + entry_inode_path)
                             except:
                                 try:
                                     link_target_block = int.from_bytes(
                                         entry_inode.open_read().read(), "little")
                                     link_target = root_inode.volume.read(
-                                        link_target_block * root_inode.volume.block_size, entry_inode.inode.i_size).decode("utf8")
+                                        link_target_block * root_inode.volume.block_size,
+                                        entry_inode.inode.i_size).decode("utf8")
 
                                     if link_target and all(c in string.printable for c in link_target):
                                         symlinks.append(
-                                            link_target+' '+whatimg+entry_inode_path)
+                                            link_target + ' ' + whatimg + entry_inode_path)
                                     else:
                                         appendf(
-                                            'Failed symlink: '+whatimg+entry_inode_path, logs+'/ext4_extract.log')
+                                            'Failed symlink: ' + whatimg + entry_inode_path, logs + '/ext4_extract.log')
 
                                         continue
                                 except:
-                                    appendf('Failed symlink 2: '+whatimg
-                                            + entry_inode_path, logs+'/ext4_extract.log')
+                                    appendf('Failed symlink 2: ' + whatimg
+                                            + entry_inode_path, logs + '/ext4_extract.log')
 
                                     continue
 
@@ -2548,24 +2555,24 @@ def ext4Xtract(whatimg, *vargs):
                     if dirr:
                         if not vargs or 'c' in vargs:
                             contexts.append(
-                                '/'+whatimg+entry_inode_path+' '+con)
+                                '/' + whatimg + entry_inode_path + ' ' + con)
 
                         if not vargs or 'f' in vargs:
                             fsconfig.append(
-                                whatimg+entry_inode_path+' '+uid+' '+gid+' '+mode+cap)
+                                whatimg + entry_inode_path + ' ' + uid + ' ' + gid + ' ' + mode + cap)
                     else:
                         if not vargs or 'c' in vargs:
-                            contexts.append(entry_inode_path+' '+con)
+                            contexts.append(entry_inode_path + ' ' + con)
 
                         if not vargs or 'f' in vargs:
                             fsconfig.append(
-                                entry_inode_path[1:]+' '+uid+' '+gid+' '+mode+cap)
+                                entry_inode_path[1:] + ' ' + uid + ' ' + gid + ' ' + mode + cap)
 
-        appendf('Extracting '+whatimg+'.img with Python ...',
-                logs+'/ext4_extract.log')
+        appendf('Extracting ' + whatimg + '.img with Python ...',
+                logs + '/ext4_extract.log')
 
         try:
-            with open(whatimg+'.img', 'r+b') as f:
+            with open(whatimg + '.img', 'r+b') as f:
                 root = ext4.Volume(f, ignore_flags=True)
 
                 stored_block_count = int(root.superblock.s_blocks_count)
@@ -2579,15 +2586,15 @@ def ext4Xtract(whatimg, *vargs):
                     f.truncate(stored_block_count * root.block_size)
         except Exception as e:
             if type(e).__name__ == 'MagicError':
-                appendf(logtb(e), logs+'/ext4_extract.log')
+                appendf(logtb(e), logs + '/ext4_extract.log')
 
                 return 4
             else:
-                appendf(logtb(e), logs+'/ext4_extract.log')
+                appendf(logtb(e), logs + '/ext4_extract.log')
 
                 return 1
 
-        with open(whatimg+'.img', 'rb') as f:
+        with open(whatimg + '.img', 'rb') as f:
             root = ext4.Volume(f).root
 
             if not vargs or ('f' in vargs or 'c' in vargs or 's' in vargs):
@@ -2604,7 +2611,7 @@ def ext4Xtract(whatimg, *vargs):
                 fsconfig = []
                 if dirr or whatimg in ['vendor', 'oem', 'product', 'system_ext']:
                     try:
-                        contexts = ['/'+whatimg+' '
+                        contexts = ['/' + whatimg + ' '
                                     + list(root.xattrs())[0][1][:-1].decode('utf8')]
                     except:
                         pass
@@ -2612,19 +2619,20 @@ def ext4Xtract(whatimg, *vargs):
                 if dirr:
                     try:
                         fsconfig = [
-                            whatimg+' '+str(root.inode.i_uid)+' '+str(root.inode.i_gid)+' '+getperm(root.mode_str)]
+                            whatimg + ' ' + str(root.inode.i_uid) + ' ' + str(root.inode.i_gid) + ' ' + getperm(
+                                root.mode_str)]
                     except:
                         if whatimg in ['system', 'product', 'system_ext']:
-                            fsconfig = [whatimg+' 0 0 0755']
+                            fsconfig = [whatimg + ' 0 0 0755']
                         elif whatimg in ['vendor', 'oem']:
-                            fsconfig = [whatimg+' 0 2000 0755']
+                            fsconfig = [whatimg + ' 0 2000 0755']
 
             case_fix = getconf('case_fix', mconf)
 
             try:
                 scan_dir(root)
             except Exception as e:
-                appendf(logtb(e), logs+'/ext4_extract.log')
+                appendf(logtb(e), logs + '/ext4_extract.log')
                 delpath(whatimg)
 
                 if platf in ['lin', 'mac', 'wsl2']:
@@ -2632,30 +2640,30 @@ def ext4Xtract(whatimg, *vargs):
 
                 return 3
 
-        delpath(prfiles+'/symlinks-'+whatimg, prfiles+'/fs_config-'
-                + whatimg, prfiles+'/file_contexts3-'+whatimg)
+        delpath(prfiles + '/symlinks-' + whatimg, prfiles + '/fs_config-'
+                + whatimg, prfiles + '/file_contexts3-' + whatimg)
 
         if not vargs or 's' in vargs:
             for i in sorted(symlinks):
                 try:
                     appendf(
-                        'symlink("'+i.split()[0]+'", "/'+i.split()[1]+'");', prfiles+'/symlinks-'+whatimg)
+                        'symlink("' + i.split()[0] + '", "/' + i.split()[1] + '");', prfiles + '/symlinks-' + whatimg)
                 except:
                     pass
 
             del symlinks
 
         if not vargs or 'f' in vargs:
-            appendf('\n'.join(sorted(fsconfig)), prfiles+'/fs_config-'+whatimg)
+            appendf('\n'.join(sorted(fsconfig)), prfiles + '/fs_config-' + whatimg)
             del fsconfig
 
         if not vargs or 'c' in vargs:
-            if not greps('/'+whatimg+' ', contexts):
-                rootcon = '/'+whatimg+' u:object_r:'+whatimg+'_file:s0'
+            if not greps('/' + whatimg + ' ', contexts):
+                rootcon = '/' + whatimg + ' u:object_r:' + whatimg + '_file:s0'
                 try:
-                    rootcon = '/'+whatimg+' ' + \
-                        greps('/'+whatimg+'/bin |/'+whatimg
-                              + '/lib ', contexts)[0].split()[1]
+                    rootcon = '/' + whatimg + ' ' + \
+                              greps('/' + whatimg + '/bin |/' + whatimg
+                                    + '/lib ', contexts)[0].split()[1]
                 except:
                     pass
 
@@ -2663,61 +2671,61 @@ def ext4Xtract(whatimg, *vargs):
                     contexts.append(rootcon)
 
             appendf('\n'.join(sorted(contexts)),
-                    prfiles+'/file_contexts3-'+whatimg)
+                    prfiles + '/file_contexts3-' + whatimg)
             del contexts
 
         if whatimg == 'system' and sar():
             case_files = []
-            for i in getconf('case_files_'+whatimg, uconf, l=1):
-                case_files.append(i.replace(whatimg+'/', '', 1))
+            for i in getconf('case_files_' + whatimg, uconf, l=1):
+                case_files.append(i.replace(whatimg + '/', '', 1))
 
             if case_files:
-                getconf('case_files_'+whatimg, uconf, add=case_files, l=1)
+                getconf('case_files_' + whatimg, uconf, add=case_files, l=1)
 
         return 0
 
     def ext4Xtract_m():
-        appendf('Extracting '+whatimg+'.img with Mount ...',
-                logs+'/ext4_extract.log')
+        appendf('Extracting ' + whatimg + '.img with Mount ...',
+                logs + '/ext4_extract.log')
 
         mkdir('output')
 
-        appendf(cmd('sudo mount -t auto -o loop,ro '+whatimg
-                + '.img output/'), logs+'/ext4_extract.log')
+        appendf(cmd('sudo mount -t auto -o loop,ro ' + whatimg
+                    + '.img output/'), logs + '/ext4_extract.log')
 
         geotest = cmd('dmesg | tail -n 1')
 
         if 'geometry' in geotest:
             geotest = geotest.strip().split()[7]
-            appendf(geotest, logs+'/ext4_extract.log')
-            appendf(cmd('truncate -o -s '+geotest+' '+whatimg+'.img'),
-                    logs+'/ext4_extract.log')
-            appendf(cmd('sudo mount -t auto -o loop,ro '+whatimg
-                    + '.img output/'), logs+'/ext4_extract.log')
+            appendf(geotest, logs + '/ext4_extract.log')
+            appendf(cmd('truncate -o -s ' + geotest + ' ' + whatimg + '.img'),
+                    logs + '/ext4_extract.log')
+            appendf(cmd('sudo mount -t auto -o loop,ro ' + whatimg
+                        + '.img output/'), logs + '/ext4_extract.log')
 
             geotest = cmd('dmesg | tail -n 1')
             if 'geometry' in geotest:
-                appendf(geotest, logs+'/ext4_extract.log')
+                appendf(geotest, logs + '/ext4_extract.log')
                 delpath('output')
                 return 1
 
         if not findf('output/*'):
-            appendf('ERROR: '+whatimg+'.img is not a valid ext4 img.',
-                    logs+'/ext4_extract.log')
+            appendf('ERROR: ' + whatimg + '.img is not a valid ext4 img.',
+                    logs + '/ext4_extract.log')
             delpath('output')
             return 1
 
         mkdir(whatimg)
 
-        if existf(tools+'/source/superrl.py'):
-            print(cmd('sudo '+tools+'/source/superrl.py --otherfile '
-                      + tools+'/source/getmeta output '+whatimg+' '+prfiles))
+        if existf(tools + '/source/superrl.py'):
+            print(cmd('sudo ' + tools + '/source/superrl.py --otherfile '
+                      + tools + '/source/getmeta output ' + whatimg + ' ' + prfiles))
         else:
-            appendf(cmd('sudo '+tools+'/source/superr --otherfile '+tools
-                    + '/source/getmeta output '+whatimg+' '+prfiles), logs+'/ext4_extract.log')
+            appendf(cmd('sudo ' + tools + '/source/superr --otherfile ' + tools
+                        + '/source/getmeta output ' + whatimg + ' ' + prfiles), logs + '/ext4_extract.log')
 
-        cmd('sudo chmod -R a+rwX '+whatimg)
-        cmd('sudo chown -hR '+whoami()+':'+whoami()+' '+prfiles)
+        cmd('sudo chmod -R a+rwX ' + whatimg)
+        cmd('sudo chown -hR ' + whoami() + ':' + whoami() + ' ' + prfiles)
 
         cmd('sudo umount output/')
         delpath('output')
@@ -2725,13 +2733,13 @@ def ext4Xtract(whatimg, *vargs):
         return 0
 
     def ext4Xtract_7():
-        appendf('Extracting '+whatimg+'.img with 7-zip ...',
-                logs+'/ext4_extract.log')
+        appendf('Extracting ' + whatimg + '.img with 7-zip ...',
+                logs + '/ext4_extract.log')
 
-        delpath(whatimg, prfiles+'/symlinks-'+whatimg, prfiles
-                + '/fs_config-'+whatimg, prfiles+'/file_contexts3-'+whatimg)
-        appendf(cmd(p7z+' x -y -o'+whatimg+' '+whatimg+'.img'), logs+'/main.log')
-        delpath(whatimg+os.sep+'[SYS]')
+        delpath(whatimg, prfiles + '/symlinks-' + whatimg, prfiles
+                + '/fs_config-' + whatimg, prfiles + '/file_contexts3-' + whatimg)
+        appendf(cmd(p7z + ' x -y -o' + whatimg + ' ' + whatimg + '.img'), logs + '/main.log')
+        delpath(whatimg + os.sep + '[SYS]')
 
         def group_path(source):
             buffer = []
@@ -2744,16 +2752,16 @@ def ext4Xtract(whatimg, *vargs):
                     buffer.append(line.strip())
             yield buffer
 
-        appendf(cmd(p7z+' l -slt '+whatimg+'.img'), prfiles+'/testfile')
+        appendf(cmd(p7z + ' l -slt ' + whatimg + '.img'), prfiles + '/testfile')
 
-        if existf(prfiles+'/testfile') and grepf('Symbolic\ Link\ ', prfiles+'/testfile'):
+        if existf(prfiles + '/testfile') and grepf('Symbolic\ Link\ ', prfiles + '/testfile'):
             grepff(fl('Symbolic Link |Mode |Group |User |Path ', '.*'
-                      + whatimg+'\.img'), prfiles+'/testfile', prfiles+'/testfile2')
+                      + whatimg + '\.img'), prfiles + '/testfile', prfiles + '/testfile2')
         else:
-            delpath(prfiles+'/testfile')
+            delpath(prfiles + '/testfile')
             return 1
 
-        with open(prfiles+'/testfile2', 'r') as source:
+        with open(prfiles + '/testfile2', 'r') as source:
             symlinks = []
             filer = []
             for line in group_path(source):
@@ -2762,26 +2770,26 @@ def ext4Xtract(whatimg, *vargs):
                     continue
                 if line[2] != 'Symbolic Link =':
                     sline = line[2].split(' = ')[1].replace('\\', '/')
-                    dline = '/'+whatimg+'/'+p
+                    dline = '/' + whatimg + '/' + p
 
                     symlinks.append(
                         'symlink("{}", "{}");'.format(sline, dline))
-                    delpath(whatimg+os.sep+line[0].split(' = ')[1])
+                    delpath(whatimg + os.sep + line[0].split(' = ')[1])
 
                 u = line[3].split(' = ')[1]
                 g = line[4].split(' = ')[1]
                 m = getperm(line[1].split(' = ')[1])
-                filer.append(whatimg+'/'+p+' '+u+' '+g+' '+m)
+                filer.append(whatimg + '/' + p + ' ' + u + ' ' + g + ' ' + m)
 
-            line = greps(whatimg+'/app ', filer)[0].split()
+            line = greps(whatimg + '/app ', filer)[0].split()
 
-            filer.append(whatimg+' '+line[1]+' '+line[2]+' '+line[3])
+            filer.append(whatimg + ' ' + line[1] + ' ' + line[2] + ' ' + line[3])
 
-        delpath(prfiles+'/testfile', prfiles+'/testfile2')
+        delpath(prfiles + '/testfile', prfiles + '/testfile2')
 
-        appendf('\n'.join(sorted(symlinks)), prfiles+'/symlinks-'+whatimg)
+        appendf('\n'.join(sorted(symlinks)), prfiles + '/symlinks-' + whatimg)
         del symlinks
-        appendf('\n'.join(sorted(filer)), prfiles+'/fs_config-'+whatimg)
+        appendf('\n'.join(sorted(filer)), prfiles + '/fs_config-' + whatimg)
         del filer
 
         get_contexts()
@@ -2816,24 +2824,24 @@ def findimgsize(whatimg):
     imgsize = ''
 
     devicename = get_devicename()
-    deviceloc = tools+os.sep+'devices'+os.sep+devicename
+    deviceloc = tools + os.sep + 'devices' + os.sep + devicename
 
     while not choice:
         numtmp = '3'
         banner()
         kprint(lang['extract_cho_part_detect']
-               + color['n']+color['gb']+whatimg+'\n', 'ryb')
-        print('1) '+lang['extract_adb_shell'])
-        print('2) '+lang['extract_project_dir']+whatimg)
-        print('3) '+lang['extract_manual'])
-        if existf(rd+'/'+whatimg+'.img'):
+               + color['n'] + color['gb'] + whatimg + '\n', 'ryb')
+        print('1) ' + lang['extract_adb_shell'])
+        print('2) ' + lang['extract_project_dir'] + whatimg)
+        print('3) ' + lang['extract_manual'])
+        if existf(rd + '/' + whatimg + '.img'):
             numtmp = '4'
-            print('4) '+whatimg+'.img')
-        elif whatimg == 'data' and existf(rd+'/user'+whatimg+'.img'):
+            print('4) ' + whatimg + '.img')
+        elif whatimg == 'data' and existf(rd + '/user' + whatimg + '.img'):
             numtmp = '4'
-            print('4) user'+whatimg+'.img')
+            print('4) user' + whatimg + '.img')
 
-        kprint('q = '+lang['menu_quit']+'\n', 'm')
+        kprint('q = ' + lang['menu_quit'] + '\n', 'm')
         print(lang['select'])
         choice = getChar()
 
@@ -2845,26 +2853,26 @@ def findimgsize(whatimg):
 
         if choice == '1':  # START Device through adb shell
             banner()
-            print(lang['byname_usb_debug']+'\n')
+            print(lang['byname_usb_debug'] + '\n')
             kprint(lang['byname_usb_debug_root'], 'ryb')
-            kprint(lang['byname_usb_debug_root2']+'\n', 'r')
+            kprint(lang['byname_usb_debug_root2'] + '\n', 'r')
             print(lang['general_continue_q'])
             reply = getChar()
             if reply != 'y':
                 return
 
             banner()
-            kprint(lang['extract_detect']+whatimg+' ...', 'b')
-            if existf(deviceloc+'/superr_mmc'):
+            kprint(lang['extract_detect'] + whatimg + ' ...', 'b')
+            if existf(deviceloc + '/superr_mmc'):
                 imgblock = grepf(whatimg, deviceloc
                                  + '/superr_mmc')[0].split()[0].split('/')[3]
             else:
                 tmpbn = {}
                 newname = ''
-                if existf(deviceloc+'/superr_appbyname'):
+                if existf(deviceloc + '/superr_appbyname'):
                     tmpbn = {'system': 'APP', 'vendor': 'VNR',
                              'data': 'UDA', 'boot': 'LNX', 'recovery': 'SOS'}
-                elif existf(deviceloc+'/superr_kerbyname'):
+                elif existf(deviceloc + '/superr_kerbyname'):
                     tmpbn = {'system': 'SYSTEM', 'boot': 'KERNEL',
                              'recovery': 'RECOVERY', 'data': 'userdata'}
                 else:
@@ -2876,10 +2884,10 @@ def findimgsize(whatimg):
                 if not newname:
                     newname = whatimg
 
-                appendf(cmd(adb+' "wait-for-device"'), logs+'/adb.log')
+                appendf(cmd(adb + ' "wait-for-device"'), logs + '/adb.log')
 
                 manu = cmd(
-                    adb+' shell getprop ro.product.manufacturer').strip()
+                    adb + ' shell getprop ro.product.manufacturer').strip()
                 if manu.lower() == 'samsung':
                     newname = newname.upper()
 
@@ -2887,73 +2895,74 @@ def findimgsize(whatimg):
                 imgblock = None
                 try:
                     imgblock = greps(
-                        ' '+newname+' ', cmd(adb+' shell su -c "ls -al '+byname+'"').splitlines())[0].split()[-1]
-                    appendf('imgblock: '+imgblock, logs+'/adb.log')
+                        ' ' + newname + ' ', cmd(adb + ' shell su -c "ls -al ' + byname + '"').splitlines())[0].split()[
+                        -1]
+                    appendf('imgblock: ' + imgblock, logs + '/adb.log')
                 except Exception as e:
-                    appendf(logtb(e), logs+'/adb.log')
+                    appendf(logtb(e), logs + '/adb.log')
 
             rawsize = None
             if imgblock:
                 try:
-                    appendf(cmd(adb+' "wait-for-device"'), logs+'/adb.log')
+                    appendf(cmd(adb + ' "wait-for-device"'), logs + '/adb.log')
                     rawsize = greps(basename(imgblock), cmd(
-                        adb+' shell su -c "cat /proc/partitions"').splitlines())[0].split()[2]
-                    appendf('rawsize: '+rawsize, logs+'/adb.log')
+                        adb + ' shell su -c "cat /proc/partitions"').splitlines())[0].split()[2]
+                    appendf('rawsize: ' + rawsize, logs + '/adb.log')
                 except Exception as e:
-                    appendf(logtb(e), logs+'/adb.log')
+                    appendf(logtb(e), logs + '/adb.log')
 
             if not rawsize:
                 banner()
-                kprint(lang['error_mess']+'\n', 'r')
+                kprint(lang['error_mess'] + '\n', 'r')
                 input(lang['enter_cho_another_detection'])
                 choice = ''
                 continue
 
             imgsize = str(int(rawsize) * 1024)
-            appendf('imgsize: '+imgsize, logs+'/adb.log')
+            appendf('imgsize: ' + imgsize, logs + '/adb.log')
         elif choice == '2':  # START Project $whatimg directory (BETA)
             banner()
             kprint(lang['warning'], 'yrbbo')
             kprint(lang['extract_beta'], 'r')
-            kprint(lang['extract_beta2']+'\n', 'r')
-            kprint(lang['extract_beta3']+'\n', 'y')
+            kprint(lang['extract_beta2'] + '\n', 'r')
+            kprint(lang['extract_beta3'] + '\n', 'y')
             kprint(lang['extract_beta4'], 'r')
-            kprint(lang['extract_beta5']+'\n', 'r')
+            kprint(lang['extract_beta5'] + '\n', 'r')
             print(lang['general_cont_anyway_q'])
             reply = getChar()
             if reply != 'y':
                 return
 
-            imgsize = str(int(dsize(rd+'/'+whatimg) * 1.039711841))
+            imgsize = str(int(dsize(rd + '/' + whatimg) * 1.039711841))
         elif choice == '3':  # START Enter it manually in bytes
-            man_img_size = getconf('img_size_'+whatimg, uconf)
+            man_img_size = getconf('img_size_' + whatimg, uconf)
 
             from_mconf = None
 
             if not man_img_size:
-                man_img_size = getconf('img_size_'+whatimg, mconf)
+                man_img_size = getconf('img_size_' + whatimg, mconf)
                 from_mconf = 1
 
             whatsize = None
             if man_img_size:
                 banner()
-                print(lang['build_man_img_size']+'\n\n'+man_img_size)
+                print(lang['build_man_img_size'] + '\n\n' + man_img_size)
                 if getChar() == 'y':
                     whatsize = man_img_size
 
             if not whatsize:
                 banner()
-                print(lang['extract_manual_bytes']+whatimg+':')
+                print(lang['extract_manual_bytes'] + whatimg + ':')
                 whatsize = input()
                 if from_mconf:
-                    getconf('img_size_'+whatimg, mconf, add=whatsize)
+                    getconf('img_size_' + whatimg, mconf, add=whatsize)
                 else:
-                    getconf('img_size_'+whatimg, uconf, add=whatsize)
+                    getconf('img_size_' + whatimg, uconf, add=whatsize)
 
             if not whatsize or not whatsize.isnumeric():
                 banner()
                 kprint(lang['error'], 'yrbbo')
-                kprint(whatimg+lang['extract_detect_fail']+'\n', 'r')
+                kprint(whatimg + lang['extract_detect_fail'] + '\n', 'r')
                 input(lang['enter_build_menu'])
                 return
             else:
@@ -2961,26 +2970,26 @@ def findimgsize(whatimg):
         elif choice == '4':  # START $whatimg.img
             imgsize = findwhatsize(whatimg)
         elif choice == 'q':  # START Quit
-            if existd(rd+'/META-INF1'):
+            if existd(rd + '/META-INF1'):
                 with cd(rd):
                     delpath('META-INF')
                     os.replace('META-INF1', 'META-INF')
 
             sys.exit()
 
-    getconf('size-'+whatimg, uconf, add=imgsize)
+    getconf('size-' + whatimg, uconf, add=imgsize)
 
     return imgsize
 
 
 def findwhatsize(whatimg, quiet=None):
     imgsize = None
-    if existf(rd+'/'+whatimg+'.img'):
+    if existf(rd + '/' + whatimg + '.img'):
         with cd(rd):
-            if sparse_chk(whatimg+'.img'):
-                sparse_conv(whatimg+'.img')
+            if sparse_chk(whatimg + '.img'):
+                sparse_conv(whatimg + '.img')
 
-            imgsize = fsize(whatimg+'.img')
+            imgsize = fsize(whatimg + '.img')
 
             if whatimg == 'system':
                 if existf('system_other.img'):
@@ -2992,17 +3001,17 @@ def findwhatsize(whatimg, quiet=None):
                         imgsize = othersize
 
             imgsize = str(imgsize)
-    elif whatimg == 'data' and existf(rd+'/user'+whatimg+'.img'):
+    elif whatimg == 'data' and existf(rd + '/user' + whatimg + '.img'):
         with cd(rd):
-            if sparse_chk('user'+whatimg+'.img'):
-                sparse_conv('user'+whatimg+'.img')
+            if sparse_chk('user' + whatimg + '.img'):
+                sparse_conv('user' + whatimg + '.img')
 
-            imgsize = str(fsize('user'+whatimg+'.img'))
+            imgsize = str(fsize('user' + whatimg + '.img'))
     else:
         if not quiet:
             banner()
             kprint(lang['error'], 'yrbbo')
-            kprint(lang['extract_img_fail']+whatimg+'.img\n', 'r')
+            kprint(lang['extract_img_fail'] + whatimg + '.img\n', 'r')
             input(lang['enter_build_menu'])
 
     return imgsize
@@ -3060,44 +3069,44 @@ def findw(indir):
 
 def fl(st, wo=None, nar1=None, nar2=None):
     if wo and nar1 and nar2:
-        return '(?!'+wo+')(?=^.*'+st+'.*$)(?=^.*'+nar1+'.*$|^.*'+nar2+'.*$)'
+        return '(?!' + wo + ')(?=^.*' + st + '.*$)(?=^.*' + nar1 + '.*$|^.*' + nar2 + '.*$)'
     elif nar1 and nar2 and not wo:
-        return '(?=^.*'+st+'.*$)(?=^.*'+nar1+'.*$|^.*'+nar2+'.*$)'
+        return '(?=^.*' + st + '.*$)(?=^.*' + nar1 + '.*$|^.*' + nar2 + '.*$)'
     elif nar1 and not nar2 and not wo:
-        return '(?=^.*'+st+'.*$)(?=^.*'+nar1+'.*$)'
+        return '(?=^.*' + st + '.*$)(?=^.*' + nar1 + '.*$)'
     elif wo and not nar1 and not nar2:
-        return '(?!'+wo+')(?=^.*'+st+'.*$)'
+        return '(?!' + wo + ')(?=^.*' + st + '.*$)'
     elif not nar1 and not nar2 and not wo:
-        return '(?=^.*'+st+'.*$)'
+        return '(?=^.*' + st + '.*$)'
 
 
 def gen_min_contexts(whatimg):
-    appendf('/(.*)?\t\tu:object_r:rootfs:s0', prfiles+'/file_contexts_min')
+    appendf('/(.*)?\t\tu:object_r:rootfs:s0', prfiles + '/file_contexts_min')
     appendf('/lost\\+found\t\tu:object_r:rootfs:s0',
-            prfiles+'/file_contexts_min')
+            prfiles + '/file_contexts_min')
 
     try:
-        if existf(prfiles+'/file_contexts3-'+whatimg):
-            testcon = grepf('^/'+whatimg+' ', prfiles
-                            + '/file_contexts3-'+whatimg)[0].split()[-1]
+        if existf(prfiles + '/file_contexts3-' + whatimg):
+            testcon = grepf('^/' + whatimg + ' ', prfiles
+                            + '/file_contexts3-' + whatimg)[0].split()[-1]
         else:
-            testcon = grepf('^/'+whatimg+'\(.*\t', prfiles
+            testcon = grepf('^/' + whatimg + '\(.*\t', prfiles
                             + '/file_contexts')[0].split('\t\t')[1]
 
-        appendf('/'+whatimg+'(/.*)?\t\t'+testcon, prfiles+'/file_contexts_min')
+        appendf('/' + whatimg + '(/.*)?\t\t' + testcon, prfiles + '/file_contexts_min')
     except:
-        appendf('/'+whatimg+'(/.*)?\t\tu:object_r:'+whatimg
-                + '_file:s0', prfiles+'/file_contexts_min')
+        appendf('/' + whatimg + '(/.*)?\t\tu:object_r:' + whatimg
+                + '_file:s0', prfiles + '/file_contexts_min')
 
-    appendf('/'+whatimg+'/lost\\+found\t\tu:object_r:'
-            + whatimg+'_file:s0', prfiles+'/file_contexts_min')
+    appendf('/' + whatimg + '/lost\\+found\t\tu:object_r:'
+            + whatimg + '_file:s0', prfiles + '/file_contexts_min')
 
-    appendf('/'+whatimg+'/omc(/.*)?\t\tu:object_r:omc_vendor_file:s0',
-            prfiles+'/file_contexts_min')
+    appendf('/' + whatimg + '/omc(/.*)?\t\tu:object_r:omc_vendor_file:s0',
+            prfiles + '/file_contexts_min')
 
 
 def getar(prop):
-    proppath = prfiles+'/AR-config'
+    proppath = prfiles + '/AR-config'
     if existf(proppath):
         proptest = grepf(fl(prop, '^#'), proppath)
         if proptest:
@@ -3110,7 +3119,7 @@ def getcap(i):
     try:
         b = os.getxattr(i, "security.capability")
         cap = str(int.from_bytes(b[4:8] + b[12:16], "little"))
-        return 'capabilities='+cap
+        return 'capabilities=' + cap
     except:
         return ''
 
@@ -3128,6 +3137,7 @@ def getChar():
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, oldSettings)
         return choice
+
     return _ttyRead().lower()
 
 
@@ -3141,24 +3151,24 @@ def getconf(conf, version, rem=None, add=None, repl=None, l=None):
             if rem:
                 del full[conf_index]
             else:
-                full[conf_index] = conf+'='+add
+                full[conf_index] = conf + '=' + add
 
             delpath(version)
             appendf('\n'.join(full), version)
     elif rem or add:
-        grepvf('^'+conf+'=', version)
+        grepvf('^' + conf + '=', version)
         if add:
             if l:
-                full = sorted(readfl(version) + [conf+'='+' '.join(add)])
+                full = sorted(readfl(version) + [conf + '=' + ' '.join(add)])
             else:
-                full = sorted(readfl(version) + [conf+'='+add])
+                full = sorted(readfl(version) + [conf + '=' + add])
 
             delpath(version)
             appendf('\n'.join(full), version)
         return
     else:
         if l:
-            i = grepf('^'+conf+'=', version)
+            i = grepf('^' + conf + '=', version)
             if i:
                 i = i[0].strip()
             else:
@@ -3175,13 +3185,13 @@ def getconf(conf, version, rem=None, add=None, repl=None, l=None):
                 return []
         else:
             try:
-                return grepf('^'+conf+'=', version)[0].split('=', 1)[1]
+                return grepf('^' + conf + '=', version)[0].split('=', 1)[1]
             except:
                 return ''
 
 
 def get_contexts():
-    if not existf(prfiles+'/file_contexts2'):
+    if not existf(prfiles + '/file_contexts2'):
         def strings(filename, minim=4):
             import string
             with open(filename, errors='ignore') as f:
@@ -3198,22 +3208,22 @@ def get_contexts():
 
         def cpcon(condir):
             for f in condir:
-                if existf(f+c):
-                    cp(f+c, prfiles+c)
+                if existf(f + c):
+                    cp(f + c, prfiles + c)
                     break
-                if existf(f+b):
-                    cp(f+b, prfiles+b)
+                if existf(f + b):
+                    cp(f + b, prfiles + b)
                     break
-                if existf(f+p):
-                    appendf(readf(f+p), prfiles+c)
-                if existf(f+n):
-                    appendf(readf(f+n), prfiles+c)
-                if existf(f+v):
-                    appendf(readf(f+v), prfiles+c)
+                if existf(f + p):
+                    appendf(readf(f + p), prfiles + c)
+                if existf(f + n):
+                    appendf(readf(f + n), prfiles + c)
+                if existf(f + v):
+                    appendf(readf(f + v), prfiles + c)
 
-            if existf(prfiles+b):
+            if existf(prfiles + b):
                 return 'bin'
-            elif existf(prfiles+c):
+            elif existf(prfiles + c):
                 return 'none'
             else:
                 return
@@ -3224,29 +3234,29 @@ def get_contexts():
         n = '/nonplat_file_contexts'
         v = '/vendor_file_contexts'
 
-        if existf(prfiles+b):
+        if existf(prfiles + b):
             method = 'bin'
-        elif existf(prfiles+c):
+        elif existf(prfiles + c):
             method = 'none'
         else:
-            method = cpcon([rd+'/system', rd+'/system/system', rd+'/bootimg/ramdisk', rd+'/recoveryimg/ramdisk',
-                           rd+'/system/etc/selinux', rd+'/system/system/etc/selinux', rd+'/vendor/etc/selinux'])
+            method = cpcon([rd + '/system', rd + '/system/system', rd + '/bootimg/ramdisk', rd + '/recoveryimg/ramdisk',
+                            rd + '/system/etc/selinux', rd + '/system/system/etc/selinux', rd + '/vendor/etc/selinux'])
 
-        if not method and existf(rd+'/boot.img'):
+        if not method and existf(rd + '/boot.img'):
             boot_unpack('boot', 'boot.img', '1')
-            method = cpcon([rd+'/bootimg/ramdisk'])
+            method = cpcon([rd + '/bootimg/ramdisk'])
 
             with cd(bd):
-                appendf(cmd(rampy()+'delram '+romname+' boot'), logs+'/boot.log')
+                appendf(cmd(rampy() + 'delram ' + romname + ' boot'), logs + '/boot.log')
 
         if method == 'bin':
-            conlist = list(strings(prfiles+b))
-            delpath(prfiles+b)
+            conlist = list(strings(prfiles + b))
+            delpath(prfiles + b)
             if len(conlist) == 1:
                 if conlist[0].startswith('/'):
-                    appendf(conlist[0], prfiles+c)
+                    appendf(conlist[0], prfiles + c)
             else:
-                cp(tools+'/boot'+c, prfiles+c)
+                cp(tools + '/boot' + c, prfiles + c)
                 conlist = greps(fl('u:|\/', 'ER'), conlist)
                 conlist = greps(fl('', '.*abcd'), conlist)
                 contest = []
@@ -3255,22 +3265,22 @@ def get_contexts():
                         contest.append(i)
 
                 for line in contest:
-                    if conlist[line+1].startswith('/'):
-                        appendf(conlist[line+1]+'\t'+conlist[line], prfiles+c)
+                    if conlist[line + 1].startswith('/'):
+                        appendf(conlist[line + 1] + '\t' + conlist[line], prfiles + c)
 
-        if existf(prfiles+c):
+        if existf(prfiles + c):
             contest = grepf(fl('^\/system|^\/vendor|^\/oem|^\/product|^\/system_ext',
-                            '.*:system_file|.*:system_library_file'), prfiles+c)
+                               '.*:system_file|.*:system_library_file'), prfiles + c)
 
             with cd(rd):
-                flist = findr('system/**')+findr('vendor/**') + \
-                    findr('oem/**')+findr('product/**')+findr('system_ext/**')
+                flist = findr('system/**') + findr('vendor/**') + \
+                        findr('oem/**') + findr('product/**') + findr('system_ext/**')
 
             for i in contest:
                 i = i.replace('--', '').replace('/', '', 1)
                 cexc = i.split()[1]
                 for cexf in greps(i.split()[0], flist):
-                    appendf('/'+cexf+' '+cexc, prfiles+c+'2')
+                    appendf('/' + cexf + ' ' + cexc, prfiles + c + '2')
 
 
 def get_devicename():
@@ -3299,7 +3309,7 @@ def get_devicename():
             getconf('devicechk', uconf, add=devicechk)
 
     if devicename:
-        mkdir(tools+'/devices/'+devicename)
+        mkdir(tools + '/devices/' + devicename)
 
     return devicename
 
@@ -3315,7 +3325,7 @@ def getlang(lfile, tools1=None):
     if not tools1:
         tools1 = tools
 
-    with cd(tools1+'/language'):
+    with cd(tools1 + '/language'):
         coding = grepf(' coding: ', lfile)
         if coding:
             coding = coding[0].split()[3]
@@ -3375,13 +3385,13 @@ def getperm(arg):
         s += 1
         w += 1
 
-    return str(s)+str(o)+str(g)+str(w)
+    return str(s) + str(o) + str(g) + str(w)
 
 
 def getprop(prop):
-    proptmp = [rd+'/system/system/build.prop',
-               rd+'/system/build.prop',
-               rd+'/build.prop']
+    proptmp = [rd + '/system/system/build.prop',
+               rd + '/system/build.prop',
+               rd + '/build.prop']
     proppath = []
     for i in proptmp:
         if existf(i):
@@ -3428,11 +3438,11 @@ def grepc(searcht, gstr):
 
 def grepvb(rlist, filename):
     tmpf = readfl(filename)
-    with open(filename+'-tmp', 'w', newline='\n') as f:
+    with open(filename + '-tmp', 'w', newline='\n') as f:
         for i in tmpf:
             if i not in rlist:
-                f.write(i+'\n')
-    os.replace(filename+'-tmp', filename)
+                f.write(i + '\n')
+    os.replace(filename + '-tmp', filename)
 
 
 def grepf(searcht, filename):
@@ -3482,14 +3492,14 @@ def grepv(searcht, thelist):
 
 def grepvf(searcht, filename):
     if existf(filename):
-        with open(filename, 'r') as f, open(filename+'-tmp', 'w', newline='\n') as ft:
+        with open(filename, 'r') as f, open(filename + '-tmp', 'w', newline='\n') as ft:
             data = f.readlines()
             for line in data:
                 if re.search(searcht, line):
                     continue
                 else:
                     ft.write(line)
-        os.replace(filename+'-tmp', filename)
+        os.replace(filename + '-tmp', filename)
 
 
 def get_symlinks(quiet=None):
@@ -3497,13 +3507,13 @@ def get_symlinks(quiet=None):
         banner()
         kprint(lang['perm_check_symlinks'], 'b')
 
-    if findf(prfiles+'/symlinks*'):
+    if findf(prfiles + '/symlinks*'):
         return
 
     symlinks = {}
 
     with cd(rd):
-        for i in [x for x in partslist if existd(x) and not existf(prfiles+'/symlinks-'+x)]:
+        for i in [x for x in partslist if existd(x) and not existf(prfiles + '/symlinks-' + x)]:
             tmplinks = []
 
             for root, dirs, files in os.walk(i):
@@ -3511,15 +3521,15 @@ def get_symlinks(quiet=None):
                     source = os.path.join(root, filename)
                     if os.path.islink(source):
                         tmplinks.append(
-                            'symlink("'+os.readlink(source)+'", "/'+source+'");')
-                        delpath(rd+'/'+source)
+                            'symlink("' + os.readlink(source) + '", "/' + source + '");')
+                        delpath(rd + '/' + source)
 
                 for directory in dirs:
                     source = os.path.join(root, directory)
                     if os.path.islink(source):
                         tmplinks.append(
-                            'symlink("'+os.readlink(source)+'", "/'+source+'");')
-                        delpath(rd+'/'+source)
+                            'symlink("' + os.readlink(source) + '", "/' + source + '");')
+                        delpath(rd + '/' + source)
 
             if tmplinks:
                 symlinks[i] = tmplinks
@@ -3527,14 +3537,14 @@ def get_symlinks(quiet=None):
     if symlinks:
         for part in symlinks:
             for i in sorted(symlinks[part], key=str.lower):
-                appendf(i, prfiles+'/symlinks-'+part)
+                appendf(i, prfiles + '/symlinks-' + part)
 
         return
     else:
-        if not existf(usdir+'/updater-script'):
+        if not existf(usdir + '/updater-script'):
             return
 
-        symlinks = grepf('symlink\(.*', usdir+'/updater-script')
+        symlinks = grepf('symlink\(.*', usdir + '/updater-script')
         if not symlinks:
             return
 
@@ -3542,26 +3552,26 @@ def get_symlinks(quiet=None):
         symlinks = greps(';$', symlinks)
         if symlinks2:
             for i in symlinks2:
-                mulsym = grepb(i, ';', readfl(usdir+'/updater-script'), 1)
+                mulsym = grepb(i, ';', readfl(usdir + '/updater-script'), 1)
                 top = mulsym[0]
                 top2 = top.replace(',', '').split()[1:]
-                bottom = mulsym[len(mulsym)-1]
+                bottom = mulsym[len(mulsym) - 1]
                 symlist = bottom.replace(',', '').replace(');', '').split()
                 symlist = top2 + symlist
-                mulname = '"'+top.split('"')[1]+'"'
+                mulname = '"' + top.split('"')[1] + '"'
                 del mulsym[0]
-                del mulsym[len(mulsym)-1]
+                del mulsym[len(mulsym) - 1]
                 for a in mulsym:
                     symtmp = a.replace(',', '').split()
                     symlist = symlist + symtmp
 
                 for a in symlist:
                     if a.startswith('"'):
-                        symlinks.append('symlink('+mulname+', '+a+');')
+                        symlinks.append('symlink(' + mulname + ', ' + a + ');')
 
         if symlinks:
             for i in sorted(symlinks, key=str.lower):
-                appendf(i, prfiles+'/symlinks')
+                appendf(i, prfiles + '/symlinks')
 
 
 def imgextract(extractimg, quiet=None, cli=None):
@@ -3573,7 +3583,7 @@ def imgextract(extractimg, quiet=None, cli=None):
 
         if not cli:
             banner(quiet)
-        kprint(lang['extract_copy_e']+extractdir+' ...', 'b')
+        kprint(lang['extract_copy_e'] + extractdir + ' ...', 'b')
 
         return ext4Xtract(extractdir)
 
@@ -3585,14 +3595,14 @@ def imgrename(new=None):
 
     if new:
         for i in partslist + ['cache', 'data', 'userdata']:
-            imgdict[i+'_new.img'] = i+'.img'
+            imgdict[i + '_new.img'] = i + '.img'
     else:
         for i in partslist + ['cache', 'data', 'userdata', 'boot']:
-            imgdict[i+'.img.ext4'] = i+'.img'
-            imgdict[i+'.ext4'] = i+'.img'
-            imgdict[i.upper()+'.IMG'] = i+'.img'
-            imgdict[i+'.IMG'] = i+'.img'
-            imgdict[i.upper()+'.img'] = i+'.img'
+            imgdict[i + '.img.ext4'] = i + '.img'
+            imgdict[i + '.ext4'] = i + '.img'
+            imgdict[i.upper() + '.IMG'] = i + '.img'
+            imgdict[i + '.IMG'] = i + '.img'
+            imgdict[i.upper() + '.img'] = i + '.img'
             # imgdict[i+'_new.img'] = i+'.img'
 
         imgdict['factoryfs.img'] = 'system.img'
@@ -3601,7 +3611,7 @@ def imgrename(new=None):
         for i in list(imgdict):
             if existf(i):
                 if not new and not imgext:
-                    imgext = '.'+'.'.join(i.split('.')[1:])
+                    imgext = '.' + '.'.join(i.split('.')[1:])
                     getconf('img_extension', uconf, add=imgext)
 
                 if existf(imgdict[i]):
@@ -3613,7 +3623,7 @@ def imgrename(new=None):
 def internet(url='https://bing.com', op=None):
     try:
         result = requests.get(
-            url, headers={'User-Agent': 'srk_'+(superrv or '3220')}).text.strip()
+            url, headers={'User-Agent': 'srk_' + (superrv or '3220')}).text.strip()
     except:
         result = None
 
@@ -3638,14 +3648,14 @@ def isodexstatus():
     # deotmp += findr(rd+'/oem/**/*.odex')
     # deotmp += findr(rd+'/product/**/*.odex')
     # deotmp += findr(rd+'/system_ext/**/*.odex')
-    deotmp = grepv('.*00_project_files', findr(rd+'/**/*.odex'))
-    deotmp += findf(sysdir+'/*.sqsh')
-    deotmp += findr(sysdir+'/framework/**/boot*.oat')
+    deotmp = grepv('.*00_project_files', findr(rd + '/**/*.odex'))
+    deotmp += findf(sysdir + '/*.sqsh')
+    deotmp += findr(sysdir + '/framework/**/boot*.oat')
 
     if not deotmp:
-        return color['g']+'Deodexed'+color['n']
+        return color['g'] + 'Deodexed' + color['n']
     else:
-        return color['r']+'Odexed'+color['n']
+        return color['r'] + 'Odexed' + color['n']
 
 
 def kitchen_update(jupdate=None, averify=None):
@@ -3653,7 +3663,7 @@ def kitchen_update(jupdate=None, averify=None):
     if not internet():
         banner()
         kprint(lang['error'], 'yrbbo')
-        kprint(lang['update_no_internet']+'\n', 'r')
+        kprint(lang['update_no_internet'] + '\n', 'r')
         if jupdate:
             input(lang['enter_exit'])
             sys.exit()
@@ -3661,16 +3671,16 @@ def kitchen_update(jupdate=None, averify=None):
             input(lang['enter_main_menu'])
     else:
         localzip = sorted(
-            findf('update_'+(platf if platf not in ['wsl', 'wsl2'] else 'lin')+'*.zip'))
+            findf('update_' + (platf if platf not in ['wsl', 'wsl2'] else 'lin') + '*.zip'))
         if localzip:
             localzip = localzip[-1]
             ziplist = zipl(localzip)
             if any(['tools/source/mainsrk' in ziplist, 'tools/source/srktools' in ziplist]):
                 banner()
-                print(lang['update_local']+'\n')
+                print(lang['update_local'] + '\n')
                 reply = getChar()
                 if reply == 'y':
-                    delpath(tools+'/auth.key')
+                    delpath(tools + '/auth.key')
 
                     if averify:
                         srkuser, srkpass, dbtst = averify
@@ -3683,34 +3693,35 @@ def kitchen_update(jupdate=None, averify=None):
 
                     zipu(localzip)
 
-                    if existf(tools+'/source/md5_full'):
+                    if existf(tools + '/source/md5_full'):
                         source_files = ['tools/source/md5_full']
-                        for i in greps('tools/source', readfl(tools+'/source/md5_full')):
+                        for i in greps('tools/source', readfl(tools + '/source/md5_full')):
                             source_files.append(i.split('\t')[0])
 
                         for i in findr('tools/source/**'):
                             if i and not existd(i) and i not in source_files:
                                 delpath(i)
-                                if not findf(dirname(i)+'/*'):
+                                if not findf(dirname(i) + '/*'):
                                     delpath(dirname(i))
 
-                    internet(server1+'/errlog2/?e='+mfunc2('auth = '
-                                                           + str(['LOCAL UPDATE:', srkuser, 'Zip:'+localzip]), 'out').decode())
+                    internet(server1 + '/errlog2/?e=' + mfunc2('auth = '
+                                                               + str(['LOCAL UPDATE:', srkuser, 'Zip:' + localzip]),
+                                                               'out').decode())
 
                     banner()
-                    kprint(lang['success']+'\n', 'g')
+                    kprint(lang['success'] + '\n', 'g')
                     input(lang['enter_continue'])
                     sys.exit(3)
 
         banner()
         kprint(lang['update_check_kitchen'], 'b')
-        changelog = internet(server1+'/changelog/?v=donate&c=c', 1)
+        changelog = internet(server1 + '/changelog/?v=donate&c=c', 1)
 
         if not changelog:
             banner()
             kprint(lang['error'], 'yrbbo')
             kprint(lang['update_down'], 'r')
-            kprint(lang['update_down2']+'\n', 'r')
+            kprint(lang['update_down2'] + '\n', 'r')
             if jupdate:
                 input(lang['enter_exit'])
                 sys.exit()
@@ -3727,7 +3738,7 @@ def kitchen_update(jupdate=None, averify=None):
             if getconf('updatecheck', mconf):
                 ucheck = getconf('updatecheck', mconf)
             else:
-                ucheck = color['r']+'N/A'
+                ucheck = color['r'] + 'N/A'
 
             if jupdate:
                 choice = '1'
@@ -3738,22 +3749,22 @@ def kitchen_update(jupdate=None, averify=None):
                 allowupdate = None
                 if int(currentv) < int(upcheck):
                     allowupdate = 1
-                    kprint(lang['update_update_avail']+'\n', 'gbo')
-                    kprint(lang['update_update_cv']+color['r']+superrv, 'b')
-                    kprint(lang['update_update_nv']+color['g']+newv+'\n', 'b')
-                    print('1) '+lang['update_update_now'])
-                    print('2) '+lang['update_update_view'])
-                    print('3) '+lang['update_auto_toggle']+' ('+color['b']
-                          + lang['title_current']+color['g']+ucheck+color['n']+')')
+                    kprint(lang['update_update_avail'] + '\n', 'gbo')
+                    kprint(lang['update_update_cv'] + color['r'] + superrv, 'b')
+                    kprint(lang['update_update_nv'] + color['g'] + newv + '\n', 'b')
+                    print('1) ' + lang['update_update_now'])
+                    print('2) ' + lang['update_update_view'])
+                    print('3) ' + lang['update_auto_toggle'] + ' (' + color['b']
+                          + lang['title_current'] + color['g'] + ucheck + color['n'] + ')')
                 else:
-                    kprint(lang['update_already']+'\n', 'gbo')
-                    kprint('1) '+lang['update_update_now'], 'r')
-                    print('2) '+lang['update_update_view'])
-                    print('3) '+lang['update_auto_toggle']+' ('+color['b']
-                          + lang['title_current']+color['g']+ucheck+color['n']+')')
+                    kprint(lang['update_already'] + '\n', 'gbo')
+                    kprint('1) ' + lang['update_update_now'], 'r')
+                    print('2) ' + lang['update_update_view'])
+                    print('3) ' + lang['update_auto_toggle'] + ' (' + color['b']
+                          + lang['title_current'] + color['g'] + ucheck + color['n'] + ')')
 
-                kprint('m = '+lang['title_main'], 'y')
-                kprint('q = '+lang['menu_quit']+'\n', 'm')
+                kprint('m = ' + lang['title_main'], 'y')
+                kprint('q = ' + lang['menu_quit'] + '\n', 'm')
                 print(lang['select'])
                 choice = getChar()
 
@@ -3776,8 +3787,8 @@ def kitchen_update(jupdate=None, averify=None):
                 sys.exit()
             elif choice == '2':  # START View changelog
                 banner()
-                kprint(lang['update_changelog']+'\n', 'gb')
-                kprint(changelog.replace('. ', '\n')+'\n', 'y')
+                kprint(lang['update_changelog'] + '\n', 'gb')
+                kprint(changelog.replace('. ', '\n') + '\n', 'y')
                 input(lang['enter_kitchen_updater'])
                 choice = ''
                 continue
@@ -3789,7 +3800,7 @@ def kitchen_update(jupdate=None, averify=None):
                 choice = ''
                 continue
             elif choice == '1':  # START Update now
-                delpath(tools+'/auth.key')
+                delpath(tools + '/auth.key')
 
                 if averify:
                     srkuser, srkpass, dbtst = averify
@@ -3817,20 +3828,20 @@ def kitchen_update(jupdate=None, averify=None):
                     kprint('Unknown platform', 'r')
                     sys.exit()
 
-                dlfile(server1+'/dl/?u='+srkuser+'&p='
-                       + srkpass+'&d='+download, 'dist.zip')
+                dlfile(server1 + '/dl/?u=' + srkuser + '&p='
+                       + srkpass + '&d=' + download, 'dist.zip')
 
                 zipu('dist.zip')
                 delpath('dist.zip')
 
                 source_files = ['tools/source/md5_full']
-                for i in greps('tools/source', readfl(tools+'/source/md5_full')):
+                for i in greps('tools/source', readfl(tools + '/source/md5_full')):
                     source_files.append(i.split('\t')[0])
 
                 for i in findr('tools/source/**'):
                     if i and not existd(i) and i not in source_files:
                         delpath(i)
-                        if not findf(dirname(i)+'/*'):
+                        if not findf(dirname(i) + '/*'):
                             delpath(dirname(i))
 
                 getconf('firstrun', mconf, add='1')
@@ -3847,17 +3858,17 @@ def kitchen_update(jupdate=None, averify=None):
 
         if platf == 'lin' and not jupdate:
             home = os.path.expanduser('~')
-            if existf(home+'/bin/srkil'):
+            if existf(home + '/bin/srkil'):
                 banner()
                 kprint(lang['update_check_launcher'], 'b')
 
-                with cd(home+'/bin'):
+                with cd(home + '/bin'):
                     ilcv = cmd('./srkil -v').strip()
-                    ilnv = internet(server1+'/next/srkil/', 1).strip()
+                    ilnv = internet(server1 + '/next/srkil/', 1).strip()
 
                 if ilcv != ilnv:
                     with cd(bd):
-                        dlfile(server1+'/next/srkil/srkil', 'srkil')
+                        dlfile(server1 + '/next/srkil/srkil', 'srkil')
                         retval = cmd(
                             'chmod +x srkil; ./srkil -u; ./srkil -i; rm -f srkil')
 
@@ -3872,7 +3883,7 @@ def kitchen_update(jupdate=None, averify=None):
 
         if upchk:
             banner()
-            kprint(lang['update_finished']+'\n', 'g')
+            kprint(lang['update_finished'] + '\n', 'g')
             input(lang['enter_continue'])
             sys.exit(3)
 
@@ -3880,16 +3891,16 @@ def kitchen_update(jupdate=None, averify=None):
 
 
 def kprint(ctext, cl=None):
-    print((color[cl] if cl else '')+ctext+color['n'])
+    print((color[cl] if cl else '') + ctext + color['n'])
 
 
 def language_check(lang1):
     banner()
-    kprint('Checking language file '+lang1+' ...', 'b')
+    kprint('Checking language file ' + lang1 + ' ...', 'b')
 
     lines = []
     count = 0
-    for i in readfl(tools+'/language/'+lang1+'_srk.py'):
+    for i in readfl(tools + '/language/' + lang1 + '_srk.py'):
         count += 1
         i = i.strip()
 
@@ -3900,8 +3911,9 @@ def language_check(lang1):
             lines.append(str(count))
 
     if lines:
-        internet(server1+'/errlog2/?e='+mfunc2('auth = '
-                                               + str(['LANGUAGE BROKEN:', lang1, 'lines:'+','.join(lines)]), 'out').decode())
+        internet(server1 + '/errlog2/?e=' + mfunc2('auth = '
+                                                   + str(['LANGUAGE BROKEN:', lang1, 'lines:' + ','.join(lines)]),
+                                                   'out').decode())
 
         banner()
         kprint('There is something wrong with this language file\n', 'r')
@@ -3909,17 +3921,17 @@ def language_check(lang1):
         sys.exit(1)
 
     lang_add = []
-    for i in readfl(tools+'/language/english_srk.py'):
+    for i in readfl(tools + '/language/english_srk.py'):
         if not i or i.startswith('#'):
             continue
 
         line2 = i.split('=')[0]
-        if not grepf('^'+line2, tools+'/language/'+lang1+'_srk.py'):
+        if not grepf('^' + line2, tools + '/language/' + lang1 + '_srk.py'):
             lang_add.append(i)
 
     if lang_add:
-        appendf('\n# Needs translation\n'+'\n'.join(lang_add),
-                tools+'/language/'+lang1+'_srk.py')
+        appendf('\n# Needs translation\n' + '\n'.join(lang_add),
+                tools + '/language/' + lang1 + '_srk.py')
 
         return 1
     else:
@@ -3946,7 +3958,7 @@ def md5chk(fname=None, md5file=None):
     if md5file:
         failed = []
         with cd(tools):
-            md5file = 'depends'+os.sep+md5file
+            md5file = 'depends' + os.sep + md5file
             for i in readfl(md5file):
                 f = i.split()[0]
                 omd5 = i.split()[1]
@@ -3983,7 +3995,7 @@ def encstr(entry):
 def metasetup(extractdir):
     with cd(rd):
         fs_config = {}
-        for i in readfl(prfiles+'/fs_config-'+extractdir):
+        for i in readfl(prfiles + '/fs_config-' + extractdir):
             i = i.split()
             if 'capabilities=' in i[-1]:
                 uid, gid, mode, cap = i[-4], i[-3], i[-2], str(
@@ -3998,7 +4010,7 @@ def metasetup(extractdir):
 
             fs_config[name] = [uid, gid, mode, cap]
 
-        for i in readfl(prfiles+'/file_contexts3-'+extractdir):
+        for i in readfl(prfiles + '/file_contexts3-' + extractdir):
             i = i.split()
             context = i[-1]
             name = ' '.join(i[:-1])[1:]
@@ -4021,14 +4033,14 @@ def metasetup(extractdir):
             if len(fs_config[i]) != 5:
                 continue
 
-            if existd(dirr+i) or existf(dirr+i):
-                mlist.append('set_metadata("/'+dirr+i
+            if existd(dirr + i) or existf(dirr + i):
+                mlist.append('set_metadata("/' + dirr + i
                              + '", "uid", '
-                             + fs_config[i][0]+', "gid", ' + fs_config[i][1]
+                             + fs_config[i][0] + ', "gid", ' + fs_config[i][1]
                              + ', "mode", '
-                             + fs_config[i][2]+', "capabilities", '
+                             + fs_config[i][2] + ', "capabilities", '
                              + fs_config[i][3]
-                             + ', "selabel", "'+fs_config[i][4]+'");')
+                             + ', "selabel", "' + fs_config[i][4] + '");')
 
         del fs_config
 
@@ -4049,8 +4061,8 @@ def mfunc2(data, dtype):
             data = Fernet(bytes(xtr_cc)).decrypt(''.join(data[::2]).encode())
         except:
             data = 'auth = ' + \
-                str(['no', datetime.utcnow().strftime(
-                    date_pattern), 1, 'dbtst-fake'+''.join(data)])
+                   str(['no', datetime.utcnow().strftime(
+                       date_pattern), 1, 'dbtst-fake' + ''.join(data)])
             data = data.encode()
 
         del xtr_cc
@@ -4073,9 +4085,9 @@ def mfunc2(data, dtype):
         del xtr_cc
 
         data = list(''.join(random.choice(string.ascii_letters)
-                    for x in range(len(encrypted))))
+                            for x in range(len(encrypted))))
 
-        result = [None]*(len(encrypted)+len(data))
+        result = [None] * (len(encrypted) + len(data))
         result[::2] = encrypted
         result[1::2] = data
 
@@ -4118,21 +4130,21 @@ def partimg(whatimg, sparseimg='', fromplug=None, frommenu=None, quiet=None):
             else:
                 input(lang['enter_rom_tools'])
 
-    imgsize = getconf('size-'+whatimg, uconf)
-    dirsize = dsize(rd+'/'+whatimg)
+    imgsize = getconf('size-' + whatimg, uconf)
+    dirsize = dsize(rd + '/' + whatimg)
 
     if not imgsize:
-        size_mess = whatimg+': '+lang['img_fail_size']
+        size_mess = whatimg + ': ' + lang['img_fail_size']
 
-        appendf(size_mess, logs+'/img_build.log')
+        appendf(size_mess, logs + '/img_build.log')
         imgfailmsg(size_mess)
 
         return 1
     elif int(imgsize) < dirsize:
-        size_mess = whatimg+'.img '+lang['img_fail_fit']+'\nimg size: '+str(round(
-            int(imgsize)/1024/1024))+'MB, dir size: '+str(round(dirsize/1024/1024))+'MB'
+        size_mess = whatimg + '.img ' + lang['img_fail_fit'] + '\nimg size: ' + str(round(
+            int(imgsize) / 1024 / 1024)) + 'MB, dir size: ' + str(round(dirsize / 1024 / 1024)) + 'MB'
 
-        appendf(size_mess, logs+'/img_build.log')
+        appendf(size_mess, logs + '/img_build.log')
         imgfailmsg(size_mess)
 
         return 1
@@ -4143,22 +4155,22 @@ def partimg(whatimg, sparseimg='', fromplug=None, frommenu=None, quiet=None):
         banner()
         fcontexts = ''
 
-        if existf(prfiles+'/file_contexts3-'+whatimg):
+        if existf(prfiles + '/file_contexts3-' + whatimg):
             check_ci(whatimg, old=1)
 
-            delpath(prfiles+'/file_contexts_min')
+            delpath(prfiles + '/file_contexts_min')
 
-            if existf(prfiles+'/file_contexts_custom'):
-                cp(prfiles+'/file_contexts_custom', prfiles+'/file_contexts_min')
+            if existf(prfiles + '/file_contexts_custom'):
+                cp(prfiles + '/file_contexts_custom', prfiles + '/file_contexts_min')
             else:
                 gen_min_contexts(whatimg)
 
-            fcontexts = ' -S '+prfiles+'/file_contexts_min'
+            fcontexts = ' -S ' + prfiles + '/file_contexts_min'
         else:
             get_contexts()
 
-        if not fcontexts and existf(prfiles+'/file_contexts'):
-            fcontexts = ' -S '+prfiles+'/file_contexts'
+        if not fcontexts and existf(prfiles + '/file_contexts'):
+            fcontexts = ' -S ' + prfiles + '/file_contexts'
 
         api = getprop('ro.build.version.sdk')
 
@@ -4168,17 +4180,17 @@ def partimg(whatimg, sparseimg='', fromplug=None, frommenu=None, quiet=None):
             kprint(lang['build_img_nocon'], 'r')
             kprint(lang['build_img_nocon2'], 'r')
             kprint(lang['build_img_nocon3'], 'r')
-            kprint(lang['build_img_nocon4']+'\n', 'r')
+            kprint(lang['build_img_nocon4'] + '\n', 'r')
             if not quiet:
                 input(lang['enter_continue'])
             return 1
 
-        kprint(lang['img_create_raw']+whatimg+'.img (make_ext4fs)', 'b')
-        kprint(whatimg+': '+imgsize+' bytes ('
-               + str(round(int(imgsize)/1024/1024))+' MB) ...', 'y')
+        kprint(lang['img_create_raw'] + whatimg + '.img (make_ext4fs)', 'b')
+        kprint(whatimg + ': ' + imgsize + ' bytes ('
+               + str(round(int(imgsize) / 1024 / 1024)) + ' MB) ...', 'y')
 
         devicename = get_devicename()
-        deviceloc = tools+os.sep+'devices'+os.sep+devicename
+        deviceloc = tools + os.sep + 'devices' + os.sep + devicename
 
         addlf = None
         if existd('system/lost+found'):
@@ -4186,43 +4198,43 @@ def partimg(whatimg, sparseimg='', fromplug=None, frommenu=None, quiet=None):
             addlf = 1
 
         xtra = ''
-        if existf(prfiles+'/fs_config-'+whatimg):
-            xtra = ' -X '+prfiles+'/fs_config-'+whatimg
-        elif existf(prfiles+'/fs_config'):
-            xtra = ' -X '+prfiles+'/fs_config'
-        elif existf(deviceloc+'/capfiles-'+api):
-            xtra = ' -X '+deviceloc+'/capfiles-'+api
+        if existf(prfiles + '/fs_config-' + whatimg):
+            xtra = ' -X ' + prfiles + '/fs_config-' + whatimg
+        elif existf(prfiles + '/fs_config'):
+            xtra = ' -X ' + prfiles + '/fs_config'
+        elif existf(deviceloc + '/capfiles-' + api):
+            xtra = ' -X ' + deviceloc + '/capfiles-' + api
 
         if whatimg == 'system' and sar():
-            build_args = ' -T 1'+fcontexts+' -l '+imgsize+' -L '+whatimg+' -a /' + \
-                sparseimg+xtra+' -K vUA6spGTE7EuEd4H '+whatimg+'_new.img '+whatimg+'/'
+            build_args = ' -T 1' + fcontexts + ' -l ' + imgsize + ' -L ' + whatimg + ' -a /' + \
+                         sparseimg + xtra + ' -K vUA6spGTE7EuEd4H ' + whatimg + '_new.img ' + whatimg + '/'
         else:
-            build_args = ' -T 1'+fcontexts+' -l '+imgsize+' -L '+whatimg+' -a '+whatimg + \
-                sparseimg+xtra+' -K vUA6spGTE7EuEd4H '+whatimg+'_new.img '+whatimg+'/'
+            build_args = ' -T 1' + fcontexts + ' -l ' + imgsize + ' -L ' + whatimg + ' -a ' + whatimg + \
+                         sparseimg + xtra + ' -K vUA6spGTE7EuEd4H ' + whatimg + '_new.img ' + whatimg + '/'
 
-        appendf('\n[INFO] Building '+whatimg+'_new.img', logs+'/img_build.log')
+        appendf('\n[INFO] Building ' + whatimg + '_new.img', logs + '/img_build.log')
 
-        tmpbuild = cmd(make_ext4fs+build_args)
+        tmpbuild = cmd(make_ext4fs + build_args)
 
         if 'ext4_allocate_best_fit_partial:' in tmpbuild.split():
-            appendf('[INFO] Out of space in ext4 '+whatimg
-                    + '_new.img file. Trying again as ext2.', logs+'/img_build.log')
+            appendf('[INFO] Out of space in ext4 ' + whatimg
+                    + '_new.img file. Trying again as ext2.', logs + '/img_build.log')
 
             build_args = ' -J' + build_args
-            tmpbuild = cmd(make_ext4fs+build_args)
+            tmpbuild = cmd(make_ext4fs + build_args)
 
             if 'ext4_allocate_best_fit_partial:' in tmpbuild.split():
-                tmpbuild = tmpbuild + '\n[ERROR] Out of space in ext2 '+whatimg+'_new.img file.\n[SUGGESTIONS]\n[OPTION 1] Remove some unneeded files from the ' + \
-                    whatimg + \
-                    ' directory.\n[OPTION 2] Choose manual partition size and increase as needed.\n'
+                tmpbuild = tmpbuild + '\n[ERROR] Out of space in ext2 ' + whatimg + '_new.img file.\n[SUGGESTIONS]\n[OPTION 1] Remove some unneeded files from the ' + \
+                           whatimg + \
+                           ' directory.\n[OPTION 2] Choose manual partition size and increase as needed.\n'
 
-        appendf(tmpbuild, logs+'/img_build.log')
-        delpath(prfiles+'/file_contexts_min')
+        appendf(tmpbuild, logs + '/img_build.log')
+        delpath(prfiles + '/file_contexts_min')
         delpath(*dellink)
-        getconf('size-'+whatimg, uconf, 'rem')
+        getconf('size-' + whatimg, uconf, 'rem')
 
-        if not existf(whatimg+'_new.img'):
-            imgfailmsg(whatimg+'.img: '+lang['img_fail_log'])
+        if not existf(whatimg + '_new.img'):
+            imgfailmsg(whatimg + '.img: ' + lang['img_fail_log'])
             return 1
 
         if addlf:
@@ -4250,12 +4262,12 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
             else:
                 input(lang['enter_rom_tools'])
 
-    imgsize = getconf('size-'+whatimg, uconf)
+    imgsize = getconf('size-' + whatimg, uconf)
 
     if not imgsize:
-        size_mess = whatimg+': '+lang['img_fail_size']
+        size_mess = whatimg + ': ' + lang['img_fail_size']
 
-        appendf(size_mess, logs+'/img_build.log')
+        appendf(size_mess, logs + '/img_build.log')
         imgfailmsg(size_mess)
 
         return 1
@@ -4266,8 +4278,14 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
         if not quiet:
             banner()
 
-        complete_features = ['dir_prealloc', 'has_journal', 'imagic_inodes', 'ext_attr', 'dir_index', 'resize_inode', 'lazy_bg', 'snapshot_bitmap', 'sparse_super2', 'stable_inodes', 'sparse_super', 'large_file', 'huge_file', 'uninit_bg', 'uninit_groups', 'dir_nlink', 'extra_isize', 'quota', 'bigalloc', 'metadata_csum',
-                             'replica', 'read-only', 'project', 'verity', 'compression', 'filetype', 'needs_recovery', 'journal_dev', 'extent', 'extents', 'meta_bg', '64bit', 'mmp', 'flex_bg', 'ea_inode', 'dirdata', 'metadata_csum_seed', 'large_dir', 'inline_data', 'encrypt', 'casefold', 'fname_encoding', 'exclude_inode']
+        complete_features = ['dir_prealloc', 'has_journal', 'imagic_inodes', 'ext_attr', 'dir_index', 'resize_inode',
+                             'lazy_bg', 'snapshot_bitmap', 'sparse_super2', 'stable_inodes', 'sparse_super',
+                             'large_file', 'huge_file', 'uninit_bg', 'uninit_groups', 'dir_nlink', 'extra_isize',
+                             'quota', 'bigalloc', 'metadata_csum',
+                             'replica', 'read-only', 'project', 'verity', 'compression', 'filetype', 'needs_recovery',
+                             'journal_dev', 'extent', 'extents', 'meta_bg', '64bit', 'mmp', 'flex_bg', 'ea_inode',
+                             'dirdata', 'metadata_csum_seed', 'large_dir', 'inline_data', 'encrypt', 'casefold',
+                             'fname_encoding', 'exclude_inode']
 
         base_features = ['sparse_super', 'large_file',
                          'filetype', 'dir_index', 'ext_attr']
@@ -4292,18 +4310,18 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
         fcontexts = None
         build_args = ['-j', '0']
 
-        if existf(whatimg+'.img'):
+        if existf(whatimg + '.img'):
             superblock = {}
             try:
-                superblock = ext4_header(whatimg+'.img')
+                superblock = ext4_header(whatimg + '.img')
             except:
                 superblock = {}
                 appendf('[INFO] ext4 features were not found in your existing '
-                        + whatimg+'.img. Using defaults.', logs+'/img_build.log')
+                        + whatimg + '.img. Using defaults.', logs + '/img_build.log')
 
             if superblock.get('not_ext4'):
                 appendf(
-                    '[INFO] '+whatimg+'.img is not a raw ext4 img. Using defaults.', logs+'/img_build.log')
+                    '[INFO] ' + whatimg + '.img is not a raw ext4 img. Using defaults.', logs + '/img_build.log')
 
             features = superblock.get('FS features')
             if features:
@@ -4321,7 +4339,7 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
                 for i in features.split():
                     if all([i in complete_features, i not in exclude_features, i not in base_features]):
                         base_features.append(i)
-            elif 'ext4' in cmd('file '+whatimg+'.img').split():
+            elif 'ext4' in cmd('file ' + whatimg + '.img').split():
                 build_args = []
 
             isize = '256'
@@ -4332,10 +4350,12 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
 
         if whatimg == 'system' and sar():
             build_args += ['-K', 'yPmy6kiDfsWLtMoM', '-P', prfiles, '-X', whatimg, '-L', whatimg, '-C', prfiles
-                           + '/fs_config-'+whatimg, whatimg, whatimg+'_new.img', 'ext4', '/', imgsize, prfiles+'/file_contexts_min']
+                           + '/fs_config-' + whatimg, whatimg, whatimg + '_new.img', 'ext4', '/', imgsize,
+                           prfiles + '/file_contexts_min']
         else:
             build_args += ['-K', 'yPmy6kiDfsWLtMoM', '-P', prfiles, '-X', whatimg, '-L', whatimg, '-C', prfiles
-                           + '/fs_config-'+whatimg, whatimg, whatimg+'_new.img', 'ext4', '/'+whatimg, imgsize, prfiles+'/file_contexts_min']
+                           + '/fs_config-' + whatimg, whatimg, whatimg + '_new.img', 'ext4', '/' + whatimg, imgsize,
+                           prfiles + '/file_contexts_min']
 
         convert_sparse = None
         if sparseimg:
@@ -4344,13 +4364,13 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
             else:
                 build_args = ['-s'] + build_args
 
-        if existf(prfiles+'/file_contexts3-'+whatimg):
+        if existf(prfiles + '/file_contexts3-' + whatimg):
             check_ci(whatimg, new=1)
 
-            delpath(prfiles+'/file_contexts_min')
+            delpath(prfiles + '/file_contexts_min')
 
-            if existf(prfiles+'/file_contexts_custom'):
-                cp(prfiles+'/file_contexts_custom', prfiles+'/file_contexts_min')
+            if existf(prfiles + '/file_contexts_custom'):
+                cp(prfiles + '/file_contexts_custom', prfiles + '/file_contexts_min')
             else:
                 gen_min_contexts(whatimg)
 
@@ -4359,13 +4379,13 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
             get_contexts()
 
         if not fcontexts:
-            loc = build_args.index(prfiles+'/file_contexts_min')
+            loc = build_args.index(prfiles + '/file_contexts_min')
 
-            if existf(prfiles+'/file_contexts.bin'):
-                build_args[loc] = prfiles+'/file_contexts.bin'
+            if existf(prfiles + '/file_contexts.bin'):
+                build_args[loc] = prfiles + '/file_contexts.bin'
                 fcontexts = 1
-            elif existf(prfiles+'/file_contexts'):
-                build_args[loc] = prfiles+'/file_contexts'
+            elif existf(prfiles + '/file_contexts'):
+                build_args[loc] = prfiles + '/file_contexts'
                 fcontexts = 1
 
         api = getprop('ro.build.version.sdk')
@@ -4376,67 +4396,67 @@ def partimg2(whatimg, sparseimg=None, fromplug=None, frommenu=None, quiet=None):
             kprint(lang['build_img_nocon'], 'r')
             kprint(lang['build_img_nocon2'], 'r')
             kprint(lang['build_img_nocon3'], 'r')
-            kprint(lang['build_img_nocon4']+'\n', 'r')
+            kprint(lang['build_img_nocon4'] + '\n', 'r')
             if not quiet:
                 input(lang['enter_continue'])
             return 1
 
-        kprint(lang['img_create_raw']+whatimg+'.img (e2fsdroid)', 'b')
-        kprint(whatimg+': '+imgsize+' bytes ('
-               + str(round(int(imgsize)/1024/1024))+' MB) ...', 'y')
+        kprint(lang['img_create_raw'] + whatimg + '.img (e2fsdroid)', 'b')
+        kprint(whatimg + ': ' + imgsize + ' bytes ('
+               + str(round(int(imgsize) / 1024 / 1024)) + ' MB) ...', 'y')
 
         devicename = get_devicename()
-        deviceloc = tools+os.sep+'devices'+os.sep+devicename
+        deviceloc = tools + os.sep + 'devices' + os.sep + devicename
 
         addlf = None
         if existd('system/lost+found'):
             delpath('system/lost+found')
             addlf = 1
 
-        loc = build_args.index(prfiles+'/fs_config-'+whatimg)
+        loc = build_args.index(prfiles + '/fs_config-' + whatimg)
 
-        if not existf(prfiles+'/fs_config-'+whatimg):
-            if existf(prfiles+'/fs_config'):
-                build_args[loc] = prfiles+'/fs_config'
-            elif existf(deviceloc+'/capfiles-'+api):
-                build_args[loc] = deviceloc+'/capfiles-'+api
+        if not existf(prfiles + '/fs_config-' + whatimg):
+            if existf(prfiles + '/fs_config'):
+                build_args[loc] = prfiles + '/fs_config'
+            elif existf(deviceloc + '/capfiles-' + api):
+                build_args[loc] = deviceloc + '/capfiles-' + api
             else:
                 build_args.remove('-C')
-                build_args.remove(prfiles+'/fs_config-'+whatimg)
+                build_args.remove(prfiles + '/fs_config-' + whatimg)
 
         tmpbuild = e2fsdroid_run(build_args, base_features, ext4_features)
 
         if not tmpbuild:
             tmpbuild = '\n[ERROR] Something went wrong while building ' + \
-                whatimg+'_new.img.\n'
+                       whatimg + '_new.img.\n'
         else:
             if greps('Could not allocate', tmpbuild.split('\n')):
-                tmpbuild = tmpbuild + '\n[ERROR] Out of space in '+whatimg+'_new.img file.\n\n[SUGGESTIONS]\n[OPTION 1] Remove some unneeded files from the ' + \
-                    whatimg + \
-                    ' directory.\n[OPTION 2] Choose manual partition size and increase as needed.\n'
+                tmpbuild = tmpbuild + '\n[ERROR] Out of space in ' + whatimg + '_new.img file.\n\n[SUGGESTIONS]\n[OPTION 1] Remove some unneeded files from the ' + \
+                           whatimg + \
+                           ' directory.\n[OPTION 2] Choose manual partition size and increase as needed.\n'
             elif greps('failed to alloc', tmpbuild.split('\n')):
                 tmpbuild = tmpbuild + \
-                    '\n[ERROR] Out of memory on your PC.\n[SUGGESTION] Add more RAM to your PC.\n'
+                           '\n[ERROR] Out of memory on your PC.\n[SUGGESTION] Add more RAM to your PC.\n'
 
-        appendf(tmpbuild, logs+'/img_build.log')
-        delpath(prfiles+'/file_contexts_min')
+        appendf(tmpbuild, logs + '/img_build.log')
+        delpath(prfiles + '/file_contexts_min')
         delpath(*dellink)
-        getconf('size-'+whatimg, uconf, 'rem')
+        getconf('size-' + whatimg, uconf, 'rem')
 
-        if not existf(whatimg+'_new.img'):
-            delpath(whatimg+'_new.img')
-            imgfailmsg(whatimg+'.img: '+lang['img_fail_log'])
+        if not existf(whatimg + '_new.img'):
+            delpath(whatimg + '_new.img')
+            imgfailmsg(whatimg + '.img: ' + lang['img_fail_log'])
             return 1
 
         if convert_sparse:
             appendf(
-                '[INFO] Converting raw to sparse with img2simg due to low RAM on PC.', logs+'/img_build.log')
+                '[INFO] Converting raw to sparse with img2simg due to low RAM on PC.', logs + '/img_build.log')
 
-            appendf(cmd(img2simg+' '+whatimg+'_new.img '
-                    + whatimg+'_new.img_2'), logs+'/img_build.log')
+            appendf(cmd(img2simg + ' ' + whatimg + '_new.img '
+                        + whatimg + '_new.img_2'), logs + '/img_build.log')
 
-            if existf(whatimg+'_new.img_2'):
-                os.replace(whatimg+'_new.img_2', whatimg+'_new.img')
+            if existf(whatimg + '_new.img_2'):
+                os.replace(whatimg + '_new.img_2', whatimg + '_new.img')
 
         if addlf:
             mkdir('system/lost+found')
@@ -4450,28 +4470,28 @@ def partlz4(chosenimg, keep=None):
 
     if new_ext and new_ext != '.img' and new_ext.startswith('.'):
         img_ext = new_ext
-        lz4_ext = new_ext+'.lz4'
+        lz4_ext = new_ext + '.lz4'
 
-    work_img = chosenimg+'_new.img'
-    imgname = chosenimg+lz4_ext
+    work_img = chosenimg + '_new.img'
+    imgname = chosenimg + lz4_ext
     comp_img = None
 
     with cd(rd):
         mkdir('temp_lz4')
 
-        kprint('Packing '+imgname+' ...', 'b')
+        kprint('Packing ' + imgname + ' ...', 'b')
 
         if existf(work_img):
-            os.replace(work_img, 'temp_lz4/'+chosenimg+img_ext)
-            comp_img = chosenimg+img_ext
-        elif existf(chosenimg+'.img'):
-            work_img = chosenimg+'.img'
-            os.replace(work_img, 'temp_lz4/'+work_img)
+            os.replace(work_img, 'temp_lz4/' + chosenimg + img_ext)
+            comp_img = chosenimg + img_ext
+        elif existf(chosenimg + '.img'):
+            work_img = chosenimg + '.img'
+            os.replace(work_img, 'temp_lz4/' + work_img)
 
         with cd('temp_lz4'):
-            os.system(lz4+' -qB6 --content-size '+(comp_img or work_img))
+            os.system(lz4 + ' -qB6 --content-size ' + (comp_img or work_img))
 
-        os.replace('temp_lz4/'+imgname, imgname)
+        os.replace('temp_lz4/' + imgname, imgname)
 
         if keep:
             for i in findf('temp_lz4/*'):
@@ -4488,7 +4508,7 @@ def partsdat(whatimg, quiet=None):
     if not quiet:
         banner()
 
-    kprint(lang['img_create_dat']+whatimg+' ...', 'b')
+    kprint(lang['img_create_dat'] + whatimg + ' ...', 'b')
     api = getprop('ro.build.version.sdk')
     aver = ''
     if api == '21':
@@ -4501,11 +4521,11 @@ def partsdat(whatimg, quiet=None):
         aver = 4
 
     with cd(rd):
-        work_img = whatimg+'_new.img'
+        work_img = whatimg + '_new.img'
         if not existf(work_img):
-            work_img = whatimg+'.img'
+            work_img = whatimg + '.img'
 
-        repout(logs+'/img_build.log')
+        repout(logs + '/img_build.log')
         img2sdat.main(work_img, VERSION=aver, PREFIX=whatimg)
         repout()
         delpath(work_img)
@@ -4516,13 +4536,13 @@ def partsdat(whatimg, quiet=None):
                 brcomp = '0'
                 getconf('brotli_comp', mconf, add=brcomp)
 
-            kprint(lang['menu_pack_boot']+whatimg+'.new.dat.br ...', 'b')
-            appendf(cmd(brotli+' -'+brcomp+'j '+whatimg
-                    + '.new.dat'), logs+'/img_build.log')
+            kprint(lang['menu_pack_boot'] + whatimg + '.new.dat.br ...', 'b')
+            appendf(cmd(brotli + ' -' + brcomp + 'j ' + whatimg
+                        + '.new.dat'), logs + '/img_build.log')
 
-            return whatimg+'.new.dat.br'
+            return whatimg + '.new.dat.br'
         else:
-            return whatimg+'.new.dat'
+            return whatimg + '.new.dat'
 
 
 def pickfile(sdir, ftype=None, mul=None, dirr=None):
@@ -4607,7 +4627,7 @@ def plug_update(plugins, getlist=None, quiet=None):
 
         try:
             pluglist1 = sorted(
-                internet(server1+'/dlplug/?u=md5plugs2', 1).splitlines())
+                internet(server1 + '/dlplug/?u=md5plugs2', 1).splitlines())
         except:
             pass
 
@@ -4637,7 +4657,7 @@ def plug_update(plugins, getlist=None, quiet=None):
         if not quiet:
             banner()
             kprint(lang['error'], 'yrbbo')
-            kprint(lang['donate_plugin_server']+'\n', 'r')
+            kprint(lang['donate_plugin_server'] + '\n', 'r')
             input(lang['enter_continue'])
 
         return 1
@@ -4646,20 +4666,20 @@ def plug_update(plugins, getlist=None, quiet=None):
         return pluglist[0]
 
     banner()
-    kprint(lang['menu_plugin_updates']+' ...', 'b')
+    kprint(lang['menu_plugin_updates'] + ' ...', 'b')
     upplugs = []
     for i in plugins:
         if i not in pluglist[0]:
             continue
 
-        if not existf(tools+'/plugins/'+i+'/plugmd5'):
+        if not existf(tools + '/plugins/' + i + '/plugmd5'):
             if quiet:
                 upplugs.append(i)
             else:
                 banner()
-                kprint(i+color['n']+':\n'
-                        + lang['donate_plugin_reinstall_q'], 'y')
-                print(lang['donate_plugin_reinstall_q2']+'\n')
+                kprint(i + color['n'] + ':\n'
+                       + lang['donate_plugin_reinstall_q'], 'y')
+                print(lang['donate_plugin_reinstall_q2'] + '\n')
                 print(lang['donate_plugin_reinstall_q3'])
                 reply = getChar()
                 if reply == 'y':
@@ -4667,14 +4687,14 @@ def plug_update(plugins, getlist=None, quiet=None):
 
             continue
 
-        if readf(tools+'/plugins/'+i+'/plugmd5') != pluglist[1][i]:
+        if readf(tools + '/plugins/' + i + '/plugmd5') != pluglist[1][i]:
             upplugs.append(i)
 
     if upplugs:
         if not quiet:
             banner()
-            kprint(lang['menu_plugin_updates_info']+'\n', 'gb')
-            kprint('\n'.join(upplugs)+'\n', 'y')
+            kprint(lang['menu_plugin_updates_info'] + '\n', 'gb')
+            kprint('\n'.join(upplugs) + '\n', 'y')
             print(lang['update_q'])
             reply = getChar()
 
@@ -4684,23 +4704,23 @@ def plug_update(plugins, getlist=None, quiet=None):
         banner()
         kprint(lang['update_updating'], 'b')
 
-        with cd(tools+'/plugins'):
+        with cd(tools + '/plugins'):
             for i in upplugs:
                 delpath(i)
-                dlfile('plugins/'+i+'.zip', i+'.zip', 1)
-                internet(server1+'/dllog/?f=PLUG_'+i+'.zip&u='+srkuser)
-                tmpz = zipu(i+'.zip')
-                appendf(pluglist[1][i], i+'/plugmd5')
-                delpath(i+'.zip')
+                dlfile('plugins/' + i + '.zip', i + '.zip', 1)
+                internet(server1 + '/dllog/?f=PLUG_' + i + '.zip&u=' + srkuser)
+                tmpz = zipu(i + '.zip')
+                appendf(pluglist[1][i], i + '/plugmd5')
+                delpath(i + '.zip')
 
 
 def rampy(filetype=None):
     issudo3 = issudo2 or 'sudo '
 
-    if existf(tools+'/source/superrl.py'):
-        return issudo3+tools+'/source/superrl.py --mainram '+bd+' '
+    if existf(tools + '/source/superrl.py'):
+        return issudo3 + tools + '/source/superrl.py --mainram ' + bd + ' '
 
-    return issudo3+tools+'/source/superr --mainram '+bd+' '
+    return issudo3 + tools + '/source/superr --mainram ' + bd + ' '
 
 
 def randm():
@@ -4735,7 +4755,7 @@ def run_end_command():
     run_cmd = getconf('run_end_command', mconf)
     if run_cmd:
         kprint('\nRunning user command:\n', 'y')
-        print(run_cmd+'\n')
+        print(run_cmd + '\n')
         kprint('Press ctrl+c to stop it,\nor wait until it finishes.\n', 'y')
 
         os.system(run_cmd)
@@ -4745,8 +4765,8 @@ def sar():
     if existd(rd):
         with cd(rd):
             if (existd('system/system/app') and
-                (existf('system/init.rc') or
-                 existf('system/init.environ.rc'))):
+                    (existf('system/init.rc') or
+                     existf('system/init.environ.rc'))):
                 return True
             else:
                 return False
@@ -4761,10 +4781,10 @@ def sed(searcht, newstr, thelist, count=0):
 
 def sedf(searcht, newstr, filename):
     if existf(filename):
-        with open(filename, 'r', encoding=utftest(filename)) as f, open(filename+'-tmp', 'w', newline='\n') as ft:
+        with open(filename, 'r', encoding=utftest(filename)) as f, open(filename + '-tmp', 'w', newline='\n') as ft:
             for line in f:
                 ft.write(re.sub(searcht, newstr, line))
-        os.replace(filename+'-tmp', filename)
+        os.replace(filename + '-tmp', filename)
 
 
 def sparse_chk(filename):
@@ -4781,14 +4801,14 @@ def sparse_conv(extractimg, quiet=None, cli=None):
     if not quiet:
         if not cli:
             banner()
-        kprint(extractimg+': '+lang['extract_sparse_convert'], 'b')
+        kprint(extractimg + ': ' + lang['extract_sparse_convert'], 'b')
 
-    simgtmp = cmd(simg2img+' '+extractimg+' '+extractimg+'-2')
-    appendf(simgtmp, logs+'/main.log')
-    if existf(extractimg+'-2'):
-        os.replace(extractimg+'-2', extractimg)
+    simgtmp = cmd(simg2img + ' ' + extractimg + ' ' + extractimg + '-2')
+    appendf(simgtmp, logs + '/main.log')
+    if existf(extractimg + '-2'):
+        os.replace(extractimg + '-2', extractimg)
     else:
-        delpath(extractimg+'-2')
+        delpath(extractimg + '-2')
 
 
 def sudo_prep(quiet=None):
@@ -4807,12 +4827,14 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
             if not fromcli:
                 banner()
             kprint(lang['error'], 'yrbbo')
-            kprint('super.img pack requires openssl to be installed.\nPlease install it using Homebrew or similar, then\ntry again.\n', 'r')
+            kprint(
+                'super.img pack requires openssl to be installed.\nPlease install it using Homebrew or similar, then\ntry again.\n',
+                'r')
             if not fromcli:
                 input(lang['enter_continue'])
             return 1
 
-    if existf(rd+'/super.img'):
+    if existf(rd + '/super.img'):
         if fromcli:
             print(lang['super_exists_cli'])
             return 1
@@ -4820,7 +4842,7 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
             banner()
             print(lang['super_exists_q'])
             if getChar() == 'y':
-                delpath(rd+'/super.img')
+                delpath(rd + '/super.img')
             else:
                 return 1
 
@@ -4836,10 +4858,10 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
         if not fromcli:
             banner()
         kprint(lang['no_supersize1'], 'r')
-        kprint(lang['no_supersize2']+'\n', 'y')
+        kprint(lang['no_supersize2'] + '\n', 'y')
         kprint(lang['no_supersize3'], 'y')
         kprint('supersize=9437184000\n', 'y')
-        kprint(lang['no_supersize4']+'\n', 'y')
+        kprint(lang['no_supersize4'] + '\n', 'y')
         if not fromcli:
             input(lang['enter_continue'])
         return 1
@@ -4856,7 +4878,7 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
                 pname = i[:-4]
                 if pname.endswith('_new'):
                     pname = pname[:-4]
-                if pname+'.img' in newimglist or pname+'_new.img' in newimglist:
+                if pname + '.img' in newimglist or pname + '_new.img' in newimglist:
                     continue
 
                 superblock = ext4_header(i)
@@ -4867,8 +4889,8 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
                 super_tmp = []
                 for i in superlist:
                     pname = i[:-4]
-                    if existf(pname+'_new.img'):
-                        super_tmp.append(pname+'_new.img')
+                    if existf(pname + '_new.img'):
+                        super_tmp.append(pname + '_new.img')
                     elif existf(i):
                         super_tmp.append(i)
 
@@ -4884,7 +4906,7 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
         else:
             for i in newimglist:
                 if not existf(i):
-                    kprint(i+': '+lang['files_not_exist'], 'r')
+                    kprint(i + ': ' + lang['files_not_exist'], 'r')
                     return 1
 
         for i in newimglist:
@@ -4898,15 +4920,15 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
                 reply = 'y'
             else:
                 banner()
-                print(lang['super_include']+' '
-                      + color['y']+i+color['n']+'  y/n')
+                print(lang['super_include'] + ' '
+                      + color['y'] + i + color['n'] + '  y/n')
                 reply = getChar()
 
             if reply == 'y':
                 if not fromcli:
                     banner()
 
-                kprint(i+': '+lang['super_part_size'], 'b')
+                kprint(i + ': ' + lang['super_part_size'], 'b')
 
                 if sparse_chk(i):
                     superblock = ext4_header(i, sparse=1)
@@ -4916,27 +4938,27 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
 
                 if imgsize:
                     imgsize = str(imgsize)
-                    imgprint.append(i+': '+imgsize+' bytes')
+                    imgprint.append(i + ': ' + imgsize + ' bytes')
 
                     if superab == 'Yes':
                         if group1 == 'main':
                             group1 = 'main_a'
 
-                        imglist.append(' --partition '+imgname+'_a'+':readonly:'
-                                       + imgsize+':'+group1+' --image '+imgname+'_a'+'='+i)
+                        imglist.append(' --partition ' + imgname + '_a' + ':readonly:'
+                                       + imgsize + ':' + group1 + ' --image ' + imgname + '_a' + '=' + i)
                         imglist.append(' --partition '
-                                       + imgname+'_b'+':readonly:0:'+group2)
+                                       + imgname + '_b' + ':readonly:0:' + group2)
                     else:
-                        imglist.append(' --partition '+imgname+':readonly:'
-                                       + imgsize+':'+group1+' --image '+imgname+'='+i)
+                        imglist.append(' --partition ' + imgname + ':readonly:'
+                                       + imgsize + ':' + group1 + ' --image ' + imgname + '=' + i)
                 else:
                     failed.append(i)
 
         if not imgprint:
             if not fromcli:
                 banner()
-            kprint(lang['super_no_img1']+'\n', 'r')
-            kprint('1. '+lang['super_no_img3']+'\n', 'y')
+            kprint(lang['super_no_img1'] + '\n', 'r')
+            kprint('1. ' + lang['super_no_img3'] + '\n', 'y')
             if not fromcli:
                 input(lang['enter_continue'])
             return 1
@@ -4944,14 +4966,14 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
         if failed:
             if fromcli:
                 kprint(lang['img_not_included1'], 'r')
-                kprint(lang['img_not_included2']+'\n', 'r')
-                kprint('\n'.join(failed)+'\n', 'y')
+                kprint(lang['img_not_included2'] + '\n', 'r')
+                kprint('\n'.join(failed) + '\n', 'y')
                 return 1
 
             banner()
             kprint(lang['img_not_included1'], 'r')
-            kprint(lang['img_not_included2']+'\n', 'r')
-            kprint('\n'.join(failed)+'\n', 'y')
+            kprint(lang['img_not_included2'] + '\n', 'r')
+            kprint('\n'.join(failed) + '\n', 'y')
             print(lang['general_cont_anyway_q'])
 
             if getChar() != 'y':
@@ -4966,34 +4988,34 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
                 return 1
 
         if superab == 'Yes':
-            build_args = superp+' -K H4dEuE7ETGps6AUv --sparse -o super.img --metadata-size '+metasize+' --metadata-slots ' + \
-                metaslots+' --device super:'+supersize+' --group '+group1+':' + \
-                supersize+' --group '+group2+':'+supersize+''.join(imglist)
+            build_args = superp + ' -K H4dEuE7ETGps6AUv --sparse -o super.img --metadata-size ' + metasize + ' --metadata-slots ' + \
+                         metaslots + ' --device super:' + supersize + ' --group ' + group1 + ':' + \
+                         supersize + ' --group ' + group2 + ':' + supersize + ''.join(imglist)
         else:
-            build_args = superp+' -K H4dEuE7ETGps6AUv --sparse -o super.img --metadata-size '+metasize + \
-                ' --metadata-slots '+metaslots+' --device super:'+supersize + \
-                ' --group '+group1+':'+supersize + ''.join(imglist)
+            build_args = superp + ' -K H4dEuE7ETGps6AUv --sparse -o super.img --metadata-size ' + metasize + \
+                         ' --metadata-slots ' + metaslots + ' --device super:' + supersize + \
+                         ' --group ' + group1 + ':' + supersize + ''.join(imglist)
 
-        if existf(ostools+'/lpmake'):
+        if existf(ostools + '/lpmake'):
             lpmake_add_args = getconf('lpmake_add_args', uconf)
             if lpmake_add_args:
-                lpmake_add_args = ' '+lpmake_add_args
+                lpmake_add_args = ' ' + lpmake_add_args
 
-            build_args = build_args.replace(superp+' -K H4dEuE7ETGps6AUv',
-                                            ostools+'/lpmake' + lpmake_add_args)
+            build_args = build_args.replace(superp + ' -K H4dEuE7ETGps6AUv',
+                                            ostools + '/lpmake' + lpmake_add_args)
 
         if not fromcli:
             if not newdat:
                 choice = ''
                 while not choice:
                     banner()
-                    kprint(lang['super_sparse_q']+'\n', 'ryb')
+                    kprint(lang['super_sparse_q'] + '\n', 'ryb')
                     print('1) raw')
                     print('2) sparse')
                     print('3) super.new.dat'
                           + ('.br' if getconf('brotli_comp', mconf) else ''))
                     print('4) super.img.lz4')
-                    kprint('b = '+lang['menu_back'], 'y')
+                    kprint('b = ' + lang['menu_back'], 'y')
                     print()
                     print(lang['select'])
                     choice = getChar()
@@ -5039,18 +5061,18 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
 
             if not fromcli:
                 banner()
-            kprint(lang['super_success']+'\n', 'g')
+            kprint(lang['super_success'] + '\n', 'g')
 
             if fromcli:
                 return 0
         else:
             delpath('super.img')
-            appendf(retval, logs+'/img_build.log')
+            appendf(retval, logs + '/img_build.log')
 
             if not fromcli:
                 banner()
 
-            kprint(lang['super_failed']+'\n', 'r')
+            kprint(lang['super_failed'] + '\n', 'r')
 
             if fromcli:
                 return 1
@@ -5065,7 +5087,9 @@ def super_unpack(romimg, fromcli=None):
                 if not fromcli:
                     banner()
                 kprint(lang['error'], 'yrbbo')
-                kprint('super.img unpack requires openssl to be installed.\nPlease install it using Homebrew or similar, then\ntry again.\n', 'r')
+                kprint(
+                    'super.img unpack requires openssl to be installed.\nPlease install it using Homebrew or similar, then\ntry again.\n',
+                    'r')
                 if not fromcli:
                     input(lang['enter_main_menu'])
                 return 1
@@ -5081,11 +5105,11 @@ def super_unpack(romimg, fromcli=None):
 
         if not fromcli:
             banner()
-        kprint(lang['boot_unpack']+'super.img ...', 'b')
+        kprint(lang['boot_unpack'] + 'super.img ...', 'b')
 
         now_img = findf('*.img')
 
-        appendf(cmd(superx+' -K H4dEuE7ETGps6AUv '+romimg), logs+'/main.log')
+        appendf(cmd(superx + ' -K H4dEuE7ETGps6AUv ' + romimg), logs + '/main.log')
 
         ab = None
         for i in findf('*_a.img'):
@@ -5116,7 +5140,7 @@ def super_unpack(romimg, fromcli=None):
 
             metadata = None
             try:
-                args = argparse.Namespace(SUPER_IMAGE=rd+'/'+romimg, DUMP=2)
+                args = argparse.Namespace(SUPER_IMAGE=rd + '/' + romimg, DUMP=2)
                 metadata = lpunpack.LpUnpack(**vars(args)).lpdump()
             except Exception as e:
                 pass
@@ -5171,7 +5195,7 @@ def super_unpack(romimg, fromcli=None):
             if not fromcli:
                 banner()
             kprint(lang['error'], 'yrbbo')
-            kprint('super.img: '+lang['extract_fail']+'\n', 'r')
+            kprint('super.img: ' + lang['extract_fail'] + '\n', 'r')
             if not fromcli:
                 input(lang['enter_main_menu'])
             return 1
@@ -5181,12 +5205,12 @@ def symlinks_create(whatimg, quiet=None):
     if not quiet:
         banner()
 
-    kprint(lang['img_create_symlinks']+whatimg+'.img ...', 'b')
+    kprint(lang['img_create_symlinks'] + whatimg + '.img ...', 'b')
 
-    if existf(prfiles+'/symlinks-'+whatimg):
-        symlinks = readfl(prfiles+'/symlinks-'+whatimg)
+    if existf(prfiles + '/symlinks-' + whatimg):
+        symlinks = readfl(prfiles + '/symlinks-' + whatimg)
     else:
-        symlinks = readfl(prfiles+'/symlinks')
+        symlinks = readfl(prfiles + '/symlinks')
 
     create_dir = getconf('create_missing_symlink_dirs', mconf)
 
@@ -5216,11 +5240,11 @@ def table(it, rows):
     widths = [len(max(it, key=len))] * math.ceil(len(it) / rows)
 
     ntable = itertools.zip_longest(
-        *[it[i:i+rows] for i in range(0, len(it), rows)], fillvalue='')
+        *[it[i:i + rows] for i in range(0, len(it), rows)], fillvalue='')
 
     for i in ntable:
         print('  '.join((val.ljust(width, ' ')
-              for val, width in zip(i, widths))))
+                         for val, width in zip(i, widths))))
 
 
 def tarlist(filename):
@@ -5229,7 +5253,7 @@ def tarlist(filename):
 
 
 def taref(tarname, filename):
-    tarex = cmd(tar+' -xf '+tarname+' '+filename)
+    tarex = cmd(tar + ' -xf ' + tarname + ' ' + filename)
 
     return tarex
 
@@ -5243,9 +5267,9 @@ def tarp(tarname, filelist):
 def taru(tarname, outdir=None):
     if outdir:
         mkdir(outdir)
-        tarex = cmd(tar+' -xf '+tarname+' -C '+outdir)
+        tarex = cmd(tar + ' -xf ' + tarname + ' -C ' + outdir)
     else:
-        tarex = cmd(tar+' -xf '+tarname)
+        tarex = cmd(tar + ' -xf ' + tarname)
 
     return tarex
 
@@ -5268,9 +5292,9 @@ def timegt(short=None):
         if (last_used + timedelta(hours=4)) < start_date:
             while True:
                 banner()
-                kprint(lang['session_expired']+'\n', 'r')
-                print('1) '+lang['session_restart'])
-                kprint('q = '+lang['menu_quit']+'\n', 'm')
+                kprint(lang['session_expired'] + '\n', 'r')
+                print('1) ' + lang['session_restart'])
+                kprint('q = ' + lang['menu_quit'] + '\n', 'm')
                 print(lang['select'])
                 reply = getChar()
 
@@ -5284,13 +5308,13 @@ def timegt(short=None):
 
         if offline_auth == 'enabled':
             if (start_date > datetime.strptime(days_left, date_pattern)):
-                delpath(tools+'/auth.key')
+                delpath(tools + '/auth.key')
 
                 while True:
                     banner()
-                    kprint(lang['auth_expired']+'\n', 'r')
-                    print('1) '+lang['menu_renew_now'])
-                    kprint('q = '+lang['menu_quit']+'\n', 'm')
+                    kprint(lang['auth_expired'] + '\n', 'r')
+                    print('1) ' + lang['menu_renew_now'])
+                    kprint('q = ' + lang['menu_quit'] + '\n', 'm')
                     print(lang['select'])
                     reply = getChar()
 
@@ -5312,31 +5336,31 @@ def touch(filename):
 def ubinary(ubdir):
     banner()
     kprint(lang['cust_convert_binary'], 'b')
-    delpath(ubdir+'/update-binary')
-    cp(tools+'/updater/custom/ubinary', ubdir+'/update-binary')
-    uscript = readfl(ubdir+'/updater-script')
+    delpath(ubdir + '/update-binary')
+    cp(tools + '/updater/custom/ubinary', ubdir + '/update-binary')
+    uscript = readfl(ubdir + '/updater-script')
 
     for line in uscript:
         if 'assert' in line:
             if 'ro.product.device' in line:
                 testvar = greps('abort', uscript)[0].split('"')[
                     2].replace('\\', '')
-                appendf('assert_device "'+testvar+'"', ubdir+'/update-binary')
+                appendf('assert_device "' + testvar + '"', ubdir + '/update-binary')
             else:
                 testvar = line.split('"')[1]
                 testvar2 = line.split('"')[3]
-                appendf('assert_custom "'+testvar+'='
-                        + testvar2+'"', ubdir+'/update-binary')
+                appendf('assert_custom "' + testvar + '='
+                        + testvar2 + '"', ubdir + '/update-binary')
 
         elif 'unmount(' in line:
             if 'sysmnt' in line:
                 testvar = '$sysmnt'
             else:
                 testvar = line.split('"')[1]
-            appendf('umount '+testvar, ubdir+'/update-binary')
+            appendf('umount ' + testvar, ubdir + '/update-binary')
         elif 'show_progress' in line:
             testvar = line.split('(')[1].replace(',', '').replace(');', '')
-            appendf('show_progress '+testvar, ubdir+'/update-binary')
+            appendf('show_progress ' + testvar, ubdir + '/update-binary')
         elif 'ui_print' in line:
             if '; u' in line:
                 for i in line.split('; '):
@@ -5345,14 +5369,14 @@ def ubinary(ubdir):
                             testvar = i.split('"')[1]
                         except:
                             testvar = ''
-                        appendf('ui_print "'+testvar+'"',
-                                ubdir+'/update-binary')
+                        appendf('ui_print "' + testvar + '"',
+                                ubdir + '/update-binary')
             else:
                 try:
                     testvar = line.split('"')[1]
                 except:
                     testvar = ''
-                appendf('ui_print "'+testvar+'"', ubdir+'/update-binary')
+                appendf('ui_print "' + testvar + '"', ubdir + '/update-binary')
         elif 'format' in line:
             if 'file_getprop' in line:
                 if '"byname"' in line:
@@ -5364,18 +5388,18 @@ def ubinary(ubdir):
                     testvar = line.split('"')[7]
                 except:
                     testvar = line.split('"')[5]
-            appendf('mount '+testvar, ubdir+'/update-binary')
-            appendf('delete_recursive '+testvar, ubdir+'/update-binary')
+            appendf('mount ' + testvar, ubdir + '/update-binary')
+            appendf('delete_recursive ' + testvar, ubdir + '/update-binary')
         elif 'delete_recursive' in line:
             if 'sysmnt' in line:
                 line = line.replace(
                     'file_getprop("/tmp/config", "sysmnt")', '"$sysmnt"')
 
             testvar = line.split('"')[1]
-            appendf('delete_recursive '+testvar, ubdir+'/update-binary')
+            appendf('delete_recursive ' + testvar, ubdir + '/update-binary')
         elif 'set_progress' in line:
             testvar = line.split('(')[1].replace(',', '').replace(');', '')
-            appendf('set_progress '+testvar, ubdir+'/update-binary')
+            appendf('set_progress ' + testvar, ubdir + '/update-binary')
         elif line.startswith('mount("'):
             if 'file_getprop' in line:
                 if '"byname"' in line:
@@ -5384,36 +5408,36 @@ def ubinary(ubdir):
                     testvar = line.split('"')[9]
             else:
                 testvar = line.split('"')[7]
-            appendf('mount '+testvar, ubdir+'/update-binary')
+            appendf('mount ' + testvar, ubdir + '/update-binary')
         elif line.startswith('ifelse(is_mounted') and 'mount("ext4"' in line:
             if 'sysmnt' in line:
                 testvar = '$sysmnt'
             else:
                 testvar = line.split('"')[1]
-            appendf('mount '+testvar, ubdir+'/update-binary')
+            appendf('mount ' + testvar, ubdir + '/update-binary')
         elif 'package_extract_dir' in line:
             testvar = line.split('"')[1]
             if 'sysmnt' in line:
                 testvar2 = '$sysmnt'
             elif 'file_getprop' in line:
                 testvar2 = line.split('"')[5]
-                testvar2 = '/'+testvar2
+                testvar2 = '/' + testvar2
             else:
                 testvar2 = line.split('"')[3]
 
             if any(['supersu' in line, 'busybox' in line, 'root' in line]):
-                appendf('package_extract_dir '+testvar
-                        + ' /tmp', ubdir+'/update-binary')
+                appendf('package_extract_dir ' + testvar
+                        + ' /tmp', ubdir + '/update-binary')
             else:
-                appendf('package_extract_dir '+testvar
-                        + ' '+testvar2, ubdir+'/update-binary')
+                appendf('package_extract_dir ' + testvar
+                        + ' ' + testvar2, ubdir + '/update-binary')
         elif 'run_program' in line:
             if any(['supersu' in line, 'busybox' in line, 'root' in line]):
                 testvar = line.replace('", ', ' ').split(
                     '"', 1)[1].replace('"', '').replace(');', '')
             else:
                 testvar = line.split('"')[1]
-            appendf(testvar, ubdir+'/update-binary')
+            appendf(testvar, ubdir + '/update-binary')
         elif 'set_metadata' in line:
             if 'sysmnt' in line:
                 line = line.replace(
@@ -5428,48 +5452,47 @@ def ubinary(ubdir):
                     line[9] = str(int(line[9], 16))
             except:
                 pass
-            appendf(' '.join(line), ubdir+'/update-binary')
+            appendf(' '.join(line), ubdir + '/update-binary')
         elif 'set_perm' in line:
             line = line.replace('(', ' ').replace(
                 ',', '').replace('"', '').replace(');', '')
-            appendf(line, ubdir+'/update-binary')
+            appendf(line, ubdir + '/update-binary')
         elif 'symlink' in line:
             if 'sysmnt' in line:
                 line = line.replace(
                     'file_getprop("/tmp/config", "sysmnt")+"', '"$sysmnt')
 
             appendf(line.replace('("', ' ').replace(
-                '", "', ' ').replace('");', ''), ubdir+'/update-binary')
+                '", "', ' ').replace('");', ''), ubdir + '/update-binary')
         elif 'package_extract_file' in line:
             testvar = line.split('"')[1]
             if 'file_getprop' in line:
                 if 'byname' in line:
                     if testvar.replace('.img', '') in partslist:
-                        testvar2 = '$byname'+line.split('"')[7]+'$slotnum'
+                        testvar2 = '$byname' + line.split('"')[7] + '$slotnum'
                     else:
-                        testvar2 = '$byname'+line.split('"')[7]
+                        testvar2 = '$byname' + line.split('"')[7]
                 else:
-                    testvar2 = '$'+line.split('"')[5]
+                    testvar2 = '$' + line.split('"')[5]
             else:
                 testvar2 = line.split('"')[3]
 
             if testvar.endswith('.img'):
-                appendf('package_extract_file '+testvar
-                        + ' /tmp', ubdir+'/update-binary')
-                appendf('write_raw_image /tmp/'+testvar
-                        + ' '+testvar2, ubdir+'/update-binary')
+                appendf('package_extract_file ' + testvar
+                        + ' /tmp', ubdir + '/update-binary')
+                appendf('write_raw_image /tmp/' + testvar
+                        + ' ' + testvar2, ubdir + '/update-binary')
             else:
-                appendf('package_extract_file '+testvar
-                        + ' '+testvar2, ubdir+'/update-binary')
+                appendf('package_extract_file ' + testvar
+                        + ' ' + testvar2, ubdir + '/update-binary')
 
-    delpath(ubdir+'/updater-script')
+    delpath(ubdir + '/updater-script')
     appendf('# Dummy file; update-binary is a shell script.',
-            ubdir+'/updater-script')
+            ubdir + '/updater-script')
 
 
 def user_auth(jupdate=None):
-
-        return [srkuser, srkpass, dbtst, '114514', '3.2.2.2']
+    return [srkuser, srkpass, dbtst, '114514', '3.2.2.2']
 
 
 def utftest(filename):
@@ -5490,7 +5513,7 @@ def virtual_memory():
     else:
         if platf in ['lin', 'wsl', 'wsl2']:
             mem_bytes = os.sysconf('SC_PAGE_SIZE') * \
-                os.sysconf('SC_PHYS_PAGES')
+                        os.sysconf('SC_PHYS_PAGES')
         else:
             try:
                 mem_bytes = int(cmd('sysctl hw.memsize').split()[1])
@@ -5524,7 +5547,7 @@ def zipl7(zipname, p7z1=None):
         p7z1 = p7z
 
     plist = []
-    initlist = grepb('----', '----', cmd(p7z1+' l "'+zipname+'"').splitlines())
+    initlist = grepb('----', '----', cmd(p7z1 + ' l "' + zipname + '"').splitlines())
 
     for i in initlist:
         nline = i.split()
@@ -5543,16 +5566,16 @@ def zipef(zipname, filename, outfile=None, p7z1=None):
         p7z1 = p7z
 
     if outfile:
-        return cmd(p7z1+' e "'+zipname+'" "'+filename+'" -o"'+outfile+'"')
+        return cmd(p7z1 + ' e "' + zipname + '" "' + filename + '" -o"' + outfile + '"')
     else:
-        return cmd(p7z1+' e "'+zipname+'" "'+filename+'"')
+        return cmd(p7z1 + ' e "' + zipname + '" "' + filename + '"')
 
 
 def zipp(zipname, filelist, comp='5', p7z1=None):
     if not p7z1:
         p7z1 = p7z
 
-    return cmd(p7z1+' a -tzip -mx'+comp+' "'+zipname+'" '+' '.join(filelist))
+    return cmd(p7z1 + ' a -tzip -mx' + comp + ' "' + zipname + '" ' + ' '.join(filelist))
 
 
 def zipu(zipname, outdir=None, p7z1=None):
@@ -5560,9 +5583,9 @@ def zipu(zipname, outdir=None, p7z1=None):
         p7z1 = p7z
 
     if outdir:
-        return cmd(p7z1+' x -y '+'-o"'+outdir+'" "'+zipname+'"')
+        return cmd(p7z1 + ' x -y ' + '-o"' + outdir + '" "' + zipname + '"')
     else:
-        return cmd(p7z1+' x -y "'+zipname+'"')
+        return cmd(p7z1 + ' x -y "' + zipname + '"')
 
 
 def zipu2(zipname, outdir=None):
@@ -5599,25 +5622,25 @@ color = {
     'n': '\033[0m'
 }
 
-rd = None
+rd: str = ''
 romname = None
-prfiles = None
+prfiles: str = ''
 uconf = None
-logs = None
+logs: str = ''
 usdir = None
-lang = None
-issudo2 = None
+lang: dict = {}
+issudo2: str = ''
 srkuser = None
 srkpass = None
 dbtst = None
 superrv = None
-server1 = None
-sysdir = None
+server1: str = ''
+sysdir: str = ''
 androidversion = None
 
 bd = os.getcwd()
-tools = bd+os.sep+'tools'
-mconf = tools+os.sep+'srk.conf'
+tools = bd + os.sep + 'tools'
+mconf = tools + os.sep + 'srk.conf'
 tsize = 60
 
 auth_days = 3
@@ -5626,44 +5649,44 @@ date_pattern = '%m/%d/%Y-%H:%M:%S'
 
 partslist = getconf('partition_extract_list', mconf, l=1)
 
-intro1 = color['s']+color['bo']
-intro2 = color['s']+color['it']
-AIK = tools+'/boot/AIK'
+intro1 = color['s'] + color['bo']
+intro2 = color['s'] + color['it']
+AIK = tools + '/boot/AIK'
 
 if platf in ['lin', 'wsl', 'wsl2']:
-    ostools = tools+'/linux_tools'
-    lz4 = AIK+'/bin/linux/x86_64/lz4'
-    vdexcon = ostools+'/compact_dex_converter'
+    ostools = tools + '/linux_tools'
+    lz4 = AIK + '/bin/linux/x86_64/lz4'
+    vdexcon = ostools + '/compact_dex_converter'
 elif platf == 'mac':
-    ostools = tools+'/mac_tools'
-    lz4 = AIK+'/bin/macos/x86_64/lz4'
-    vdexcon = ostools+'/bin/compact_dex_converter'
+    ostools = tools + '/mac_tools'
+    lz4 = AIK + '/bin/macos/x86_64/lz4'
+    vdexcon = ostools + '/bin/compact_dex_converter'
 else:
     banner()
     kprint('The platform you are running on is not recognized:', 'r')
-    kprint('Current platform: "'+platf+'"\n', 'y')
+    kprint('Current platform: "' + platf + '"\n', 'y')
     input('Press ENTER to exit')
     sys.exit(1)
 
 issudo = 'sudo '
-p7z = ostools+'/7z'
-superx = ostools+'/superx'
-zipalign = ostools+'/zipalign'
+p7z = ostools + '/7z'
+superx = ostools + '/superx'
+zipalign = ostools + '/zipalign'
 tar = 'tar'
-adb = ostools+'/adb'
-aapt = ostools+'/aapt'
-make_ext4fs = ostools+'/make_ext4fs'
-mke2fs = ostools+'/mke2fs'
-e2fsdroid = ostools+'/e2fsdroid'
-tune2fs = ostools+'/tune2fs'
-pacextract = ostools+'/pacextractor'
-simg2img = ostools+'/simg2img'
-img2simg = ostools+'/img2simg'
-unsquashfs = ostools+'/unsquashfs'
-zipadjust = ostools+'/zipadjust'
-vdexext = ostools+'/vdexExtractor'
-brotli = ostools+'/brotli'
-superp = ostools+'/superp'
+adb = ostools + '/adb'
+aapt = ostools + '/aapt'
+make_ext4fs = ostools + '/make_ext4fs'
+mke2fs = ostools + '/mke2fs'
+e2fsdroid = ostools + '/e2fsdroid'
+tune2fs = ostools + '/tune2fs'
+pacextract = ostools + '/pacextractor'
+simg2img = ostools + '/simg2img'
+img2simg = ostools + '/img2simg'
+unsquashfs = ostools + '/unsquashfs'
+zipadjust = ostools + '/zipadjust'
+vdexext = ostools + '/vdexExtractor'
+brotli = ostools + '/brotli'
+superp = ostools + '/superp'
 last_used = datetime.now()
 offline_auth = getconf('offline_auth', mconf)
 lpunpack = None
