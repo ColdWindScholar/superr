@@ -1,0 +1,13 @@
+language/__pycache__
+source/__pycache__
+linux_tools/tune2fs
+mac_tools/tune2fs
+source/srkcli_list
+plugins/example_python
+# smali
+# linux_tools
+# mac_tools
+# boot/AIK
+# language/default_srk.py
+# root/busybox/Busybox.zip
+# root/root_zips/SuperSU.zip

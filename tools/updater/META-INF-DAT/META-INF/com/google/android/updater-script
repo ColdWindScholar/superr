@@ -1,0 +1,43 @@
+#ASSERT
+show_progress(1.000000, 0);
+ui_print(" ");
+ui_print(" ");
+ui_print("#SIGNATURE Installer");
+ui_print("#SIGCUST");
+ui_print(" ");
+ui_print(" ");
+ui_print(" ");
+ui_print(" ");
+ui_print("Checking config ...");
+ui_print(" ");
+package_extract_dir("install", "/tmp/install");
+set_metadata_recursive("/tmp/install", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0644);
+set_metadata_recursive("/tmp/install/bin", "uid", 0, "gid", 0, "dmode", 0755, "fmode", 0755);
+run_program("/tmp/install/bin/busybox", "sh", "/tmp/install/bin/configure.sh");
+ifelse(file_getprop("/tmp/config", "fail"), abort("ERROR: Partition paths not found."));
+#UNMOUNT
+ifelse(is_mounted(file_getprop("/tmp/config", "sysmnt")), unmount(file_getprop("/tmp/config", "sysmnt")));
+#MOUNT
+ifelse(is_mounted(file_getprop("/tmp/config", "sysmnt")), "", mount("ext4", "EMMC", file_getprop("/tmp/config", "system"), file_getprop("/tmp/config", "sysmnt")));
+run_program("/tmp/install/bin/busybox", "sh", "/tmp/install/bin/backuptool.sh", "backup");
+#UNMOUNT
+ifelse(is_mounted(file_getprop("/tmp/config", "sysmnt")), unmount(file_getprop("/tmp/config", "sysmnt")));
+show_progress(0.750000, 0);
+ui_print("Extracting system...");
+ui_print(" ");
+block_image_update(file_getprop("/tmp/config", "system"), package_extract_file("system.transfer.list"), "system.new.dat", "system.patch.dat");
+show_progress(0.020000, 10);
+#MOUNT
+ifelse(is_mounted(file_getprop("/tmp/config", "sysmnt")), "", mount("ext4", "EMMC", file_getprop("/tmp/config", "system"), file_getprop("/tmp/config", "sysmnt")));
+run_program("/tmp/install/bin/busybox", "sh", "/tmp/install/bin/backuptool.sh", "restore");
+#UNMOUNT
+ifelse(is_mounted(file_getprop("/tmp/config", "sysmnt")), unmount(file_getprop("/tmp/config", "sysmnt")));
+show_progress(0.050000, 5);
+ui_print("Extracting boot image..."); ui_print(" "); show_progress(0.050000, 5);
+package_extract_file("boot.img", file_getprop("/tmp/config", "boot"));
+#ROOT
+ui_print(" ");
+#BUSYBOX
+show_progress(0.200000, 10);
+ui_print("#SIGNATURE Installed");
+set_progress(1.000000);

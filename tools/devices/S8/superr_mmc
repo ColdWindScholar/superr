@@ -1,0 +1,5 @@
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/system /system
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/boot /boot
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/userdata /data
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/cache /cache
+/dev/block/platform/mtk-msdc.0/11230000.msdc0/by-name/recovery /recovery
