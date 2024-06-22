@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import glob
 # by SuperR. @XDA
 
 import os
@@ -14,7 +14,7 @@ def main(j, indir, partition, filedir):
         else:
             return False
 
-    if not j.findf(indir+'/*'):
+    if not glob.glob(indir+'/*'):
         print('\n'+indir+' does not exist or is empty.\n')
         return
 

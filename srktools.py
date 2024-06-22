@@ -731,7 +731,7 @@ def deodex_start(quiet=None):
                         appendf(cmd('java -Xmx' + heapsize + 'm -jar ' + oat2dex
                                     + ' ' + app2 + '.odex odex'), logs + '/deodex.log')
                         if not existf(app2 + '.dex'):
-                            delpath(*findf(app2 + '-classes*.dex'))
+                            delpath(*glob.glob(app2 + '-classes*.dex'))
                             continue
 
                         os.replace(app2 + '.dex', deoappdir
@@ -772,10 +772,10 @@ def deodex_start(quiet=None):
                 with cd(deoappdir + '/' + app):
                     appendf(cmd(aapt + ' add -fk ' + app2
                                 + '.apk classes*.dex'), logs + '/deodex.log')
-                    delpath(*findf('classes*.dex'))
+                    delpath(*glob.glob('classes*.dex'))
 
         getconf('deodex', uconf, add=dtype)
-        delpath(*findf(logs + '/*.log'))
+        delpath(*glob.glob(logs + '/*.log'))
         delpath(logs + '/deodex_fail_list')
 
         comptmp = findr(appdir + '/**') + findr(privdir
@@ -917,7 +917,7 @@ def deodex_start(quiet=None):
             print('-'.center(tsize, '-'))
             print()
             with cd(appdir):
-                applist = sorted(findf('*'), key=str.lower)
+                applist = sorted(glob.glob('*'), key=str.lower)
                 for app in applist:
                     if dtype == 'l':
                         if arch2 and existd(app + '/' + arch) and existd(app + '/' + arch2):
@@ -944,7 +944,7 @@ def deodex_start(quiet=None):
             print('-'.center(tsize, '-'))
             print()
             with cd(privdir):
-                applist = sorted(findf('*'), key=str.lower)
+                applist = sorted(glob.glob('*'), key=str.lower)
                 for app in applist:
                     if dtype == 'l':
                         if arch2 and existd(app + '/' + arch) and existd(app + '/' + arch2):
@@ -974,7 +974,7 @@ def deodex_start(quiet=None):
 
         if dtype in ['n2', 'm2']:
             with cd(framedir + '/' + deoarch2):
-                oattmp = sorted(findf('*.oat'), key=str.lower)
+                oattmp = sorted(glob.glob('*.oat'), key=str.lower)
                 for line in oattmp:
                     if line != 'boot.oat':
                         framejar = line.replace(
@@ -1014,7 +1014,7 @@ def deodex_start(quiet=None):
 
             if existd(framedir + '/' + deoarch):
                 with cd(framedir + '/' + deoarch):
-                    frametmp = sorted(findf('*.odex'), key=str.lower)
+                    frametmp = sorted(glob.glob('*.odex'), key=str.lower)
                     for frame in frametmp:
                         frname = frame.replace('.odex', '')
                         for ftype in glob.glob(frname + '.*'):
@@ -1059,14 +1059,14 @@ def deodex_start(quiet=None):
 
                                 delpath('smali')
 
-                            delpath(*findf(frname + '.*'))
+                            delpath(*glob.glob(frname + '.*'))
         elif dtype in ['l', 'm']:
             if dtype == 'l':
                 deoarch = arch
                 deoarch2 = arch
             if existd(framedir + '/' + deoarch):
                 with cd(framedir + '/' + deoarch):
-                    frametmp = sorted(findf('*.odex'), key=str.lower)
+                    frametmp = sorted(glob.glob('*.odex'), key=str.lower)
                     for frame in frametmp:
                         os.replace(frame, framedir + '/' + deoarch2 + '/' + frame)
                         print('\n' + lang['deodex_deodexing'] + frame + '\n')
@@ -1097,7 +1097,7 @@ def deodex_start(quiet=None):
         banner(quiet)
         kprint(lang['deodex_pack_jar'], 'b')
         with cd(framedir):
-            frametmp = sorted(findf('*jar__classes*.dex'), key=str.lower)
+            frametmp = sorted(glob.glob('*jar__classes*.dex'), key=str.lower)
             lskip = ''
             for line in frametmp:
                 if lskip and lskip + '__' in line:
@@ -1120,7 +1120,7 @@ def deodex_start(quiet=None):
                     appendf('ERROR: ' + line2 + ' has no classes.dex',
                             logs + '/deodex.log')
 
-                delpath(*findf('classes*.dex'))
+                delpath(*glob.glob('classes*.dex'))
 
             if dtype in ['l', 'm']:
                 delpath(arch + '/odex')
@@ -1270,7 +1270,7 @@ def deodex_start(quiet=None):
                 return
 
         getconf('deodex', uconf, add=dtype)
-        delpath(*findf(logs + '/*.log'))
+        delpath(*glob.glob(logs + '/*.log'))
         delpath(logs + '/deodex_fail_list')
 
         comptmp = findr(appdir + '/**') + findr(privdir
@@ -1410,7 +1410,7 @@ def deodex_start(quiet=None):
                             appendf(mainfile.replace(rd2, ''),
                                     logs + '/deodex_fail_list')
                             os.replace(thefile, i)
-                            delpath(*findf(thefile[:-5] + '_classes*'))
+                            delpath(*glob.glob(thefile[:-5] + '_classes*'))
                             continue
                         else:
                             appendf(mainfile.replace(rd2, ''),
@@ -1458,12 +1458,12 @@ def deodex_start(quiet=None):
 
                         appendf(cmd(aapt + ' add -fk ' + basename(mainfile)
                                     + ' classes*.dex'), logs + '/deodex.log')
-                        delpath(*findf('classes*.dex'), thefile)
+                        delpath(*glob.glob('classes*.dex'), thefile)
 
                         if not mainfile.endswith('.jar'):
                             delpath('oat')
                     else:
-                        delpath(*findf('*classes*dex'))
+                        delpath(*glob.glob('*classes*dex'))
                         continue
 
         banner(quiet)
@@ -1579,10 +1579,10 @@ def deodex_start(quiet=None):
                 delpath(deoappdir + '/smali')
 
         with cd(prfiles):
-            delpath(*findf('deoxex_*'))
+            delpath(*glob.glob('deoxex_*'))
             getconf('deodex', uconf, add='old')
         with cd(prfiles + '/logs'):
-            delpath(*findf('*.log'))
+            delpath(*glob.glob('*.log'))
 
         with cd(rd):
             odextmp = greps(fl('', '.*system/framework|.*system/app/|.*system/priv-app/'),
@@ -1611,7 +1611,7 @@ def deodex_start(quiet=None):
         print('-'.center(tsize, '-'))
         print()
         with cd(appdir):
-            applist = sorted(findf('*.apk'), key=str.lower)
+            applist = sorted(glob.glob('*.apk'), key=str.lower)
         deoappdir = appdir
         deoext = 'apk'
         dodeodexold()
@@ -1628,7 +1628,7 @@ def deodex_start(quiet=None):
         print('-'.center(tsize, '-'))
         print()
         with cd(privdir):
-            applist = sorted(findf('*.apk'), key=str.lower)
+            applist = sorted(glob.glob('*.apk'), key=str.lower)
         deoappdir = privdir
         deoext = 'apk'
         dodeodexold()
@@ -1640,12 +1640,12 @@ def deodex_start(quiet=None):
         print('-'.center(tsize, '-'))
         print()
         with cd(framedir):
-            applist = sorted(findf('*.jar'), key=str.lower)
+            applist = sorted(glob.glob('*.jar'), key=str.lower)
         deoappdir = framedir
         deoext = 'jar'
         dodeodexold()
         with cd(framedir):
-            applist = sorted(findf('*.apk'), key=str.lower)
+            applist = sorted(glob.glob('*.apk'), key=str.lower)
         deoappdir = framedir
         deoext = 'apk'
         dodeodexold()
@@ -1658,7 +1658,7 @@ def deodex_start(quiet=None):
         print()
         print()
         with cd(framedir):
-            delpath(*findf('*.odex'))
+            delpath(*glob.glob('*.odex'))
         with cd(rd):
             stillodexed = '\n'.join(
                 findr('system/**/*.odex') + findr('vendor/**/*.odex'))

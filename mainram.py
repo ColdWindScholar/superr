@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import glob
 import os
 import sys
 import re
@@ -49,7 +49,7 @@ def ramdisk(j, base, func, romname, filetype, action, extra):
                 j.appendf('0', deviceloc+'/superr_'+bytest[i])
                 j.appendf(byname, deviceloc+'/superr_byname')
                 with j.cd(deviceloc):
-                    for a in j.findf('*'):
+                    for a in glob.glob('*'):
                         j.chown(a)
                 break
 
@@ -225,7 +225,7 @@ def ramdisk(j, base, func, romname, filetype, action, extra):
         if filekind == 'boot':
             fstdir = None
             for i in [rd+'/system', bootdir+'/ramdisk', rd+'/system/vendor/etc', rd+'/vendor/etc']:
-                newfstab = j.findf(i+os.sep+'*fstab*')
+                newfstab = glob.glob(i+os.sep+'*fstab*')
                 if newfstab:
                     fstdir = i
                     break
@@ -358,7 +358,7 @@ def ramdisk(j, base, func, romname, filetype, action, extra):
                           + ' '+i, deviceloc+'/superr_mmc')
 
             with j.cd(deviceloc):
-                for a in j.findf('*'):
+                for a in glob.glob('*'):
                     j.chown(a)
 
     devicename = j.getconf('devicename', uconf)

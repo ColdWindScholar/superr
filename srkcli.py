@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-
+import glob
 import sys
 import os
 
@@ -28,7 +28,7 @@ def main(j, args, func_dict):
         else:
             err('[ERROR] The project path does not exist')
 
-        if len(j.findf('tools/updater/binary/*')) < 7:
+        if len(glob.glob('tools/updater/binary/*')) < 7:
             err('[ERROR] The kitchen must be installed before using the CLI')
 
         try:
@@ -163,7 +163,7 @@ def main(j, args, func_dict):
 
             j.deodex_start(quiet=1)
         elif args.function[0] == 'dmverity':
-            if not j.greps('system|vendor|boot.img', j.findf('*')):
+            if not j.greps('system|vendor|boot.img', glob.glob('*')):
                 err(color['r']+'ERROR: Nothing to do here'+color['n'])
 
             if j.existf('boot.img'):
@@ -186,7 +186,7 @@ def main(j, args, func_dict):
 
             print('dm-verity status: '+veritystatus)
         elif args.function[0] == 'forcee':
-            if not j.greps('system|vendor|boot.img', j.findf('*')):
+            if not j.greps('system|vendor|boot.img', glob.glob('*')):
                 err(color['r']+'ERROR: Nothing to do here'+color['n'])
 
             if j.existf('boot.img'):
