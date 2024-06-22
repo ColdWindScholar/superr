@@ -42,8 +42,7 @@ def superr():
     except:
         pass
 
-    j.lpunpack = __import__('lpdump')
-    importlib.reload(j.lpunpack)
+
 
     depends = j.tools + '/depends/l'
 

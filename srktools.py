@@ -23,7 +23,7 @@ from time import sleep
 from os.path import basename, dirname
 import requests
 from cryptography.fernet import Fernet
-
+import lpdump as lpunpack
 
 def adb_byname(deviceloc):
     try:
@@ -140,9 +140,6 @@ def banner(quiet=None):
 
 def bencode(thestring):
     return base64.b64encode(thestring.encode('utf-8')).decode('utf-8')
-
-
-
 
 
 def bbdown(dlurl):
@@ -1790,9 +1787,6 @@ def deodex_start(quiet=None):
     return
 
 
-
-
-
 def dlfile(url, filename, bit=None):
     try:
         count = 0
@@ -2715,7 +2709,8 @@ def ext4Xtract(whatimg, *vargs):
             print(cmd('sudo ' + tools + '/source/superrl.py --otherfile '
                       + tools + '/source/getmeta output ' + whatimg + ' ' + prfiles))
         else:
-            appendf(cmd(f'sudo {tools_local}startup.py --otherfile {tools_local}getmeta.py output {whatimg} {prfiles}'), logs + '/ext4_extract.log')
+            appendf(cmd(f'sudo {tools_local}startup.py --otherfile {tools_local}getmeta.py output {whatimg} {prfiles}'),
+                    logs + '/ext4_extract.log')
 
         cmd('sudo chmod -R a+rwX ' + whatimg)
         cmd('sudo chown -hR ' + whoami() + ':' + whoami() + ' ' + prfiles)
@@ -3899,7 +3894,7 @@ def language_check(lang1):
             lang_add.append(i)
 
     if lang_add:
-        appendf('\n# Needs translation\n' + '\n'.join(lang_add),f'{tools}/language/{lang1}_srk.py')
+        appendf('\n# Needs translation\n' + '\n'.join(lang_add), f'{tools}/language/{lang1}_srk.py')
 
         return 1
     else:
@@ -4879,8 +4874,6 @@ def super_build(fromcli=None, newdat=None, imglz4=None):
             if imgname.endswith('_new'):
                 imgname = imgname[:-4]
 
-
-
             if fromcli or superlist:
                 reply = 'y'
             else:
@@ -5654,4 +5647,4 @@ brotli = ostools + '/brotli'
 superp = ostools + '/superp'
 last_used = datetime.now()
 offline_auth = getconf('offline_auth', mconf)
-lpunpack = None
+
